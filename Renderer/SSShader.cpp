@@ -83,7 +83,7 @@ std::vector<std::string> SSShader::GetSamplerNames()
 
 int SSShader::GetConstantBufferSlotIndex(const std::string& InName)
 {
-	if (mConstantBufferMap.contains(InName))
+	if (mConstantBufferMap.count(InName)>0)
 	{
 		return mConstantBufferMap[InName]->GetBufferIndex();
 	}
@@ -94,7 +94,7 @@ int SSShader::GetConstantBufferSlotIndex(const std::string& InName)
 
 int SSShader::GetTextureSlotIndex(const std::string& InName)
 {
-	if (mTextureMap.contains(InName))
+	if (mTextureMap.count(InName)>0)
 	{
 		return mTextureMap[InName];
 	}
@@ -104,7 +104,7 @@ int SSShader::GetTextureSlotIndex(const std::string& InName)
 
 int SSShader::GetSamplerSlotIndex(const std::string& InName)
 {
-	if (mSamplerMap.contains(InName))
+	if (mSamplerMap.count(InName)>0)
 	{
 		return mSamplerMap[InName];
 	}

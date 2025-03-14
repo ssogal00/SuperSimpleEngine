@@ -27,7 +27,7 @@ void SSRenderingObjectManager::UpdateObjects()
 	
 	for (auto& [k, v] : GameObjects)
 	{
-		if (!mRenderingObjectMap.contains(k))
+		if (mRenderingObjectMap.count(k) == 0)
 		{
 			mRenderingObjectMap[k] = new SSRenderingObject(v);
 		}
@@ -37,7 +37,7 @@ void SSRenderingObjectManager::UpdateObjects()
 
 	for (auto& [k, v] : mRenderingObjectMap)
 	{
-		if (!GameObjects.contains(k))
+		if (GameObjects.count(k) == 0)
 		{
 			ObjectsToDelete.push_back(k);
 		}

@@ -7,7 +7,7 @@ set(CMAKE_EXE_LINKER_FLAGS "/machine:x64")
 set(CMAKE_MODULE_LINKER_FLAGS "/machine:x64")
 set(CMAKE_SHARED_LINKER_FLAGS "/machine:x64")
 set(CMAKE_STATIC_LINKER_FLAGS "/machine:x64")
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 ###########################################################
 ################ Engine					 ################

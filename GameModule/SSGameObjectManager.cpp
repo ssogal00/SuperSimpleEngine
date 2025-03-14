@@ -28,7 +28,7 @@ void SSGameObjectManager::AddGameObject(SSGameObject* object)
 {
 	check(object != nullptr);
 	check(object->GetId() != 0);
-	check(!mGameObjectMap.contains(object->GetId()));
+	check(mGameObjectMap.count(object->GetId()) == 0 );
 
 	mGameObjectMap[object->GetId()] = object;
 }

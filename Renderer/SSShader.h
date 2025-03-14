@@ -69,7 +69,8 @@ void SSShader::SetConstantBufferData(std::string bufferName, const T& data)
 {
     if(mConstantBufferMap.count(bufferName) > 0)
     {
-        mConstantBufferMap[bufferName]->SetBufferData<T>(data);
+		auto* buffer = mConstantBufferMap[bufferName];
+		buffer->SetBufferData<T>(data);
     }
 }
 
