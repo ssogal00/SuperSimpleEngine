@@ -66,7 +66,6 @@ add_executable(ConsoleApp Console/main.cpp)
 target_include_directories(ConsoleApp PUBLIC "Core" "Engine")
 
 target_link_libraries(ConsoleApp PRIVATE Core)
-
 target_compile_options(ConsoleApp PRIVATE /GR-)
 
 set_target_properties(ConsoleApp PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:console")	
