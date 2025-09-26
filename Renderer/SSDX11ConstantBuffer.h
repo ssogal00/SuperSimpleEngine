@@ -17,7 +17,7 @@ struct VariableInConstantBufferInfo
     BYTE Index;
     std::string Name;
 };
-
+// cbuffer in HLSL
 class SSDX11ConstantBuffer : public SSDX11Buffer
 {
 public:
