@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.0)
-project(SuperSimpleEngine)
+project(SuperSimpleEngine LANGUAGES CXX CUDA)
 
 add_compile_options(/wd4251)
 string(REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
@@ -9,8 +9,11 @@ set(CMAKE_MODULE_LINKER_FLAGS "/machine:x64")
 set(CMAKE_SHARED_LINKER_FLAGS "/machine:x64")
 set(CMAKE_STATIC_LINKER_FLAGS "/machine:x64")
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CUDA_STANDARD 11)
 
 set(SIMDJSON_JUST_LIBRARY 1)
+
+find_package(CUDA REQUIRED)
 
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
