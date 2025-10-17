@@ -13,7 +13,7 @@ public:
 	virtual void DoWork() = 0;
 };
 
-class SSThreadPool
+class CORE_API SSThreadPool
 {
 public:		
 	SSThreadPool();

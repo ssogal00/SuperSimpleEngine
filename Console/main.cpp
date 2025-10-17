@@ -6,6 +6,7 @@
 #include <deque>
 #include "Test.h"
 #include "SSTimer.h"
+#include "SSThreadPool.h"
 
 using namespace std::chrono_literals;
 
@@ -50,65 +51,20 @@ class FEmptyClass
 
 int main()
 {
-	SSMemoryAllocator8 TestAllocator{};
-	SSGameTimer TestTimer;
+	SSThreadPool TestPool{};
+	
+	for (int i = 0; i < 10; ++i)
 	{
-		FourByteClass* PtrList[8192] = { nullptr };
-
-		std::deque<FourByteClass*> PtrDeque;
-
-		int CurrentIndex = 0;
-
-		TestTimer.Tick();
-
-		for (int i = 0; i < 10000000; ++i)
+		TestPool.EnqueueJob([]()
 		{
-			if (std::rand() % 2 == 0)
-			{
-				void* Address = TestAllocator.GetFreeMemory();
-				PtrDeque.push_back(new (Address) FourByteClass(std::rand() % 1024));				
-			}
-			else if (PtrDeque.size() > 0)
-			{
-				FourByteClass* Ptr = PtrDeque.front();
-				Ptr->~FourByteClass();
-				TestAllocator.FreeMemory(Ptr);
-				PtrDeque.pop_front();
-			}
-		}
-		TestTimer.Tick();
-
-		std::cout << "Took " << TestTimer.GetDeltaTime() << std::endl;
+				int WaitMS = (std::rand() % 10) * 100 ;
+				::Sleep(WaitMS);
+			DWORD ThreadId = ::GetCurrentThreadId();
+			std::cout << "ThreadID : " << ThreadId <<" Waited : "<<WaitMS << " Hello from thread pool job!" << std::endl;
+		});
 	}
 	
-	{
-		std::deque<FourByteClass*> PtrDeque;
-
-
-		TestTimer.Tick();
-
-		for (int i = 0; i < 10000000; ++i)
-		{
-			if (std::rand() % 2 == 0)
-			{				
-				PtrDeque.push_back(new FourByteClass(std::rand() % 1024));
-				//CurrentIndex++;
-			}
-			else if (PtrDeque.size() > 0)
-			{
-				FourByteClass* Ptr = PtrDeque.front();
-				delete Ptr;
-				PtrDeque.pop_front();
-			}
-		}
-
-		TestTimer.Tick();
-
-		std::cout << "Took " << TestTimer.GetDeltaTime() << std::endl;
-	}
-
-	char a;
-	std::cin >> a;
+	::Sleep(2000); // Wait for jobs to finish
 
 	return 0;
 }

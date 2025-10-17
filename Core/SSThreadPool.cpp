@@ -6,7 +6,7 @@ DWORD ThreadPoolWorkerThreadProc(LPVOID lpParam)
 {
 	SSThreadPool* threadPool = (SSThreadPool*)lpParam;
 
-	while (true)
+	while (!threadPool->mShutdown)
 	{
 		EnterCriticalSection(&threadPool->mJobQueueCriticalSection);
 
@@ -14,13 +14,16 @@ DWORD ThreadPoolWorkerThreadProc(LPVOID lpParam)
 		{
 			SleepConditionVariableCS(&threadPool->mJobQueueConditionVariable, &threadPool->mJobQueueCriticalSection, INFINITE);
 		}
-
-		std::function<void()> job = threadPool->mJobQueue.front();
-		threadPool->mJobQueue.pop();
-		LeaveCriticalSection(&threadPool->mJobQueueCriticalSection);
-		
-		job();
+		if (!threadPool->mShutdown)
+		{
+			std::function<void()> job = threadPool->mJobQueue.front();
+			threadPool->mJobQueue.pop();
+			job();
+		}
+		LeaveCriticalSection(&threadPool->mJobQueueCriticalSection);		
 	}
+
+	return 0;
 }
 
 SSThreadPool::SSThreadPool()
