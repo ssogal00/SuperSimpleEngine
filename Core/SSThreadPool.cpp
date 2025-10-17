@@ -4,15 +4,22 @@
 
 DWORD ThreadPoolWorkerThreadProc(LPVOID lpParam)
 {
-	HANDLE eventHandle = (HANDLE)lpParam;
+	SSThreadPool* threadPool = (SSThreadPool*)lpParam;
 
 	while (true)
 	{
-		// Wait for the event to be signaled
-		WaitForSingleObject(eventHandle, INFINITE);
+		EnterCriticalSection(&threadPool->mJobQueueCriticalSection);
 
-		// Process jobs from the job queue
-		// (Implementation of job processing goes here)
+		while (!threadPool->mShutdown && threadPool->mJobQueue.empty())
+		{
+			SleepConditionVariableCS(&threadPool->mJobQueueConditionVariable, &threadPool->mJobQueueCriticalSection, INFINITE);
+		}
+
+		std::function<void()> job = threadPool->mJobQueue.front();
+		threadPool->mJobQueue.pop();
+		LeaveCriticalSection(&threadPool->mJobQueueCriticalSection);
+		
+		job();
 	}
 }
 
@@ -22,29 +29,24 @@ SSThreadPool::SSThreadPool()
 	GetSystemInfo(&sysInfo);
 	mCoreCount = std::min<int>(sysInfo.dwNumberOfProcessors, 4);
 	check(mCoreCount > 0);
-	
-	mThreadPoolEventHandleArray = new HANDLE[mCoreCount];
+		
 	mThreadHandleArray = new HANDLE[mCoreCount];
+	mThreadIDs = new DWORD[mCoreCount];
+
+	InitializeCriticalSection(&mJobQueueCriticalSection);
+	InitializeConditionVariable(&mJobQueueConditionVariable);
 
 	for (int i = 0; i < mCoreCount; ++i)
 	{
-		mThreadPoolEventHandleArray[i] = CreateEvent(
-			NULL,               // default security attributes
-			FALSE,              // auto-reset event object
-			FALSE,              // initial state is nonsignaled
-			NULL);              // unnamed object
-
 		mThreadHandleArray[i] = CreateThread(
 			NULL,                   // default security attributes
 			0,                      // use default stack size  
 			&ThreadPoolWorkerThreadProc,       // thread function name
-			(LPVOID)mThreadPoolEventHandleArray[i],          // argument to thread function 
+			(LPVOID)this,          // argument to thread function 
 			0,                      // use default creation flags 
-			NULL);   // returns the thread identifier
+			&mThreadIDs[i]);   // returns the thread identifier
 	}
 }
-
-
 
 void SSThreadPool::EnqueueJob(std::function<void()> InJob)
 {
@@ -52,15 +54,23 @@ void SSThreadPool::EnqueueJob(std::function<void()> InJob)
 	mJobQueue.push(InJob);
 	LeaveCriticalSection(&mJobQueueCriticalSection);
 
+	WakeConditionVariable(&mJobQueueConditionVariable);
 }
-
-
 
 SSThreadPool::~SSThreadPool()
 {
+	EnterCriticalSection(&mJobQueueCriticalSection);
+	mShutdown = true;
+	LeaveCriticalSection(&mJobQueueCriticalSection);
+
+	WakeAllConditionVariable(&mJobQueueConditionVariable);
+
+	WaitForMultipleObjects(mCoreCount, mThreadHandleArray, TRUE, INFINITE);
+
 	for (int i = 0; i < mCoreCount; ++i)
-	{
-		CloseHandle(mThreadPoolEventHandleArray[i]);
+	{		
+		CloseHandle(mThreadHandleArray[i]);
 	}
-	delete[] mThreadPoolEventHandleArray;
+
+	DeleteCriticalSection(&mJobQueueCriticalSection);
 }
