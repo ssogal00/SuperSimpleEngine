@@ -9,6 +9,22 @@
 #include "SSDX11RenderTarget.h"
 #include "SSShader.h"
 
+void SSDrawObjectCommand::Do(SSDX11Device* device)
+{
+	ID3D11Device* pDevice = device->GetDevice();
+
+	ID3D11DeviceContext* pDeviceContext = device->GetDeviceContext();
+	pDeviceContext->VSSetShader(mVertexShader, nullptr, 0);
+	pDeviceContext->PSSetShader(mPixelShader, nullptr, 0);
+	pDeviceContext->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	pDeviceContext->IASetVertexBuffers(1, 1, &mVertexBuffer, &mVertexStride, &mVertexOffset);
+	pDeviceContext->IASetInputLayout(mInputLayout);
+	pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pDeviceContext->VSSetConstantBuffers(0, 1, &mVertexConstantBuffer);
+	pDeviceContext->PSSetConstantBuffers(0, 1, &mPixelConstantBuffer);
+}
+
+
 SSChangeRenderTargetCmd::SSChangeRenderTargetCmd(IRenderTarget* renderTarget)
 	: mRenderTarget(renderTarget)
 {	

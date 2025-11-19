@@ -35,11 +35,6 @@ bool SSDX11Device::CreateDevice()
 	{
 		D3D_FEATURE_LEVEL_11_1,
 		D3D_FEATURE_LEVEL_11_0,
-		D3D_FEATURE_LEVEL_10_0,
-		D3D_FEATURE_LEVEL_9_3,
-		D3D_FEATURE_LEVEL_9_2,
-		D3D_FEATURE_LEVEL_9_1,
-
 	};
 
 	UINT length = sizeof(featureLevelArray) / sizeof(D3D_FEATURE_LEVEL);
@@ -522,6 +517,21 @@ SSDX11ConstantBuffer* SSDX11Device::CreateConstantBuffer(const UINT InBufferSize
 	HR(mDevice->CreateBuffer(&BufferDesc, nullptr, &BufferPtr));
 
 	return new SSDX11ConstantBuffer(BufferPtr, InSlotIndex, InBufferSize, InName);
+}
+
+ID3D11VertexShader* SSDX11Device::GetBoundVertexShader()
+{
+	ID3D11VertexShader* VertexShader = nullptr;
+	mDeviceContext->VSGetShader(&VertexShader, nullptr, nullptr);
+	return VertexShader;
+}
+
+ID3D11PixelShader* SSDX11Device::GetBoundPixelShader()
+{
+	ID3D11PixelShader* PixelShader = nullptr;
+	
+	mDeviceContext->PSGetShader(&PixelShader, nullptr, nullptr);
+	return PixelShader;
 }
 
 void SSDX11Device::SetConstantBufferData(SSDX11ConstantBuffer* InBuffer, BYTE* PtrData, int InSize)

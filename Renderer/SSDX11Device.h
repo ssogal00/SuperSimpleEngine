@@ -49,6 +49,11 @@ public:
 
 	ID3D11DepthStencilState*							CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC& InDepthStencilDesc);
 
+	ID3D11VertexShader*									GetBoundVertexShader();
+	ID3D11PixelShader*									GetBoundPixelShader();
+
+	
+
 	virtual void										Present();
 	void												ResizeRenderTarget(int inWidth, int inHeight);
 

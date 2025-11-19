@@ -55,13 +55,15 @@ int main()
 	
 	for (int i = 0; i < 10; ++i)
 	{
-		TestPool.EnqueueJob([]()
+		int WaitMS = (std::rand() % 10) * 100;
+		TestPool.EnqueueJob([WaitMS]()
 		{
-				int WaitMS = (std::rand() % 10) * 100 ;
-				::Sleep(WaitMS);
+				
+			::Sleep(WaitMS);
 			DWORD ThreadId = ::GetCurrentThreadId();
 			std::cout << "ThreadID : " << ThreadId <<" Waited : "<<WaitMS << " Hello from thread pool job!" << std::endl;
 		});
+		//::Sleep(10);
 	}
 	
 	::Sleep(2000); // Wait for jobs to finish

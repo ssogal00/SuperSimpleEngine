@@ -12,6 +12,37 @@ class SSGameObject;
 class SSDX11Texture2D;
 class IRenderTarget;
 
+// 
+// 1. vertex shader
+// 
+class SSDrawObjectCommand
+{
+public:
+	// draw하기 위해 필요한 것들
+	// 1. vertex , pixel shader
+	// 2. constant buffer data (slot, size)
+	// 3. texture
+	// 4. sampler
+	// 5. primitive type
+	// 6. vertex buffer, index buffer 
+	// 7. vertex buffer stride, offset 
+	// if any changes in rasterize state, depth state, blend state
+	// if any changes in render target
+public:
+	virtual void Do(SSDX11Device* device);
+private:
+	ID3D11VertexShader* mVertexShader = nullptr;
+	ID3D11PixelShader* mPixelShader = nullptr;
+	ID3D11Buffer* mVertexConstantBuffer = nullptr;
+	ID3D11Buffer* mPixelConstantBuffer = nullptr;
+	ID3D11Buffer* mVertexBuffer = nullptr;	
+	ID3D11Buffer* mIndexBuffer = nullptr;
+	ID3D11InputLayout* mInputLayout = nullptr;
+	ID3D11ShaderResourceView* mPixelShaderTextureView = nullptr;
+	ID3D11ShaderResourceView* mVertexShaderTextureView = nullptr;
+	UINT mVertexStride = 0;
+	UINT mVertexOffset = 0;
+};
 
 class SSDrawCmdBase
 {
