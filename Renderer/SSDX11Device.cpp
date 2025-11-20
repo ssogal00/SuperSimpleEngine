@@ -581,3 +581,24 @@ void SSDX11Device::PrintCompileError(ID3DBlob* errorMessage)
 
 	delete[] compileErrBuffer;
 }
+
+bool SSDX11DeviceStateCache::UpdatePSIfDifferent(ID3D11PixelShader* ps)
+{
+	if (mPixelShader != ps)
+	{
+		mPixelShader = ps;
+		return true;
+	}
+
+	return false;
+}
+
+bool SSDX11DeviceStateCache::UpdateVSIfDifferent(ID3D11VertexShader* vs)
+{
+	if (mVertexShader != vs)
+	{
+		mVertexShader = vs;
+		return true;
+	}
+	return false;
+}

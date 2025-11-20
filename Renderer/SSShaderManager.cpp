@@ -84,9 +84,7 @@ void SSShaderManager::Initialize()
 	{
 		
 		std::wstring filepath = f.path().c_str();
-		std::wstring wfilename = f.path().filename().c_str();
-
-        const std::string filename{ wfilename.begin(), wfilename.end() };
+        std::string filename = f.path().filename().u8string();
 
 		if (filename.find(".vs") != std::string::npos)
 		{

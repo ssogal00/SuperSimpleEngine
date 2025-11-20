@@ -38,9 +38,11 @@ public:
 	UINT mPSTextureCount = 0;
 
 	ID3D11ShaderResourceView** mPSTextureView = nullptr;
-	ID3D11ShaderResourceView** mVSTextureView = nullptr;	
+	ID3D11ShaderResourceView** mVSTextureView = nullptr;
 
-	
+public:
+	bool UpdatePSIfDifferent(ID3D11PixelShader* ps);
+	bool UpdateVSIfDifferent(ID3D11VertexShader* ps);
 };
 
 class SSDX11Device 
@@ -49,6 +51,8 @@ public:
 	ID3D11Device*				GetDevice()const;
 	ID3D11DeviceContext*		GetDeviceContext() const;
 	IDXGISwapChain*				GetSwapChain()const;
+
+	SSDX11DeviceStateCache&		GetDeviceStateCache() { return mDeviceStateCache; }
 
 	virtual bool				InitializeDevice(HWND windowHandle);
 
@@ -125,4 +129,6 @@ protected:
 
 	std::map<D3D11_DEPTH_STENCIL_DESC, ID3D11DepthStencilState*> mDepthStencilStateMap;
 	std::map<D3D11_RASTERIZER_DESC, ID3D11RasterizerState*> mRasterizeStateMap;
+
+	SSDX11DeviceStateCache mDeviceStateCache;
 };
