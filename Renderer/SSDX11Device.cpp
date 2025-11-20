@@ -127,7 +127,7 @@ std::shared_ptr<SSDX11IndexBuffer> SSDX11Device::CreateIndexBuffer(std::vector<u
 
 	HR(mDevice->CreateBuffer(&bufferDesc, &indexSubresourceData, &ptrBuffer));
 
-	std::shared_ptr<SSDX11IndexBuffer> Result = make_shared<SSDX11IndexBuffer>(ptrBuffer, inData.size());
+	std::shared_ptr<SSDX11IndexBuffer> Result = make_shared<SSDX11IndexBuffer>(ptrBuffer,static_cast<unsigned int>(inData.size()));
 
 	return Result;
 }
@@ -534,18 +534,6 @@ ID3D11PixelShader* SSDX11Device::GetBoundPixelShader()
 	return PixelShader;
 }
 
-void SSDX11Device::SetConstantBufferData(SSDX11ConstantBuffer* InBuffer, BYTE* PtrData, int InSize)
-{
-	D3D11_MAPPED_SUBRESOURCE mappedResource{};
-	
-	ID3D11Buffer* Buffer = InBuffer->GetDX11BufferPointer();
-
-	HR(mDeviceContext->Map(Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
-
-	memcpy_s(mappedResource.pData, InSize, PtrData, InSize);
-
-	mDeviceContext->Unmap(Buffer, 0);
-}
 
 SSDX11PixelShader* SSDX11Device::CompilePixelShaderFromFile(std::wstring& Path)
 {

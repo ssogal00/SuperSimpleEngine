@@ -39,6 +39,8 @@ public:
 
 	ID3D11ShaderResourceView** mPSTextureView = nullptr;
 	ID3D11ShaderResourceView** mVSTextureView = nullptr;	
+
+	
 };
 
 class SSDX11Device 
@@ -60,7 +62,6 @@ public:
 	void												ResizeDepthRenderTargetTexture2D(SSDepthRenderTargetTexture2D* InDepthRT, const UINT InWidth, const UINT InHeight);
 
 	class SSDX11ConstantBuffer*							CreateConstantBuffer(const UINT InBufferSize, const UINT InSlotIndex, std::string InName);
-	void												SetConstantBufferData(SSDX11ConstantBuffer* InBuffer, BYTE* PtrData, int InSize);
 
 	void												SetCurrentRenderTarget(SSDX11RenderTarget* InRenderTarget);
 
