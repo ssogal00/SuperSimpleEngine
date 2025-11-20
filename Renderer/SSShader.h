@@ -58,10 +58,15 @@ protected:
     
 	ComPtr<ID3DBlob> mShaderBuffer = nullptr;
 
-    //std::map<std::string, SSGenericConstantBuffer*> mConstantBufferMap;
 	std::map<std::string, SSDX11ConstantBuffer*> mConstantBufferMap;
 	std::map<std::string, UINT> mTextureMap;
 	std::map<std::string, UINT> mSamplerMap;
+
+	std::map<std::string, ID3D11ShaderResourceView*> mBoundTextureMap;
+
+	UINT mConstantBufferCount = 0;
+	UINT mBoundResourceCount = 0;
+	D3D11_SHADER_VERSION_TYPE mShaderType;
 };
 
 template<class T>

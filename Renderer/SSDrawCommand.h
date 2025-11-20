@@ -12,6 +12,7 @@ class SSGameObject;
 class SSDX11Texture2D;
 class IRenderTarget;
 
+
 // 
 // 1. vertex shader
 // 

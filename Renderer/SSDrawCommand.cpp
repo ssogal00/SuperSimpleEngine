@@ -14,6 +14,10 @@ void SSDrawObjectCommand::Do(SSDX11Device* device)
 	ID3D11Device* pDevice = device->GetDevice();
 
 	ID3D11DeviceContext* pDeviceContext = device->GetDeviceContext();
+	
+	ID3D11VertexShader* currentVS = nullptr;
+	
+
 	pDeviceContext->VSSetShader(mVertexShader, nullptr, 0);
 	pDeviceContext->PSSetShader(mPixelShader, nullptr, 0);
 	pDeviceContext->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R32_UINT, 0);

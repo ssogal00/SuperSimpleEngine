@@ -16,6 +16,31 @@ class SSVertexBuffer;
 class SSDX11IndexBuffer;
 class SSDX11RenderTarget;
 
+// cache currently bound device states to reduce redundant state setting
+struct SSDX11DeviceStateCache
+{
+public:
+	ID3D11VertexShader*		mVertexShader = nullptr;
+	ID3D11PixelShader*		mPixelShader = nullptr;
+	ID3D11ComputeShader*	mComputeShader = nullptr;
+	ID3D11Buffer*			mVertexBuffer = nullptr;
+	ID3D11Buffer*			mIndexBuffer = nullptr;
+
+	ID3D11InputLayout*		mInputLayout = nullptr;
+
+	UINT mVertexShaderConstantBufferCount = 0;
+	UINT mPixelShaderConstantBufferCount = 0;	
+
+	ID3D11Buffer** mVSConstantBufferList = nullptr;
+	ID3D11Buffer** mPSConstantBufferList = nullptr;
+
+	UINT mVSTextureCount = 0;
+	UINT mPSTextureCount = 0;
+
+	ID3D11ShaderResourceView** mPSTextureView = nullptr;
+	ID3D11ShaderResourceView** mVSTextureView = nullptr;	
+};
+
 class SSDX11Device 
 {
 public:

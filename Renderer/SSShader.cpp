@@ -5,7 +5,7 @@
 #include <map>
 #include "SSDXTranslator.h"
 #include "SSDX11Texture2D.h"
-
+#include "d3d11shader.h"
 #pragma region DXShaderImplementation
 
 void SSShader::PrintCompileError(ID3DBlob* errorMessage)
@@ -41,7 +41,10 @@ void SSShader::ReflectCompiledShader(ID3D11ShaderReflection* shaderReflection)
 	check(shaderReflection != nullptr);
 	
 	D3D11_SHADER_DESC shaderDescription;
-	shaderReflection->GetDesc(&shaderDescription);
+	HR(shaderReflection->GetDesc(&shaderDescription));
+
+	mShaderType = static_cast<D3D11_SHADER_VERSION_TYPE>(D3D11_SHVER_GET_TYPE(shaderDescription.Version));
+	check(mShaderType != D3D11_SHADER_VERSION_TYPE::D3D11_SHVER_RESERVED0);
 
 	for (unsigned int i = 0; i < shaderDescription.ConstantBuffers; ++i)
 	{		

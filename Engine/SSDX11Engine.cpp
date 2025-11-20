@@ -111,7 +111,16 @@ void SSDX11Engine::Run()
 	while (!bRequestExit)
 	{	
 		// wait for rendering thread
-		mRenderingThread->WaitForRenderingThread(100);		
+		bool bDebuggerPresent = IsDebuggerPresent();
+
+		if(bDebuggerPresent)
+		{
+			mRenderingThread->WaitForRenderingThread(INFINITE);
+		}
+		else
+		{
+			mRenderingThread->WaitForRenderingThread(100);
+		}		
 
 		// tick
 		mGameThread->Tick();
