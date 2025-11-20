@@ -15,7 +15,6 @@
 #include "SSFreqUsedNames.h"
 #include "SSFileHelper.h"
 #include "SSShaderManager.h"
-#include "SSMaterial.h"
 #include "SSFXAAPostProcess.h"
 #include "SSGBufferDumpPostProcess.h"
 #include "SSLightPostProcess.h"
@@ -371,8 +370,6 @@ void SSDX11Renderer::TestCompileShader()
 	mDeferredVertexShader = SSShaderManager::Get().GetVertexShader("GBuffer.vs");
 	mDeferredPixelShader = SSShaderManager::Get().GetPixelShader("GBuffer.ps");
 
-	mTestMaterial = std::make_shared<SSMaterial>(mDeferredVertexShader, mDeferredPixelShader);
-
 	mCubemapVertexShader = SSShaderManager::Get().GetVertexShader("CubemapShader.vs");
 	mCubemapPixelShader = SSShaderManager::Get().GetPixelShader("CubemapShader.ps");
 
@@ -394,10 +391,7 @@ void SSDX11Renderer::TestCompileShader()
 	mTBNDebugVertexShader = SSShaderManager::Get().GetVertexShader("TBNDebug.vs");
 	mTBNDebugPixelShader = SSShaderManager::Get().GetPixelShader("TBNDebug.ps");
 
-	mTBNDebugMaterial = std::make_shared<SSMaterial>(mTBNDebugVertexShader, mTBNDebugPixelShader);
-	mDeferredLightMaterial = std::make_shared<SSMaterial>(mDeferredLightVertexShader, mDeferredLightPixelShader);
 
-	//mRenderTargetCube = std::make_shared<SSRenderTargetCube>("Prefilter.vs", "Prefilter.ps");
 }
 
 

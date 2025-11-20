@@ -6,7 +6,6 @@
 #include "SSDX11IndexBuffer.h"
 #include "SSShaderManager.h"
 #include "SSFreqUsedNames.h"
-#include "SSMaterial.h"
 #include "SSTextureManager.h"
 #include "SSSamplerManager.h"
 #include "SSCameraManager.h"
@@ -45,11 +44,6 @@ SSRenderingObject::~SSRenderingObject()
 		mIndexBuffer = nullptr;
 	}
 
-	if(mMaterial != nullptr)
-	{
-		delete mMaterial;
-		mMaterial = nullptr;
-	}	
 
 	for (auto* Cmd : RenderCmdList)
 	{

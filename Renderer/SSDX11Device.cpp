@@ -159,7 +159,7 @@ void SSDX11Device::ResizeRenderTargetTexture2D(SSDX11RenderTargetTexture2D* InRT
 	InRT2D->mShaderResourceView = std::get<1>(Result);
 	std::vector<ID3D11RenderTargetView*> RenderTargetViewArray = std::get<2>(Result);
 	
-	for (int i = 0; i < InRT2D->GetMipLevels(); i++)
+	for (UINT i = 0; i < InRT2D->GetMipLevels(); i++)
 	{
 		InRT2D->mRenderTargetView[i] = RenderTargetViewArray[i];
 		InRT2D->mRenderTargetView[i]->AddRef();

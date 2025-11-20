@@ -62,10 +62,6 @@ private:
 
 	ID3D11SamplerState* mDefaultSamplerState = nullptr;	
 
-	std::shared_ptr<class SSMaterial> mTestMaterial;
-	std::shared_ptr<class SSMaterial> mTBNDebugMaterial;
-	std::shared_ptr<class SSMaterial> mDeferredLightMaterial;
-
 	std::shared_ptr<class SSRenderTargetCube> mRenderTargetCube;
 	std::vector<std::shared_ptr<class SSSPhere>> mSphereList;
 

@@ -4,7 +4,6 @@
 #include "SSDX11Renderer.h"
 #include "SSDrawCommand.h"
 #include "SSSamplerManager.h"
-#include "SSMaterial.h"
 #include "SSRenderTargetBase.h"
 #include "SSDX11RenderTarget.h"
 #include "SSShader.h"
