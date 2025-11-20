@@ -20,7 +20,3 @@ CORE_API_EXTERN SSName DeferredShaderName;
 CORE_API_EXTERN SSName EquirectToCubemapShaderName;
 
 CORE_API_EXTERN SSName RoughnessName;
-
-CORE_API_EXTERN SSName DeferredVertexShaderName;
-
-CORE_API_EXTERN SSName DeferredPixelShaderName;

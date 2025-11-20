@@ -12,5 +12,3 @@ SSName MVPName("MVP");
 SSName BasicShaderName("Basic");
 SSName DeferredShaderName("Deferred");
 SSName RoughnessName("Roughness");
-SSName DeferredVertexShaderName("DeferredShader.vs");
-SSName DeferredPixelShaderName("DeferredShader.ps");
