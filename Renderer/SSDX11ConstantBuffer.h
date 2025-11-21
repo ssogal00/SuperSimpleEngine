@@ -29,6 +29,7 @@ public:
         
     void SetBufferData(const SSConatantBufferData& data);
 
+	bool UpdateBufferData(void* InDataPtr, unsigned int InDataLength);
     void SetBufferData(void* InDataPtr, unsigned int InDataLength);
 
     virtual BYTE* GetBufferDataPtr() override { return mBufferData; }

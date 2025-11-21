@@ -98,6 +98,7 @@ protected:
 	SSDX11Buffer* mBuffer;
 };
 
+
 class SSRenderCmdSetRenderTarget : public SSRenderCmdBase
 {
 public:

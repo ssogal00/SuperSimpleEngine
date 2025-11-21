@@ -15,11 +15,12 @@ public:
     ID3D11Buffer* GetDX11BufferPointer() { return mpBuffer.Get(); }
     virtual void* GetBufferPointer() override;
     virtual void SubmitDataToDevice(ID3D11DeviceContext* deviceContext){}   
-
+	virtual bool IsDirty() const { return bDirty; }
 protected:
 
     D3D11_BUFFER_DESC mBufferDescription{};
     ComPtr<ID3D11Buffer> mpBuffer = nullptr;
+    bool bDirty = false;
 };
 
 

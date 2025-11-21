@@ -103,6 +103,8 @@ SSRenderCmdCopyCBuffer::SSRenderCmdCopyCBuffer(SSDX11Buffer* ptrBuffer)
 
 void SSRenderCmdCopyCBuffer::Execute(ID3D11DeviceContext* inDeviceContext)
 {
+
+
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	HR(inDeviceContext->Map(mBuffer->GetDX11BufferPointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
 	memcpy_s(mappedResource.pData, mBuffer->GetBufferSize(),mBuffer->GetBufferDataPtr(), mBuffer->GetBufferSize());

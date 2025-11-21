@@ -81,6 +81,24 @@ void SSDX11ConstantBuffer::SetBufferData(const SSConatantBufferData& data)
     memcpy_s(mBufferData, mBufferSize, data.GetData(), mBufferSize);
 }
 
+bool SSDX11ConstantBuffer::UpdateBufferData(void* InDataPtr, unsigned int InDataLength)
+{
+    check(mpBuffer != nullptr);
+
+    check(mBufferSize == InDataLength);
+
+    if (memcmp(mBufferData, InDataPtr, InDataLength) == 0)
+    {        
+        bDirty = false;
+        return false;
+    }
+    
+    bDirty = true;
+    memcpy_s(mBufferData, mBufferSize, InDataPtr, mBufferSize);
+
+    return true;
+}
+
 void SSDX11ConstantBuffer::SetBufferData(void* InDataPtr, unsigned int InDataLength)
 {
     check(mpBuffer != nullptr);    
@@ -92,7 +110,7 @@ void SSDX11ConstantBuffer::SetBufferData(void* InDataPtr, unsigned int InDataLen
 
 void SSDX11ConstantBuffer::SubmitDataToDevice(ID3D11DeviceContext* deviceContext)
 { 	
-	check(deviceContext);
+	check(deviceContext);    
 
     D3D11_MAPPED_SUBRESOURCE mappedResource;
 	HR(deviceContext->Map(mpBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
