@@ -6,8 +6,8 @@ class SSRenderCmdBase
 public:
 	virtual void Execute(ID3D11DeviceContext*) = 0;
 	virtual ~SSRenderCmdBase();
-	
 };
+
 // set current vertex shader
 class SSRenderCmdSetVS : public SSRenderCmdBase
 {

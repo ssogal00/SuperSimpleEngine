@@ -13,6 +13,10 @@ SSRenderCmdBase::~SSRenderCmdBase()
 
 void SSRenderCmdSetVS::Execute(ID3D11DeviceContext * inDeviceContext)
 {
+	if (GetDX11Device()->GetBoundVertexShader() == mVS->GetShader())
+	{
+		return;
+	}
 	D3D_PRIMITIVE_TOPOLOGY PrimitiveType = mVS->GetPrimitiveType();
 	inDeviceContext->IAGetPrimitiveTopology(&PrimitiveType);
 	inDeviceContext->IASetInputLayout(mVS->GetInputLayout());
@@ -48,10 +52,7 @@ SSRenderCmdSetVSTexture::SSRenderCmdSetVSTexture(SSDX11VertexShader* inVS, SSDX1
 
 void SSRenderCmdSetVSTexture::Execute(ID3D11DeviceContext* inDeviceContext)
 {
-	if(GetDX11Device()->GetBoundVertexShader() != mVS->GetShader())
-	{
-		return;
-	}
+	
 	inDeviceContext->VSSetShaderResources(mSlotIndex, 1, mTex->GetShaderResourceViewRef());
 }
 
@@ -72,6 +73,11 @@ SSRenderCmdSetVSCBuffer::SSRenderCmdSetVSCBuffer(SSDX11VertexShader* inVS, class
 
 void SSRenderCmdSetVSCBuffer::Execute(ID3D11DeviceContext* inDeviceContext)
 {
+	ID3D11Buffer* boundBuffer = GetDX11Device()->GetBoundConstantBufferVS(mSlotIndex);
+	if (boundBuffer == mBuffer->GetDX11BufferPointer())
+	{
+		return;
+	}
 	inDeviceContext->VSSetConstantBuffers(mSlotIndex, 1, (ID3D11Buffer* const*) mBuffer->GetBufferPointerRef());
 }
 
@@ -82,6 +88,11 @@ SSRenderCmdSetPSCBuffer::SSRenderCmdSetPSCBuffer(SSDX11PixelShader* inPS, class 
 
 void SSRenderCmdSetPSCBuffer::Execute(ID3D11DeviceContext* inDeviceContext)
 {
+	ID3D11Buffer* boundBuffer = GetDX11Device()->GetBoundConstantBufferPS(mSlotIndex);
+	if (boundBuffer == mBuffer->GetDX11BufferPointer())
+	{
+		return;
+	}
 	inDeviceContext->PSSetConstantBuffers(mSlotIndex, 1, (ID3D11Buffer* const*)mBuffer->GetBufferPointerRef());
 }
 

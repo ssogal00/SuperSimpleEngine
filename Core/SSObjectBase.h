@@ -13,7 +13,7 @@ public:
 	virtual void Draw(ID3D11DeviceContext* deviceContext) {}
 	
 	virtual const SSMeshRenderData& GetRenderData();
-	virtual const SSMeshVertexData& GetVertexData();
+	virtual const SSMeshVertexIndexData& GetVertexData();
 	virtual std::vector<SSMeshElementRenderData> GetMeshElementRenderData();
 
 	virtual void Tick(float delta) {}
@@ -49,7 +49,7 @@ protected:
 	virtual void CreateVertexData() {}
 	virtual void CreateInstanceData() {}
 
-	SSMeshVertexData mVertexData;
+	SSMeshVertexIndexData mVertexData;
 	SSMeshRenderData mRenderData;	
 
 	friend class SSGameObjectManager;

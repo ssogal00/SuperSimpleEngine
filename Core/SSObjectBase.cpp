@@ -44,7 +44,7 @@ void SSObjectBase::SetVSTexture(SSName paramName, SSName texture)
 	mRenderData.VSTextureMap[paramName] = texture;
 }
 
-const SSMeshVertexData& SSObjectBase::GetVertexData()
+const SSMeshVertexIndexData& SSObjectBase::GetVertexData()
 {
 	return mVertexData;
 }

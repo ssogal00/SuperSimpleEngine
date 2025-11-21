@@ -81,6 +81,8 @@ public:
 
 	ID3D11VertexShader*									GetBoundVertexShader();
 	ID3D11PixelShader*									GetBoundPixelShader();
+	ID3D11Buffer*										GetBoundConstantBufferVS(UINT InSlotIndex);
+	ID3D11Buffer*										GetBoundConstantBufferPS(UINT InSlotIndex);
 
 	
 

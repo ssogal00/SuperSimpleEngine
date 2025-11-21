@@ -32,19 +32,21 @@ enum class EVertexType : unsigned char
 };
 
 
-struct SSMeshVertexData
+struct SSMeshVertexIndexData
 {
 public:
+	// vertex datas
 	unsigned int Stride = 0;
 	unsigned int Count	= 0;
 	void* DataPtr = nullptr;
 	
+	// index datas 
     std::vector<unsigned int> IndexData;	
 	D3D_PRIMITIVE_TOPOLOGY PrimitiveType = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	bool bHasIndexData = false;
 };
 
-// per instance 
+// graphics api independent render data (whether it's opengl or directx...)
 struct SSMeshRenderData
 {
 public:

@@ -73,8 +73,9 @@ void SSRenderingObject::CreateRenderCmdList()
 		{
 			SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer(k);
 			ConstantBuffer->SetBufferData(v);			
-			RenderCmdList.push_back(new SSRenderCmdCopyCBuffer(ConstantBuffer));
+
 			RenderCmdList.push_back(new SSRenderCmdSetVSCBuffer(vs.get(), vs->GetConstantBuffer(k), SlotIndex));
+			RenderCmdList.push_back(new SSRenderCmdCopyCBuffer(ConstantBuffer));
 		}
 	}
 
@@ -86,8 +87,9 @@ void SSRenderingObject::CreateRenderCmdList()
 		{
 			SSDX11ConstantBuffer* ConstantBuffer = ps->GetConstantBuffer(k);
 			ConstantBuffer->SetBufferData(v);
-			RenderCmdList.push_back(new SSRenderCmdCopyCBuffer(ConstantBuffer));
+
 			RenderCmdList.push_back(new SSRenderCmdSetPSCBuffer(ps.get(), ps->GetConstantBuffer(k), SlotIndex));
+			RenderCmdList.push_back(new SSRenderCmdCopyCBuffer(ConstantBuffer));
 		}
 	}	
 
@@ -123,19 +125,19 @@ void SSRenderingObject::Draw(ID3D11DeviceContext* deviceContext)
 	shared_ptr<SSDX11VertexShader> vs = SSShaderManager::Get().GetVertexShader(mRenderData.VertexShaderName);
 	shared_ptr<SSDX11PixelShader> ps = SSShaderManager::Get().GetPixelShader(mRenderData.PixelShaderName);
 
-	SSDX11ConstantBuffer* ModelCBuffer = vs->GetConstantBuffer(ModelName.ToString());
+	SSDX11ConstantBuffer* ModelCBuffer = vs->GetConstantBuffer("Model");
 	XMMATRIX ModelMatrix = XMMatrixTranspose(mpObject->GetModelTransform());
 	ModelCBuffer->SetBufferData((void*)&ModelMatrix, sizeof(XMMATRIX));
 	ModelCBuffer->SubmitDataToDevice(deviceContext);
 	deviceContext->VSSetConstantBuffers(ModelCBuffer->GetBufferIndex(), 1, (ID3D11Buffer* const*)ModelCBuffer->GetBufferPointerRef());
 
-	SSDX11ConstantBuffer* ViewCBuffer = vs->GetConstantBuffer(ViewName.ToString());
+	SSDX11ConstantBuffer* ViewCBuffer = vs->GetConstantBuffer("View");
 	XMMATRIX ViewMatrix = XMMatrixTranspose(SSCameraManager::Get().GetCurrentCameraView());
 	ViewCBuffer->SetBufferData((void*)&ViewMatrix, sizeof(XMMATRIX));
 	ViewCBuffer->SubmitDataToDevice(deviceContext);
 	deviceContext->VSSetConstantBuffers(ViewCBuffer->GetBufferIndex(), 1, (ID3D11Buffer* const*)ViewCBuffer->GetBufferPointerRef());
 
-	SSDX11ConstantBuffer* ProjCBuffer = vs->GetConstantBuffer(ProjName.ToString());
+	SSDX11ConstantBuffer* ProjCBuffer = vs->GetConstantBuffer("Proj");
 	XMMATRIX ProjMatrix = XMMatrixTranspose(SSCameraManager::Get().GetCurrentCameraProj());
 	ProjCBuffer->SetBufferData((void*)&ProjMatrix, sizeof(XMMATRIX));
 	ProjCBuffer->SubmitDataToDevice(deviceContext);
