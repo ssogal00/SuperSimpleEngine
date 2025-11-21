@@ -22,10 +22,10 @@ void SSCube::CreateRenderData()
 {		
 	mRenderData.VertexShaderName = "GBuffer.vs";
 	mRenderData.PixelShaderName = "GBuffer.ps";
-	mRenderData.PSTextureMap[SSName("DiffuseTex")] = "./Resource/Tex/rustediron/rustediron2_basecolor.dds";
-	mRenderData.PSTextureMap[SSName("NormalTex")] = "./Resource/Tex/rustediron/rustediron2_normal.dds";
-	mRenderData.PSTextureMap[SSName("MetalicTex")] = "./Resource/Tex/rustediron/rustediron2_metallic.dds";
-	mRenderData.PSTextureMap[SSName("RoughnessTex")] = "./Resource/Tex/rustediron/rustediron2_roughness.dds";		
+	mRenderData.PSTextureMap["DiffuseTex"] = "./Resource/Tex/rustediron/rustediron2_basecolor.dds";
+	mRenderData.PSTextureMap["NormalTex"] = "./Resource/Tex/rustediron/rustediron2_normal.dds";
+	mRenderData.PSTextureMap["MetalicTex"] = "./Resource/Tex/rustediron/rustediron2_metallic.dds";
+	mRenderData.PSTextureMap["RoughnessTex"] = "./Resource/Tex/rustediron/rustediron2_roughness.dds";		
 
 	SSAlignedCBuffer<int, int, int, int, int> settings;
 	settings.value1 = 1; //metalic
@@ -36,7 +36,7 @@ void SSCube::CreateRenderData()
 
 	SSConatantBufferData proxy{ settings };	
 	
-	mRenderData.PSConstantBufferMap[SSName("TextureExist")] = std::move(proxy);
+	mRenderData.PSConstantBufferMap["TextureExist"] = std::move(proxy);
 }
 
 void SSCube::CreateVertexData()
