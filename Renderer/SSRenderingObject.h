@@ -13,6 +13,9 @@ public:
 	virtual void Draw(ID3D11DeviceContext* deviceContext);
 
 protected:
+
+	XMMATRIX ModelMatrix;
+
 	virtual void CreateRenderCmdList();
 	std::vector<class SSRenderCmdBase*> RenderCmdList;
 

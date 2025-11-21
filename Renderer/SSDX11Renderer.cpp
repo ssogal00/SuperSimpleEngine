@@ -319,7 +319,7 @@ void SSDX11Renderer::DrawCubeScene()
 	mGBuffer->SetCurrentRenderTarget(mDX11Device);
 
 	// cubemap draw
-	DrawSkybox();
+	//DrawSkybox();
 
 	// draw game objects
 	auto& objects = SSRenderingObjectManager::Get().GetRenderingObjectMap();

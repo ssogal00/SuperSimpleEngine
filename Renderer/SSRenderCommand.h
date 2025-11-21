@@ -26,6 +26,17 @@ public:
 private:
 	std::shared_ptr<SSDX11VertexShader> mVS;
 };
+
+class SSRenderCmdMarker : public SSRenderCmdBase
+{
+public:
+	SSRenderCmdMarker(const std::string& inMarkerName)
+		:mMarkerName(inMarkerName)
+	{
+	}
+	std::string mMarkerName;
+};
+
 // set current pixel shader
 class SSRenderCmdSetPS : public SSRenderCmdBase
 {
