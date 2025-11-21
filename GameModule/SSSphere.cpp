@@ -85,7 +85,7 @@ void SSPBRSphere::Tick(float delta)
 void SSPBRSphere::CreateRenderData()
 {
     mRenderData.VertexShaderName = "GBuffer.vs";
-    mRenderData.PixelShaderName = "GBufferNoMask.ps";
+    mRenderData.PixelShaderName = "GBuffer.ps";
 
     mRenderData.PSTextureMap[SSName("DiffuseTex")] = mDiffuseTexName;
     mRenderData.PSTextureMap[SSName("NormalTex")] = mNormalTexName;

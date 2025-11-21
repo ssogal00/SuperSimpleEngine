@@ -32,6 +32,11 @@ void SSRenderCmdSetVS::operator delete(void* Ptr)
 
 void SSRenderCmdSetPS::Execute(ID3D11DeviceContext* inDeviceContext)
 {
+	ID3D11PixelShader* BoundShader = GetDX11Device()->GetBoundPixelShader();
+	if (BoundShader == mPS->GetShader())
+	{
+		return;
+	}
 	inDeviceContext->PSSetShader(mPS->GetShader(), nullptr, 0);
 }
 
@@ -43,6 +48,10 @@ SSRenderCmdSetVSTexture::SSRenderCmdSetVSTexture(SSDX11VertexShader* inVS, SSDX1
 
 void SSRenderCmdSetVSTexture::Execute(ID3D11DeviceContext* inDeviceContext)
 {
+	if(GetDX11Device()->GetBoundVertexShader() != mVS->GetShader())
+	{
+		return;
+	}
 	inDeviceContext->VSSetShaderResources(mSlotIndex, 1, mTex->GetShaderResourceViewRef());
 }
 

@@ -44,7 +44,7 @@ bool SSDX11Device::CreateDevice()
 	HRESULT hr = D3D11CreateDevice(mAdapterInfos[0].AdapterPointer,
 		D3D_DRIVER_TYPE_UNKNOWN,
 		0,
-		D3D11_CREATE_DEVICE_DEBUG,
+		0,
 		featureLevelArray,
 		length,
 		D3D11_SDK_VERSION, mDevice.GetAddressOf(), &outFeatureLevel, mDeviceContext.ReleaseAndGetAddressOf());
@@ -283,7 +283,7 @@ bool SSDX11Device::CreateSwapChain(HWND windowHandle)
 {
 	HR(mDevice->CheckMultisampleQualityLevels(mSwapChainFormat, mSampleCount, &m4xMSAAQuality));
 
-	HR(mDevice->QueryInterface(__uuidof(ID3D11Debug), (void**)&mDebug));
+	//HR(mDevice->QueryInterface(__uuidof(ID3D11Debug), (void**)&mDebug));
 
 	IDXGIDevice* dxgiDevice = nullptr;
 	HR(mDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice));

@@ -131,13 +131,13 @@ void SSShaderManager::Shutdown()
 }
 
 
-std::shared_ptr<SSDX11VertexShader> SSShaderManager::GetVertexShader(SSName name)
+std::shared_ptr<SSDX11VertexShader> SSShaderManager::GetVertexShader(std::string name)
 {
 	check(mVertexShaderMap.count(name) > 0);
 	return mVertexShaderMap[name];
 }
 
-std::shared_ptr<SSDX11PixelShader> SSShaderManager::GetPixelShader(SSName name)
+std::shared_ptr<SSDX11PixelShader> SSShaderManager::GetPixelShader(std::string name)
 {
 	check(mPixelShaderMap.count(name) > 0);
 	return mPixelShaderMap[name];
