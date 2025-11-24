@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SSMeshRenderData.h"
+#include "SSMaterialProxy.h"
 #include "SSObjectBase.h"
 
 class GAMEMODULE_API SSGameObject : public SSObjectBase
@@ -18,4 +19,6 @@ public:
 	UINT GetId() const { return mObjectId; }	
 
 protected:
+
+	SSMaterialProxy mMaterialProxy;
 };

@@ -2,6 +2,7 @@
 
 #include <memory>
 #include "SSMeshRenderData.h"
+#include "SSMaterialProxy.h"
 
 class CORE_API SSObjectBase
 {
@@ -13,6 +14,7 @@ public:
 	virtual void Draw(ID3D11DeviceContext* deviceContext) {}
 	
 	virtual const SSMeshRenderData& GetRenderData();
+	virtual const SSMaterialProxy& GetMaterialProxy();
 	virtual const SSMeshVertexIndexData& GetVertexData();
 	virtual std::vector<SSMeshElementRenderData> GetMeshElementRenderData();
 
@@ -37,9 +39,6 @@ public:
 
 	bool IsVisible() const { return mVisible; }
 
-	void SetVertexShader(SSName vs);
-	void SetPixelShader(SSName ps);
-
 	void SetPSTexture(SSName name, SSName textureName);
 	void SetVSTexture(SSName name , SSName textureName);
 
@@ -51,6 +50,7 @@ protected:
 
 	SSMeshVertexIndexData mVertexData;
 	SSMeshRenderData mRenderData;
+	SSMaterialProxy mMaterialProxy;
 
 	friend class SSGameObjectManager;
 	DirectX::XMFLOAT3 mPosition;

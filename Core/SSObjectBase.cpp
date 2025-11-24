@@ -14,17 +14,6 @@ SSObjectBase::~SSObjectBase()
 {
 }
 
-
-void SSObjectBase::SetVertexShader(SSName vs)
-{
-	mRenderData.VertexShaderName = vs;
-}
-
-void SSObjectBase::SetPixelShader(SSName ps)
-{
-	mRenderData.PixelShaderName = ps;
-}
-
 void SSObjectBase::SetPSTexture(SSName paramName, SSName texture)
 {
 	mRenderData.PSTextureMap[paramName] = texture;
@@ -49,6 +38,11 @@ std::vector<SSMeshElementRenderData> SSObjectBase::GetMeshElementRenderData()
 const SSMeshRenderData& SSObjectBase::GetRenderData()
 {
 	return mRenderData;
+}
+
+const SSMaterialProxy& SSObjectBase::GetMaterialProxy()
+{
+	return mMaterialProxy;
 }
 
 XMMATRIX SSObjectBase::GetModelTransform()
