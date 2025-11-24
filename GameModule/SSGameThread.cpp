@@ -55,7 +55,7 @@ void SSGameThread::Tick()
 
     mGameThreadTimer.Tick();
 
-	SSCameraManager::Get().UpdateCurrentCamera();
+	SSCameraManager::Get().Tick(mGameThreadTimer.GetDeltaTime());
 
 	if (mCurrentGameScene)
 	{

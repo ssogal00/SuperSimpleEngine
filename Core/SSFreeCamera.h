@@ -14,6 +14,9 @@ public:
 	virtual void RotateYaw(float amount) override;
 	virtual void MoveFoward(float amount) override;
 	virtual void MoveBackward(float amount) override;
+
+	virtual DirectX::XMFLOAT3 GetCameraLocation() const { return mEyePosition; }
+
 protected:
 	virtual void UpdateViewMatrix() override;
 	virtual void UpdateProjMatrix() override;

@@ -51,6 +51,7 @@ SSRenderingObject::~SSRenderingObject()
 	}	
 }
 
+
 void SSRenderingObject::CreateRenderCmdList()
 {
 	shared_ptr<SSDX11VertexShader> vs = SSShaderManager::Get().GetVertexShader(mRenderData.VertexShaderName);
@@ -75,7 +76,7 @@ void SSRenderingObject::CreateRenderCmdList()
 			ConstantBuffer->SetBufferData(v);			
 
 			RenderCmdList.push_back(new SSRenderCmdSetVSCBuffer(vs.get(), vs->GetConstantBuffer(k), SlotIndex));
-			RenderCmdList.push_back(new SSRenderCmdCopyCBuffer(ConstantBuffer));
+			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer));
 		}
 	}
 
@@ -89,7 +90,7 @@ void SSRenderingObject::CreateRenderCmdList()
 			ConstantBuffer->SetBufferData(v);
 
 			RenderCmdList.push_back(new SSRenderCmdSetPSCBuffer(ps.get(), ps->GetConstantBuffer(k), SlotIndex));
-			RenderCmdList.push_back(new SSRenderCmdCopyCBuffer(ConstantBuffer));
+			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer));
 		}
 	}	
 
@@ -134,7 +135,7 @@ void SSRenderingObject::Draw(ID3D11DeviceContext* deviceContext)
 	deviceContext->VSSetConstantBuffers(ModelCBuffer->GetBufferIndex(), 1, (ID3D11Buffer* const*)ModelCBuffer->GetBufferPointerRef());
 
 	SSDX11ConstantBuffer* ViewCBuffer = vs->GetConstantBuffer("View");
-	XMMATRIX ViewMatrix = XMMatrixTranspose(SSCameraManager::Get().GetCurrentCameraView());
+	XMMATRIX ViewMatrix = XMMatrixTranspose(SSCameraManager::Get().GetGameThreadCameraView());
 	
 	if (ViewCBuffer->UpdateBufferData((void*)&ViewMatrix, sizeof(XMMATRIX)))
 	{
@@ -143,7 +144,7 @@ void SSRenderingObject::Draw(ID3D11DeviceContext* deviceContext)
 	deviceContext->VSSetConstantBuffers(ViewCBuffer->GetBufferIndex(), 1, (ID3D11Buffer* const*)ViewCBuffer->GetBufferPointerRef());
 
 	SSDX11ConstantBuffer* ProjCBuffer = vs->GetConstantBuffer("Proj");
-	XMMATRIX ProjMatrix = XMMatrixTranspose(SSCameraManager::Get().GetCurrentCameraProj());
+	XMMATRIX ProjMatrix = XMMatrixTranspose(SSCameraManager::Get().GetGameThreadCameraProj());
 
 	if (ProjCBuffer->UpdateBufferData((void*)&ProjMatrix, sizeof(XMMATRIX)))
 	{

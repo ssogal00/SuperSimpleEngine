@@ -12,6 +12,8 @@ public:
 	virtual ~SSRenderingObject();
 	virtual void Draw(ID3D11DeviceContext* deviceContext);
 
+	bool IsTranslucent() const { return bIsTranslucent; }
+
 protected:
 
 	XMMATRIX ModelMatrix;
@@ -30,6 +32,8 @@ protected:
 
 	std::shared_ptr<class SSDX11VertexShader> mVS = nullptr;
 	std::shared_ptr<class SSDX11PixelShader> mPS = nullptr;
+
+	bool bIsTranslucent	 = false;
 
 	class SSMaterial* mMaterial = nullptr;
 };

@@ -20,6 +20,8 @@ public:
 
 	virtual DirectX::XMMATRIX GetModelTransform();
 
+	//virtual float GetDistanceFromCamera() const;
+
 	UINT GetId() const { return mObjectId; }
 
 	virtual void SetPosition(float x, float y, float z);
@@ -50,7 +52,7 @@ protected:
 	virtual void CreateInstanceData() {}
 
 	SSMeshVertexIndexData mVertexData;
-	SSMeshRenderData mRenderData;	
+	SSMeshRenderData mRenderData;
 
 	friend class SSGameObjectManager;
 	DirectX::XMFLOAT3 mPosition;

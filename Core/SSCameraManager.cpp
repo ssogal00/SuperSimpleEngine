@@ -86,6 +86,14 @@ void SSCameraManager::UpdateMVP()
 	mCurrentMVP = modelView * GetCurrentCameraProj();
 }
 
+void SSCameraManager::Tick(float DeltaTime)
+{
+	UpdateCurrentCamera();
+
+	mGameThreadMVP = mCurrentMVP;
+	mGameThreadView = GetCurrentCameraView();
+	mGameThreadProj = GetCurrentCameraProj();
+}
 
 XMMATRIX SSCameraManager::GetCurrentCameraMVP() const
 {
@@ -97,6 +105,7 @@ void SSCameraManager::UpdateCurrentCamera()
 	check(mCurrentCamera != nullptr);
 	mCurrentCamera->Update();
 	UpdateMVP();
+
 }
 
 void SSCameraManager::SetCurrentCameraFOV(float fov)
@@ -131,3 +140,8 @@ void SSCameraManager::SetCurrentCameraAspectRatio(float ratio)
 	mCurrentCamera->SetAspectRatio(ratio);
 }
 
+XMFLOAT3 SSCameraManager::GetCurrentCameraPosition() const
+{
+	check(mCurrentCamera != nullptr);
+	return mCurrentCamera->GetCameraLocation();
+}

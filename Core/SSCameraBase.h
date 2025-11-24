@@ -24,6 +24,7 @@ public:
 	virtual DirectX::XMMATRIX GetViewProj() const;
 	virtual DirectX::XMMATRIX GetTranslation() const;
 	virtual DirectX::XMMATRIX GetRotation() const;
+	virtual DirectX::XMFLOAT3 GetCameraLocation() const = 0;
 	
 	virtual void RotateYaw(float amount){}
 	virtual void RotatePitch(float amount){}

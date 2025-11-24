@@ -10,7 +10,7 @@ void SSCubeScene::InitializeScene()
 	{
 		std::shared_ptr<SSSphere> newSphere = std::make_shared<SSSphere>(static_cast<UINT>(20), static_cast<UINT>(20), 10.0f);
 		newSphere->SetPositionX(30);
-		newSphere->SetPositionZ(i * 30);
+		//newSphere->SetPositionZ(i * 30);
 		newSphere->SetPositionY(i * 10);
 		mPBRSphereArray.push_back(newSphere);
 	}
@@ -24,7 +24,6 @@ void SSCubeScene::InitializeScene()
 
 void SSCubeScene::DestroyScene()
 {
-	//mCube.reset();
 	mSphere.reset();
 	mPBRSphere.reset();
 }
@@ -37,7 +36,5 @@ void SSCubeScene::Tick(float DeltaSeconds)
 	if (Elapsed > 3)
 	{
 		Elapsed = 0;
-
-		
 	}
 }

@@ -100,10 +100,10 @@ protected:
 	unsigned int mSlotIndex;
 };
 
-class SSRenderCmdCopyCBuffer : public SSRenderCmdBase
+class SSRenderCmdUpdateConstantBuffer : public SSRenderCmdBase
 {
 public:
-	SSRenderCmdCopyCBuffer(SSDX11Buffer* ptrBuffer);
+	SSRenderCmdUpdateConstantBuffer(SSDX11Buffer* ptrBuffer);
 	virtual void Execute(ID3D11DeviceContext* inDeviceContext) override;
 protected:
 	SSDX11Buffer* mBuffer;

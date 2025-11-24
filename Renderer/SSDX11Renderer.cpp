@@ -319,7 +319,7 @@ void SSDX11Renderer::DrawCubeScene()
 	mGBuffer->SetCurrentRenderTarget(mDX11Device);
 
 	// cubemap draw
-	//DrawSkybox();
+	DrawSkybox();
 
 	// draw game objects
 	auto& objects = SSRenderingObjectManager::Get().GetRenderingObjectMap();
@@ -636,7 +636,7 @@ void SSDX11Renderer::DrawSkybox()
 {
     SSDrawCommand skyboxCmd{mCubemapVertexShader, mCubemapPixelShader, mCubemapSphere };
 
-    XMMATRIX mvp = SSCameraManager::Get().GetCurrentCameraMVP();
+    XMMATRIX mvp = SSCameraManager::Get().GetGameThreadCameraMVP();
 
     skyboxCmd.StoreVSConstantBufferData(MVPName, XMMatrixTranspose(mvp));
 
