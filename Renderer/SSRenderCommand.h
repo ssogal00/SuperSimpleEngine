@@ -78,10 +78,10 @@ protected:
 	unsigned int mSlotIndex;
 };
 // set vertex shader constant buffer
-class SSRenderCmdSetVSCBuffer : public SSRenderCmdBase
+class SSRenderCmdSetVSConstantBuffer : public SSRenderCmdBase
 {
 public:
-	SSRenderCmdSetVSCBuffer(SSDX11VertexShader* inVS, class SSDX11Buffer* inBuffer, unsigned int slot);
+	SSRenderCmdSetVSConstantBuffer(SSDX11VertexShader* inVS, class SSDX11Buffer* inBuffer, unsigned int slot);
 	virtual void Execute(ID3D11DeviceContext* inDeviceContext) override;
 protected:
 	SSDX11VertexShader* mVS;
@@ -89,10 +89,10 @@ protected:
 	unsigned int mSlotIndex;
 };
 
-class SSRenderCmdSetPSCBuffer : public SSRenderCmdBase
+class SSRenderCmdSetPSConstantBuffer : public SSRenderCmdBase
 {
 public:
-	SSRenderCmdSetPSCBuffer(SSDX11PixelShader* inVS, class SSDX11Buffer* inBuffer, unsigned int slot);
+	SSRenderCmdSetPSConstantBuffer(SSDX11PixelShader* inVS, class SSDX11Buffer* inBuffer, unsigned int slot);
 	virtual void Execute(ID3D11DeviceContext* inDeviceContext) override;
 protected:
 	SSDX11PixelShader* mPS;

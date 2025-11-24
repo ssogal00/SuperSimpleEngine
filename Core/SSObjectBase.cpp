@@ -14,15 +14,6 @@ SSObjectBase::~SSObjectBase()
 {
 }
 
-void SSObjectBase::SetVSConstantBufferData(SSName name, SSConatantBufferData&& buffer)
-{
-	mRenderData.VSConstantBufferMap[name] = std::move(buffer);
-}
-
-void SSObjectBase::SetPSConstantBufferData(SSName name, SSConatantBufferData&& buffer)
-{
-	mRenderData.PSConstantBufferMap[name] = std::move(buffer);
-}
 
 void SSObjectBase::SetVertexShader(SSName vs)
 {

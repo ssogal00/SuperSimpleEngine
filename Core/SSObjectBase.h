@@ -43,8 +43,6 @@ public:
 	void SetPSTexture(SSName name, SSName textureName);
 	void SetVSTexture(SSName name , SSName textureName);
 
-	void SetVSConstantBufferData(SSName name, class SSConatantBufferData&& buffer);
-	void SetPSConstantBufferData(SSName name, class SSConatantBufferData&& buffer);
 
 protected:
 	virtual void CreateRenderData() {}

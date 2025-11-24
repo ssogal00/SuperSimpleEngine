@@ -75,7 +75,7 @@ void SSRenderingObject::CreateRenderCmdList()
 			SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer(k);
 			ConstantBuffer->SetBufferData(v);			
 
-			RenderCmdList.push_back(new SSRenderCmdSetVSCBuffer(vs.get(), vs->GetConstantBuffer(k), SlotIndex));
+			RenderCmdList.push_back(new SSRenderCmdSetVSConstantBuffer(vs.get(), vs->GetConstantBuffer(k), SlotIndex));
 			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer));
 		}
 	}
@@ -89,7 +89,7 @@ void SSRenderingObject::CreateRenderCmdList()
 			SSDX11ConstantBuffer* ConstantBuffer = ps->GetConstantBuffer(k);
 			ConstantBuffer->SetBufferData(v);
 
-			RenderCmdList.push_back(new SSRenderCmdSetPSCBuffer(ps.get(), ps->GetConstantBuffer(k), SlotIndex));
+			RenderCmdList.push_back(new SSRenderCmdSetPSConstantBuffer(ps.get(), ps->GetConstantBuffer(k), SlotIndex));
 			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer));
 		}
 	}	
