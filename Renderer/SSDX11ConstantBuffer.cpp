@@ -72,7 +72,7 @@ SSDX11ConstantBuffer::~SSDX11ConstantBuffer()
     }
 }
 
-void SSDX11ConstantBuffer::SetBufferData(const SSConatantBufferData& data)
+void SSDX11ConstantBuffer::SetBufferData(const SSConstantBufferData& data)
 {   
     check(mpBuffer != nullptr);
     

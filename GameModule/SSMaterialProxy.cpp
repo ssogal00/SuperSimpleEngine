@@ -7,7 +7,7 @@ SSMaterialProxy::SSMaterialProxy(std::string InVSName, std::string InPSName)
 {
 }
 
-void SSMaterialProxy::SetConstantParam(const std::string& InName, const SSConatantBufferData& InData)
+void SSMaterialProxy::SetConstantParam(const std::string& InName, const SSConstantBufferData& InData)
 {
 	if(VSConstantBufferMap.count(InName) > 0)
 	{

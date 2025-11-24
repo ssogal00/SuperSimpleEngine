@@ -4,7 +4,7 @@
 #include "SSDX11Buffer.h"
 #include <vector>
 #include <string>
-#include "SSConatantBufferData.h"
+#include "SSConstantBufferData.h"
 #include "SSDX11Renderer.h"
 
 
