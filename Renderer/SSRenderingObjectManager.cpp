@@ -18,6 +18,14 @@ void SSRenderingObjectManager::Shutdown()
 	DeleteAllObjects();
 }
 
+void SSRenderingObjectManager::Tick(float deltaTime)
+{
+	for (auto& [k, v] : mRenderingObjectMap)
+	{
+		v->Tick(deltaTime);
+	}
+}
+
 // called from rendering thread
 void SSRenderingObjectManager::UpdateObjects()
 {

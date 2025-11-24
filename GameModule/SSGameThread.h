@@ -31,7 +31,7 @@ protected:
 
 	bool bRequestExist = false;
 
-	int mFrameCount = 0;
+	unsigned long long mFrameCount = 0;
 
 	double mFrameSeconds=0;
 

@@ -1,22 +1,22 @@
 #include "SSCore.h"
-#include "SSConatantBufferData.h"
+#include "SSConstantBufferData.h"
 
-SSConatantBufferData::~SSConatantBufferData()
+SSConstantBufferData::~SSConstantBufferData()
 {
 	FreeBufferData();
 }
 
-void SSConatantBufferData::FreeBufferData()
+void SSConstantBufferData::FreeBufferData()
 {
 	if (mpBufferData != nullptr && mBufferSize > 0)
 	{
-		delete [] mpBufferData;
+		delete[] mpBufferData;
 		mpBufferData = nullptr;
 		mBufferSize = 0;
 	}
 }
 
-SSConatantBufferData::SSConatantBufferData(const SSConatantBufferData& rhs)
+SSConstantBufferData::SSConstantBufferData(const SSConstantBufferData& rhs)
 {
 	if (mBufferSize != rhs.mBufferSize)
 	{
@@ -32,7 +32,7 @@ SSConatantBufferData::SSConatantBufferData(const SSConatantBufferData& rhs)
 	memcpy_s(mpBufferData, mBufferSize, rhs.mpBufferData, mBufferSize);
 }
 
-SSConatantBufferData::SSConatantBufferData(SSConatantBufferData&& rhs)
+SSConstantBufferData::SSConstantBufferData(SSConstantBufferData&& rhs)
 {
 	if (mBufferSize != rhs.mBufferSize)
 	{
@@ -50,7 +50,7 @@ SSConatantBufferData::SSConatantBufferData(SSConatantBufferData&& rhs)
 	rhs.FreeBufferData();
 }
 
-SSConatantBufferData& SSConatantBufferData::operator = (SSConatantBufferData&& rhs)
+SSConstantBufferData& SSConstantBufferData::operator = (SSConstantBufferData&& rhs)
 {
 	if (mBufferSize != rhs.mBufferSize)
 	{
@@ -70,7 +70,7 @@ SSConatantBufferData& SSConatantBufferData::operator = (SSConatantBufferData&& r
 	return *this;
 }
 
-SSConatantBufferData& SSConatantBufferData::operator=(const SSConatantBufferData& rhs)
+SSConstantBufferData& SSConstantBufferData::operator=(const SSConstantBufferData& rhs)
 {
 	if (mBufferSize != rhs.mBufferSize)
 	{

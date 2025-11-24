@@ -390,8 +390,6 @@ void SSDX11Renderer::TestCompileShader()
 
 	mTBNDebugVertexShader = SSShaderManager::Get().GetVertexShader("TBNDebug.vs");
 	mTBNDebugPixelShader = SSShaderManager::Get().GetPixelShader("TBNDebug.ps");
-
-
 }
 
 

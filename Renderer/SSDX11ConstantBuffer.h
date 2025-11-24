@@ -27,7 +27,7 @@ public:
 
     virtual ~SSDX11ConstantBuffer() override;
         
-    void SetBufferData(const SSConatantBufferData& data);
+    void SetBufferData(const SSConstantBufferData& data);
 
 	bool UpdateBufferData(void* InDataPtr, unsigned int InDataLength);
     void SetBufferData(void* InDataPtr, unsigned int InDataLength);

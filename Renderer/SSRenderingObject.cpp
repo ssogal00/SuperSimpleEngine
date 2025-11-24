@@ -51,6 +51,10 @@ SSRenderingObject::~SSRenderingObject()
 	}	
 }
 
+void SSRenderingObject::Tick(float delta)
+{
+
+}
 
 void SSRenderingObject::CreateRenderCmdList()
 {
@@ -75,7 +79,7 @@ void SSRenderingObject::CreateRenderCmdList()
 			SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer(k);
 			ConstantBuffer->SetBufferData(v);			
 
-			RenderCmdList.push_back(new SSRenderCmdSetVSConstantBuffer(vs.get(), vs->GetConstantBuffer(k), SlotIndex));
+			RenderCmdList.push_back(new SSRenderCmdSetVSConstantBuffer(vs.get(), ConstantBuffer, SlotIndex));
 			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer));
 		}
 	}

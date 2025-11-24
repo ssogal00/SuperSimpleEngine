@@ -14,6 +14,8 @@ public:
 
 	bool IsTranslucent() const { return bIsTranslucent; }
 
+	virtual void Tick(float delta);
+
 protected:
 
 	XMMATRIX ModelMatrix;

@@ -45,13 +45,12 @@ void SSShader::ReflectCompiledShader(ID3D11ShaderReflection* shaderReflection)
 
 	mShaderType = static_cast<D3D11_SHADER_VERSION_TYPE>(D3D11_SHVER_GET_TYPE(shaderDescription.Version));
 	check(mShaderType != D3D11_SHADER_VERSION_TYPE::D3D11_SHVER_RESERVED0);
-
+	
 	for (unsigned int i = 0; i < shaderDescription.ConstantBuffers; ++i)
 	{		
 		ID3D11ShaderReflectionConstantBuffer* constantBuffer = shaderReflection->GetConstantBufferByIndex(i);
 		D3D11_SHADER_BUFFER_DESC bufferDesc;
 		constantBuffer->GetDesc(&bufferDesc);
-		
 		mConstantBufferMap[bufferDesc.Name] = GetDX11Device()->CreateConstantBuffer(bufferDesc.Size, i, bufferDesc.Name);
 	}
 	// @ end

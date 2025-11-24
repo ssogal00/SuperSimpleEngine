@@ -12,9 +12,11 @@ public:
 	virtual void Initialize() override;
 	virtual void Shutdown() override;
 
+
 	void SetPendingObjects(std::map<UINT, SSObjectBase*> objectMap);
 
 	void UpdateObjects();
+	void Tick(float deltaTime);
 
 	void DeleteAllObjects();
 	
