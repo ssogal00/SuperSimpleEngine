@@ -50,6 +50,8 @@ void SSSphere::CreateRenderData()
 
 void SSSphere::Tick(float delta)
 {
+	SSGameObject::Tick(delta);
+
     mYaw += 1.f * delta;
 }
 
@@ -79,6 +81,8 @@ SSPBRSphere::SSPBRSphere(SSName diffuseTexName, SSName normalTexName, SSName met
 
 void SSPBRSphere::Tick(float delta)
 {
+	SSGameObject::Tick(delta);
+
 	mYaw -= 1.f * delta;
 }
 

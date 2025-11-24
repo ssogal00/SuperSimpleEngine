@@ -15,6 +15,8 @@ SSCube::SSCube()
 
 void SSCube::Tick(float delta)
 {
+	SSGameObject::Tick(delta);
+
 	mYaw += 3.f * delta;
 }
 

@@ -17,6 +17,7 @@ SSRenderingObject::SSRenderingObject(SSObjectBase* pObject)
 {
 	mRenderData = pObject->GetRenderData();
 	mVertexData = pObject->GetVertexData();
+	mMaterialProxy = pObject->GetMaterialProxy();
 	
 	mVertexBuffer = GetDX11Device()->CreateVertexBuffer(mVertexData.Stride, mVertexData.Count, mVertexData.DataPtr);
 	
@@ -53,7 +54,7 @@ SSRenderingObject::~SSRenderingObject()
 
 void SSRenderingObject::Tick(float delta)
 {
-
+	mMaterialProxy = mpObject->GetMaterialProxy();
 }
 
 void SSRenderingObject::CreateRenderCmdList()
@@ -70,6 +71,18 @@ void SSRenderingObject::CreateRenderCmdList()
 		RenderCmdList.push_back(new SSRenderCmdSetIndexBuffer(mIndexBuffer));
 	}
 
+	for (auto& [k, v] : mMaterialProxy.GetVSConstantBufferMap())
+	{
+		const int SlotIndex = vs->GetConstantBufferSlotIndex(k);
+		if (SlotIndex != -1)
+		{
+			SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer(k);
+			ConstantBuffer->SetBufferData(v);
+
+			RenderCmdList.push_back(new SSRenderCmdSetVSConstantBuffer(vs.get(), ConstantBuffer, SlotIndex));
+			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer));
+		}
+	}
 	// set vertex shader constants
 	for (auto& [k, v] : mRenderData.VSConstantBufferMap)
 	{		
@@ -137,7 +150,7 @@ void SSRenderingObject::Draw(ID3D11DeviceContext* deviceContext)
 		ModelCBuffer->SubmitDataToDevice(deviceContext);
 	}
 	deviceContext->VSSetConstantBuffers(ModelCBuffer->GetBufferIndex(), 1, (ID3D11Buffer* const*)ModelCBuffer->GetBufferPointerRef());
-
+	
 	SSDX11ConstantBuffer* ViewCBuffer = vs->GetConstantBuffer("View");
 	XMMATRIX ViewMatrix = XMMatrixTranspose(SSCameraManager::Get().GetGameThreadCameraView());
 	
@@ -154,7 +167,7 @@ void SSRenderingObject::Draw(ID3D11DeviceContext* deviceContext)
 	{
 		ProjCBuffer->SubmitDataToDevice(deviceContext);
 	}
-	
+		
 	deviceContext->VSSetConstantBuffers(ProjCBuffer->GetBufferIndex(), 1, (ID3D11Buffer* const*)ProjCBuffer->GetBufferPointerRef());
 
 	for (auto* Cmd : RenderCmdList)

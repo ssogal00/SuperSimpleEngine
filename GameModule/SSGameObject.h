@@ -3,6 +3,7 @@
 #include "SSMeshRenderData.h"
 #include "SSMaterialProxy.h"
 #include "SSObjectBase.h"
+#include "SSMathHelper.h"
 
 class GAMEMODULE_API SSGameObject : public SSObjectBase
 {
@@ -18,7 +19,11 @@ public:
 	
 	UINT GetId() const { return mObjectId; }	
 
+	virtual void Tick(float deltaSeconds) override;
+
 protected:
 
-	SSMaterialProxy mMaterialProxy;
+	SSConstantBufferData mModelCBufferData{ SSMathHelper::IdentityMatrix4X4 };
+	SSConstantBufferData mViewCBufferData{ SSMathHelper::IdentityMatrix4X4 };
+	SSConstantBufferData mProjCBufferData{ SSMathHelper::IdentityMatrix4X4 };
 };

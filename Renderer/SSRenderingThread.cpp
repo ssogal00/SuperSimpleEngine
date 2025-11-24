@@ -4,6 +4,7 @@
 #include "SSRenderingThread.h"
 #include "Windows.h"
 #include "SSTimer.h"
+#include "SSRenderingObjectManager.h"
 
 SSRenderingThread::SSRenderingThread(SSRenderer* pRenderer)
 {
@@ -75,6 +76,7 @@ DWORD SSRenderingThread::Run()
 
 		if (mRenderer)
 		{
+			SSRenderingObjectManager::Get().Tick(renderingThreadTimer.GetDeltaTime());
 			// sync gamethread object <-> rendering thread object
 			mRenderer->UpdateRenderingObjects();
 			mRenderer->DrawScene();

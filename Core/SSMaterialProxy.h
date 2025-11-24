@@ -8,6 +8,7 @@ public:
 
 	SSMaterialProxy(std::string InVSName, std::string InPSName);
 	SSMaterialProxy() = default;
+	SSMaterialProxy(const SSMaterialProxy& rhs) = default;
 	~SSMaterialProxy();
 
 	void SetVSConstantParam(const std::string& InName, const SSConstantBufferData& InData);
@@ -16,6 +17,8 @@ public:
 	void SetPSTextureParam(const std::string& InName, const std::string& InTextureName);
 	void SetVertexShaderName(const std::string& InVSName) { VertexShaderName = InVSName; }
 	void SetPixelShaderName(const std::string& InPSName) { PixelShaderName = InPSName; }
+
+	const std::map<std::string, SSConstantBufferData>& GetVSConstantBufferMap() const { return VSConstantBufferMap; }
 
 private:
 	std::string VertexShaderName;
