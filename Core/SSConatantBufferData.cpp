@@ -16,14 +16,18 @@ void SSConstantBufferData::FreeBufferData()
 	}
 }
 
+
+
 SSConstantBufferData::SSConstantBufferData(const SSConstantBufferData& rhs)
 {
 	if (mBufferSize != rhs.mBufferSize)
 	{
 		FreeBufferData();
+		mBufferSize = rhs.mBufferSize;
 	}
 
-	mBufferSize = rhs.mBufferSize;
+	check(mBufferSize == rhs.mBufferSize);
+
 	if (mpBufferData == nullptr)
 	{
 		mpBufferData = new BYTE[mBufferSize];

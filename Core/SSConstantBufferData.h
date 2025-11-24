@@ -19,6 +19,8 @@ public:
 	SSConstantBufferData& operator=(const SSConstantBufferData& rhs);
 	
 	~SSConstantBufferData();
+
+	void CopyFrom(const SSConstantBufferData& rhs);
 		
 	template<class T>
 	void SetBufferData(const T& value);

@@ -32,6 +32,11 @@ void SSGameObject::Tick(float fDeltaSeconds)
 	SSObjectBase::Tick(fDeltaSeconds);
 
 	mModelCBufferData.SetBufferData(XMMatrixTranspose(GetModelTransform()));
-	mViewCBufferData.SetBufferData(SSCameraManager::Get().GetCurrentCameraView());
-	mProjCBufferData.SetBufferData(SSCameraManager::Get().GetCurrentCameraProj());
+	mMaterialProxy.SetVSConstantParam("Model", mModelCBufferData);
+
+	mViewCBufferData.SetBufferData(XMMatrixTranspose(SSCameraManager::Get().GetCurrentCameraView()));
+	mMaterialProxy.SetVSConstantParam("View", mViewCBufferData);
+
+	mProjCBufferData.SetBufferData(XMMatrixTranspose(SSCameraManager::Get().GetCurrentCameraProj()));
+	mMaterialProxy.SetVSConstantParam("Proj", mProjCBufferData);
 }
