@@ -66,20 +66,11 @@ void SSRenderingObject::Tick(float delta)
 			{
 				const SSConstantBufferData* ConstantBufferData = mMaterialProxy.GetVSConstantParam(k);
 				BYTE* DataPtr = ConstantBufferData->GetData();
+				XMMATRIX TestMatrix = *ConstantBufferData->GetDataPtrAs<XMMATRIX>();
 				SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer(k);
 				ConstantBuffer->UpdateBufferData(DataPtr, ConstantBufferData->GetBufferSize());
 			}
 		}
-
-		/*const int SlotIndex = vs->GetConstantBufferSlotIndex("Model");
-		if (SlotIndex != -1)
-		{
-			const SSConstantBufferData* Data2 = mMaterialProxy.GetVSConstantParam("Model");
-			XMMATRIX Model2Matrix = *Data2->GetDataAs<XMMATRIX>();
-			SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer("Model");
-			ConstantBuffer->UpdateBufferData(&Model2Matrix, sizeof(XMMATRIX));
-		}
-		*/
 	}
 }
 
@@ -102,10 +93,11 @@ void SSRenderingObject::CreateRenderCmdList()
 		const int SlotIndex = vs->GetConstantBufferSlotIndex(k);
 		if (SlotIndex != -1)
 		{
+			SSConstantBufferData* ConstantBufferData = const_cast<SSConstantBufferData*>(mMaterialProxy.GetVSConstantParam(k));
 			SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer(k);
 			ConstantBuffer->SetBufferData(v);
 
-			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer,k));
+			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer,k, ConstantBufferData));
 			RenderCmdList.push_back(new SSRenderCmdSetVSConstantBuffer(vs.get(), ConstantBuffer, SlotIndex));			
 		}
 	}
@@ -120,7 +112,7 @@ void SSRenderingObject::CreateRenderCmdList()
 			ConstantBuffer->SetBufferData(v);			
 
 			RenderCmdList.push_back(new SSRenderCmdSetVSConstantBuffer(vs.get(), ConstantBuffer, SlotIndex));
-			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer,k));
+			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer,k, nullptr));
 		}
 	}
 
@@ -134,7 +126,7 @@ void SSRenderingObject::CreateRenderCmdList()
 			ConstantBuffer->SetBufferData(v);
 
 			RenderCmdList.push_back(new SSRenderCmdSetPSConstantBuffer(ps.get(), ps->GetConstantBuffer(k), SlotIndex));
-			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer,k));
+			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer,k, nullptr));
 		}
 	}	
 

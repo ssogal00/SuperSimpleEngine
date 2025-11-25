@@ -96,8 +96,8 @@ void SSRenderCmdSetPSConstantBuffer::Execute(ID3D11DeviceContext* inDeviceContex
 	inDeviceContext->PSSetConstantBuffers(mSlotIndex, 1, (ID3D11Buffer* const*)mBuffer->GetBufferPointerRef());
 }
 
-SSRenderCmdUpdateConstantBuffer::SSRenderCmdUpdateConstantBuffer(SSDX11Buffer* ptrBuffer, std::string InBufferName)
-	: mBuffer(ptrBuffer), mBufferName(InBufferName)
+SSRenderCmdUpdateConstantBuffer::SSRenderCmdUpdateConstantBuffer(SSDX11Buffer* ptrBuffer, std::string InBufferName, SSConstantBufferData* InBufferData)
+	: mBuffer(ptrBuffer), mBufferName(InBufferName), mBufferData(InBufferData)
 {
 }
 
@@ -105,8 +105,10 @@ void SSRenderCmdUpdateConstantBuffer::Execute(ID3D11DeviceContext* inDeviceConte
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	HR(inDeviceContext->Map(mBuffer->GetDX11BufferPointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
-	memcpy_s(mappedResource.pData, mBuffer->GetBufferSize(),mBuffer->GetBufferDataPtr(), mBuffer->GetBufferSize());
-
+	
+	{
+		memcpy_s(mappedResource.pData, mBuffer->GetBufferSize(), mBuffer->GetBufferDataPtr(), mBuffer->GetBufferSize());
+	}
 	inDeviceContext->Unmap(mBuffer->GetDX11BufferPointer(), 0);
 
 	if (mBuffer->GetBufferSize() == 64)

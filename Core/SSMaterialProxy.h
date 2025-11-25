@@ -14,6 +14,8 @@ public:
 	void SetVSConstantParam(const std::string& InName, const SSConstantBufferData& InData);
 	const SSConstantBufferData* GetVSConstantParam(const std::string& InName) const;
 
+	const SSConstantBufferData* GetPSConstantParam(const std::string& InName) const;
+
 	void SetVSTextureParam(const std::string& InName, const std::string& InTextureName);
 	void SetPSConstantParam(const std::string& InName, const SSConstantBufferData& InData);
 	void SetPSTextureParam(const std::string& InName, const std::string& InTextureName);

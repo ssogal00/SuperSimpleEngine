@@ -1,5 +1,6 @@
 
 #include <memory>
+#include "SSConstantBufferData.h"
 
 class SSRenderCmdBase
 {
@@ -103,11 +104,12 @@ protected:
 class SSRenderCmdUpdateConstantBuffer : public SSRenderCmdBase
 {
 public:
-	SSRenderCmdUpdateConstantBuffer(SSDX11Buffer* ptrBuffer, std::string InBufferName);
+	SSRenderCmdUpdateConstantBuffer(SSDX11Buffer* ptrBuffer, std::string InBufferName, SSConstantBufferData* InBufferData);
 	virtual void Execute(ID3D11DeviceContext* inDeviceContext) override;
 protected:
 	SSDX11Buffer* mBuffer;
 	std::string mBufferName;
+	SSConstantBufferData* mBufferData=nullptr;
 };
 
 

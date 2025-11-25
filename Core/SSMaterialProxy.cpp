@@ -14,6 +14,18 @@ const SSConstantBufferData* SSMaterialProxy::GetVSConstantParam(const std::strin
 	}
 	return nullptr;
 }
+
+
+const SSConstantBufferData* SSMaterialProxy::GetPSConstantParam(const std::string& InName) const
+{
+	auto It = PSConstantBufferMap.find(InName);
+	if (It != PSConstantBufferMap.end())
+	{
+		return &It->second;
+	}
+	return nullptr;
+}
+
 void SSMaterialProxy::SetVSConstantParam(const std::string& InName, const SSConstantBufferData& InData)
 {
 	VSConstantBufferMap[InName] = InData;

@@ -28,7 +28,10 @@ public:
 	BYTE* GetData() const { return mpBufferData; }
 
 	template<class T>
-	T* GetDataAs() const;
+	T* GetDataPtrAs() const;
+
+	template<class T>
+	T GetDataAs() const;
 
 	UINT GetBufferSize() const { return mBufferSize; }
 	
@@ -54,7 +57,7 @@ void SSConstantBufferData::SetBufferData(const T& value)
 }
 
 template<class T>
-T* SSConstantBufferData::GetDataAs() const
+T* SSConstantBufferData::GetDataPtrAs() const
 {
 	check(mBufferSize == sizeof(T));
 	return reinterpret_cast<T*>(mpBufferData);
@@ -64,4 +67,11 @@ template<class T>
 SSConstantBufferData::SSConstantBufferData(const T& value)
 {	
 	SetBufferData(value);
+}
+
+template<class T>
+T SSConstantBufferData::GetDataAs() const
+{
+	check(mBufferSize == sizeof(T));
+	return *reinterpret_cast<T*>(mpBufferData);
 }
