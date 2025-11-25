@@ -6,18 +6,18 @@
 
 void SSCubeScene::InitializeScene()
 {
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < 2; ++i)
 	{
 		std::shared_ptr<SSSphere> newSphere = std::make_shared<SSSphere>(static_cast<UINT>(20), static_cast<UINT>(20), 10.0f);
 		newSphere->SetPositionX(40);
 		//newSphere->SetPositionZ(i * 30);
-		newSphere->SetPositionY( i* 30);
+		newSphere->SetPositionY( i* 10);
 		mPBRSphereArray.push_back(newSphere);
 	}
 
 	//mPBRSphere = std::make_shared<SSPBRSphere>();
 	//mPBRSphere->SetPositionX(40);
-	//mPBRSphere->SetPositionY(-10);
+	//mPBRSphere->SetPositionY(-30);
 
 	GLTF::SSGLTF_V2::LoadGLTFFile("./Resource/GLTF/DamagedHelmet/glTF/DamagedHelmet.gltf");
 }
