@@ -59,13 +59,27 @@ void SSRenderingObject::Tick(float delta)
 	if (vs)
 	{
 		mMaterialProxy = mpObject->GetMaterialProxy();
-		const int SlotIndex = vs->GetConstantBufferSlotIndex("Model");
+		for(auto& [k, v] : mMaterialProxy.GetVSConstantBufferMap())
+		{
+			const int SlotIndex = vs->GetConstantBufferSlotIndex(k);
+			if (SlotIndex != -1)
+			{
+				const SSConstantBufferData* ConstantBufferData = mMaterialProxy.GetVSConstantParam(k);
+				BYTE* DataPtr = ConstantBufferData->GetData();
+				SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer(k);
+				ConstantBuffer->UpdateBufferData(DataPtr, ConstantBufferData->GetBufferSize());
+			}
+		}
+
+		/*const int SlotIndex = vs->GetConstantBufferSlotIndex("Model");
 		if (SlotIndex != -1)
 		{
-			XMMATRIX ModelMatrix = XMMatrixTranspose(mpObject->GetModelTransform());
+			const SSConstantBufferData* Data2 = mMaterialProxy.GetVSConstantParam("Model");
+			XMMATRIX Model2Matrix = *Data2->GetDataAs<XMMATRIX>();
 			SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer("Model");
-			ConstantBuffer->UpdateBufferData(&ModelMatrix, sizeof(ModelMatrix));
+			ConstantBuffer->UpdateBufferData(&Model2Matrix, sizeof(XMMATRIX));
 		}
+		*/
 	}
 }
 
@@ -152,37 +166,7 @@ void SSRenderingObject::CreateRenderCmdList()
 }
 
 void SSRenderingObject::Draw(ID3D11DeviceContext* deviceContext)
-{	
-	shared_ptr<SSDX11VertexShader> vs = SSShaderManager::Get().GetVertexShader(mRenderData.VertexShaderName);
-	shared_ptr<SSDX11PixelShader> ps = SSShaderManager::Get().GetPixelShader(mRenderData.PixelShaderName);
-	
-	/*SSDX11ConstantBuffer* ModelCBuffer = vs->GetConstantBuffer("Model");
-	XMMATRIX ModelMatrix = XMMatrixTranspose(mpObject->GetModelTransform());		
-	if (ModelCBuffer->UpdateBufferData((void*)&ModelMatrix, sizeof(XMMATRIX)))
-	{
-		ModelCBuffer->SubmitDataToDevice(deviceContext);
-	}
-	deviceContext->VSSetConstantBuffers(ModelCBuffer->GetBufferIndex(), 1, (ID3D11Buffer* const*)ModelCBuffer->GetBufferPointerRef());
-	*/
-	SSDX11ConstantBuffer* ViewCBuffer = vs->GetConstantBuffer("View");
-	XMMATRIX ViewMatrix = XMMatrixTranspose(SSCameraManager::Get().GetGameThreadCameraView());
-	
-	if (ViewCBuffer->UpdateBufferData((void*)&ViewMatrix, sizeof(XMMATRIX)))
-	{
-		ViewCBuffer->SubmitDataToDevice(deviceContext);
-	}	
-	deviceContext->VSSetConstantBuffers(ViewCBuffer->GetBufferIndex(), 1, (ID3D11Buffer* const*)ViewCBuffer->GetBufferPointerRef());
-
-	SSDX11ConstantBuffer* ProjCBuffer = vs->GetConstantBuffer("Proj");
-	XMMATRIX ProjMatrix = XMMatrixTranspose(SSCameraManager::Get().GetGameThreadCameraProj());
-
-	if (ProjCBuffer->UpdateBufferData((void*)&ProjMatrix, sizeof(XMMATRIX)))
-	{
-		ProjCBuffer->SubmitDataToDevice(deviceContext);
-	}
-		
-	deviceContext->VSSetConstantBuffers(ProjCBuffer->GetBufferIndex(), 1, (ID3D11Buffer* const*)ProjCBuffer->GetBufferPointerRef());
-	
+{
 	for (auto* Cmd : RenderCmdList)
 	{
 		Cmd->Execute(deviceContext);

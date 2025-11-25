@@ -11,7 +11,7 @@ void SSCubeScene::InitializeScene()
 		std::shared_ptr<SSSphere> newSphere = std::make_shared<SSSphere>(static_cast<UINT>(20), static_cast<UINT>(20), 10.0f);
 		newSphere->SetPositionX(40);
 		//newSphere->SetPositionZ(i * 30);
-		newSphere->SetPositionY( 0);
+		newSphere->SetPositionY( i* 30);
 		mPBRSphereArray.push_back(newSphere);
 	}
 
