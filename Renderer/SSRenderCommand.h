@@ -103,10 +103,11 @@ protected:
 class SSRenderCmdUpdateConstantBuffer : public SSRenderCmdBase
 {
 public:
-	SSRenderCmdUpdateConstantBuffer(SSDX11Buffer* ptrBuffer);
+	SSRenderCmdUpdateConstantBuffer(SSDX11Buffer* ptrBuffer, std::string InBufferName);
 	virtual void Execute(ID3D11DeviceContext* inDeviceContext) override;
 protected:
 	SSDX11Buffer* mBuffer;
+	std::string mBufferName;
 };
 
 

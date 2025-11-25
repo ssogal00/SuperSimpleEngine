@@ -5,7 +5,15 @@ SSMaterialProxy::SSMaterialProxy(std::string InVSName, std::string InPSName)
 	: VertexShaderName(InVSName), PixelShaderName(InPSName)
 {
 }
-
+const SSConstantBufferData* SSMaterialProxy::GetVSConstantParam(const std::string& InName) const
+{
+	auto It = VSConstantBufferMap.find(InName);
+	if (It != VSConstantBufferMap.end())
+	{
+		return &It->second;
+	}
+	return nullptr;
+}
 void SSMaterialProxy::SetVSConstantParam(const std::string& InName, const SSConstantBufferData& InData)
 {
 	VSConstantBufferMap[InName] = InData;

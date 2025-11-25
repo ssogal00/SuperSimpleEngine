@@ -27,6 +27,9 @@ public:
 
 	BYTE* GetData() const { return mpBufferData; }
 
+	template<class T>
+	T* GetDataAs() const;
+
 	UINT GetBufferSize() const { return mBufferSize; }
 	
 protected:
@@ -48,6 +51,13 @@ void SSConstantBufferData::SetBufferData(const T& value)
 	}
 
 	memcpy_s(mpBufferData, mBufferSize, &value, mBufferSize);
+}
+
+template<class T>
+T* SSConstantBufferData::GetDataAs() const
+{
+	check(mBufferSize == sizeof(T));
+	return reinterpret_cast<T*>(mpBufferData);
 }
 
 template<class T>

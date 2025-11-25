@@ -31,7 +31,8 @@ void SSGameObject::Tick(float fDeltaSeconds)
 {
 	SSObjectBase::Tick(fDeltaSeconds);
 
-	mModelCBufferData.SetBufferData(XMMatrixTranspose(GetModelTransform()));
+	XMMATRIX ModelMatrix = XMMatrixTranspose(GetModelTransform());
+	mModelCBufferData.SetBufferData(ModelMatrix);
 	mMaterialProxy.SetVSConstantParam("Model", mModelCBufferData);
 
 	mViewCBufferData.SetBufferData(XMMatrixTranspose(SSCameraManager::Get().GetCurrentCameraView()));

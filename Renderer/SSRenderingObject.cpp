@@ -59,17 +59,12 @@ void SSRenderingObject::Tick(float delta)
 	if (vs)
 	{
 		mMaterialProxy = mpObject->GetMaterialProxy();
-
-		for (auto& [k, v] : mMaterialProxy.GetVSConstantBufferMap())
+		const int SlotIndex = vs->GetConstantBufferSlotIndex("Model");
+		if (SlotIndex != -1)
 		{
-			const int SlotIndex = vs->GetConstantBufferSlotIndex(k);
-			if (SlotIndex != -1)
-			{
-				XMMATRIX ModelMatrix = XMMatrixTranspose(mpObject->GetModelTransform());
-				XMMATRIX Test = *reinterpret_cast<XMMATRIX*>(v.GetData());
-				SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer(k);
-				ConstantBuffer->UpdateBufferData(v.GetData(), v.GetBufferSize());
-			}
+			XMMATRIX ModelMatrix = XMMatrixTranspose(mpObject->GetModelTransform());
+			SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer("Model");
+			ConstantBuffer->UpdateBufferData(&ModelMatrix, sizeof(ModelMatrix));
 		}
 	}
 }
@@ -96,9 +91,8 @@ void SSRenderingObject::CreateRenderCmdList()
 			SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer(k);
 			ConstantBuffer->SetBufferData(v);
 
-			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer));
-			RenderCmdList.push_back(new SSRenderCmdSetVSConstantBuffer(vs.get(), ConstantBuffer, SlotIndex));
-			
+			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer,k));
+			RenderCmdList.push_back(new SSRenderCmdSetVSConstantBuffer(vs.get(), ConstantBuffer, SlotIndex));			
 		}
 	}
 
@@ -112,7 +106,7 @@ void SSRenderingObject::CreateRenderCmdList()
 			ConstantBuffer->SetBufferData(v);			
 
 			RenderCmdList.push_back(new SSRenderCmdSetVSConstantBuffer(vs.get(), ConstantBuffer, SlotIndex));
-			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer));
+			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer,k));
 		}
 	}
 
@@ -126,7 +120,7 @@ void SSRenderingObject::CreateRenderCmdList()
 			ConstantBuffer->SetBufferData(v);
 
 			RenderCmdList.push_back(new SSRenderCmdSetPSConstantBuffer(ps.get(), ps->GetConstantBuffer(k), SlotIndex));
-			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer));
+			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer,k));
 		}
 	}	
 
@@ -161,15 +155,15 @@ void SSRenderingObject::Draw(ID3D11DeviceContext* deviceContext)
 {	
 	shared_ptr<SSDX11VertexShader> vs = SSShaderManager::Get().GetVertexShader(mRenderData.VertexShaderName);
 	shared_ptr<SSDX11PixelShader> ps = SSShaderManager::Get().GetPixelShader(mRenderData.PixelShaderName);
-
-	SSDX11ConstantBuffer* ModelCBuffer = vs->GetConstantBuffer("Model");
+	
+	/*SSDX11ConstantBuffer* ModelCBuffer = vs->GetConstantBuffer("Model");
 	XMMATRIX ModelMatrix = XMMatrixTranspose(mpObject->GetModelTransform());		
 	if (ModelCBuffer->UpdateBufferData((void*)&ModelMatrix, sizeof(XMMATRIX)))
 	{
 		ModelCBuffer->SubmitDataToDevice(deviceContext);
 	}
 	deviceContext->VSSetConstantBuffers(ModelCBuffer->GetBufferIndex(), 1, (ID3D11Buffer* const*)ModelCBuffer->GetBufferPointerRef());
-	
+	*/
 	SSDX11ConstantBuffer* ViewCBuffer = vs->GetConstantBuffer("View");
 	XMMATRIX ViewMatrix = XMMatrixTranspose(SSCameraManager::Get().GetGameThreadCameraView());
 	
