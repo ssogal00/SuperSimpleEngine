@@ -17,7 +17,7 @@ SSRenderingObject::SSRenderingObject(SSObjectBase* pObject)
 {
 	mRenderData = pObject->GetRenderData();
 	mVertexData = pObject->GetVertexData();
-	mMaterialProxy = pObject->GetMaterialProxy();
+	mMaterialProxy = pObject->GetMaterialProxySharedPtr();
 	
 	mVertexBuffer = GetDX11Device()->CreateVertexBuffer(mVertexData.Stride, mVertexData.Count, mVertexData.DataPtr);
 	
@@ -54,24 +54,23 @@ SSRenderingObject::~SSRenderingObject()
 
 void SSRenderingObject::Tick(float delta)
 {
-	shared_ptr<SSDX11VertexShader> vs = SSShaderManager::Get().GetVertexShader(mRenderData.VertexShaderName);
+	/*shared_ptr<SSDX11VertexShader> vs = SSShaderManager::Get().GetVertexShader(mRenderData.VertexShaderName);
 
 	if (vs)
 	{
-		mMaterialProxy = mpObject->GetMaterialProxy();
-		for(auto& [k, v] : mMaterialProxy.GetVSConstantBufferMap())
+		for(auto& [k, v] : mMaterialProxy->GetVSConstantBufferMap())
 		{
 			const int SlotIndex = vs->GetConstantBufferSlotIndex(k);
 			if (SlotIndex != -1)
 			{
-				const SSConstantBufferData* ConstantBufferData = mMaterialProxy.GetVSConstantParam(k);
+				const SSConstantBufferData* ConstantBufferData = mMaterialProxy->GetVSConstantParam(k);
 				BYTE* DataPtr = ConstantBufferData->GetData();
 				XMMATRIX TestMatrix = *ConstantBufferData->GetDataPtrAs<XMMATRIX>();
 				SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer(k);
 				ConstantBuffer->UpdateBufferData(DataPtr, ConstantBufferData->GetBufferSize());
 			}
 		}
-	}
+	}*/
 }
 
 void SSRenderingObject::CreateRenderCmdList()
@@ -88,12 +87,13 @@ void SSRenderingObject::CreateRenderCmdList()
 		RenderCmdList.push_back(new SSRenderCmdSetIndexBuffer(mIndexBuffer));
 	}
 
-	for (auto& [k, v] : mMaterialProxy.GetVSConstantBufferMap())
+	for (auto& [k, v] : mMaterialProxy->GetVSConstantBufferMap())
 	{
 		const int SlotIndex = vs->GetConstantBufferSlotIndex(k);
 		if (SlotIndex != -1)
 		{
-			SSConstantBufferData* ConstantBufferData = const_cast<SSConstantBufferData*>(mMaterialProxy.GetVSConstantParam(k));
+			SSConstantBufferData* ConstantBufferData = const_cast<SSConstantBufferData*>(mMaterialProxy->GetVSConstantParam(k));
+			check(ConstantBufferData != nullptr);
 			SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer(k);
 			ConstantBuffer->SetBufferData(v);
 
@@ -102,34 +102,20 @@ void SSRenderingObject::CreateRenderCmdList()
 		}
 	}
 
-	// set vertex shader constants
-	for (auto& [k, v] : mRenderData.VSConstantBufferMap)
-	{		
-		const int SlotIndex = vs->GetConstantBufferSlotIndex(k);
-		if (SlotIndex != -1)
-		{
-			SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer(k);
-			ConstantBuffer->SetBufferData(v);			
-
-			RenderCmdList.push_back(new SSRenderCmdSetVSConstantBuffer(vs.get(), ConstantBuffer, SlotIndex));
-			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer,k, nullptr));
-		}
-	}
-
-	// set pixel shader constants
-	for (auto& [k, v] : mRenderData.PSConstantBufferMap)
-	{		
+	for (auto& [k, v] : mMaterialProxy->GetPSConstantBufferMap())
+	{
 		const int SlotIndex = ps->GetConstantBufferSlotIndex(k);
 		if (SlotIndex != -1)
 		{
+			SSConstantBufferData* ConstantBufferData = const_cast<SSConstantBufferData*>(mMaterialProxy->GetVSConstantParam(k));
+			check(ConstantBufferData != nullptr);
 			SSDX11ConstantBuffer* ConstantBuffer = ps->GetConstantBuffer(k);
 			ConstantBuffer->SetBufferData(v);
 
-			RenderCmdList.push_back(new SSRenderCmdSetPSConstantBuffer(ps.get(), ps->GetConstantBuffer(k), SlotIndex));
-			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer,k, nullptr));
+			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer, k, ConstantBufferData));
+			RenderCmdList.push_back(new SSRenderCmdSetPSConstantBuffer(ps.get(), ConstantBuffer, SlotIndex));
 		}
-	}	
-
+	}
 	// @ set pixel shader texture
 	for (auto& [name, texture] : mRenderData.PSTextureMap)
 	{

@@ -43,9 +43,8 @@ void SSSphere::CreateRenderData()
 	settings.value4 = 1; // roghness
 	settings.value5 = 1; // diffuse
 
-	SSConstantBufferData proxy{ settings };
-
-	mRenderData.PSConstantBufferMap["TextureExist"] = std::move(proxy);
+	SSConstantBufferData Data{ settings };
+	mMaterialProxy->SetPSConstantParam("TextureExist", Data);
 }
 
 void SSSphere::Tick(float delta)

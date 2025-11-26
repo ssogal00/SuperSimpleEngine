@@ -16,9 +16,9 @@ SSGameObject::SSGameObject()
 	
 	SSGameObjectManager::Get().AddGameObject(this);	
 
-	mMaterialProxy.SetVSConstantParam("Model", mModelCBufferData);
-	mMaterialProxy.SetVSConstantParam("View", mViewCBufferData);
-	mMaterialProxy.SetVSConstantParam("Proj", mProjCBufferData);
+	mMaterialProxy->SetVSConstantParam("Model", mModelCBufferData);
+	mMaterialProxy->SetVSConstantParam("View", mViewCBufferData);
+	mMaterialProxy->SetVSConstantParam("Proj", mProjCBufferData);
 }
 
 SSGameObject::~SSGameObject()
@@ -33,11 +33,11 @@ void SSGameObject::Tick(float fDeltaSeconds)
 
 	XMMATRIX ModelMatrix = XMMatrixTranspose(GetModelTransform());
 	mModelCBufferData.SetBufferData(ModelMatrix);
-	mMaterialProxy.SetVSConstantParam("Model", mModelCBufferData);
+	mMaterialProxy->SetVSConstantParam("Model", mModelCBufferData);
 
 	mViewCBufferData.SetBufferData(XMMatrixTranspose(SSCameraManager::Get().GetCurrentCameraView()));
-	mMaterialProxy.SetVSConstantParam("View", mViewCBufferData);
+	mMaterialProxy->SetVSConstantParam("View", mViewCBufferData);
 
 	mProjCBufferData.SetBufferData(XMMatrixTranspose(SSCameraManager::Get().GetCurrentCameraProj()));
-	mMaterialProxy.SetVSConstantParam("Proj", mProjCBufferData);
+	mMaterialProxy->SetVSConstantParam("Proj", mProjCBufferData);
 }

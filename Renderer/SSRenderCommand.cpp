@@ -52,7 +52,12 @@ SSRenderCmdSetVSTexture::SSRenderCmdSetVSTexture(SSDX11VertexShader* inVS, SSDX1
 
 void SSRenderCmdSetVSTexture::Execute(ID3D11DeviceContext* inDeviceContext)
 {
-	
+	ID3D11ShaderResourceView* BoundShaderResourceView = nullptr;
+	inDeviceContext->VSGetShaderResources(mSlotIndex, 1, &BoundShaderResourceView);
+	if (BoundShaderResourceView == mTex->GetShaderResourceView())
+	{
+		return;
+	}
 	inDeviceContext->VSSetShaderResources(mSlotIndex, 1, mTex->GetShaderResourceViewRef());
 }
 
@@ -106,6 +111,11 @@ void SSRenderCmdUpdateConstantBuffer::Execute(ID3D11DeviceContext* inDeviceConte
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	HR(inDeviceContext->Map(mBuffer->GetDX11BufferPointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
 	
+	if(mBufferData)
+	{
+		memcpy_s(mappedResource.pData, mBuffer->GetBufferSize(), mBufferData->GetData(), mBuffer->GetBufferSize());
+	}
+	else
 	{
 		memcpy_s(mappedResource.pData, mBuffer->GetBufferSize(), mBuffer->GetBufferDataPtr(), mBuffer->GetBufferSize());
 	}

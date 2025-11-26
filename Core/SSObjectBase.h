@@ -14,7 +14,8 @@ public:
 	virtual void Draw(ID3D11DeviceContext* deviceContext) {}
 	
 	virtual const SSMeshRenderData& GetRenderData();
-	virtual const SSMaterialProxy& GetMaterialProxy();
+	//virtual const SSMaterialProxy& GetMaterialProxy();
+	virtual std::shared_ptr<SSMaterialProxy> GetMaterialProxySharedPtr();
 	virtual const SSMeshVertexIndexData& GetVertexData();
 	virtual std::vector<SSMeshElementRenderData> GetMeshElementRenderData();
 
@@ -50,7 +51,7 @@ protected:
 
 	SSMeshVertexIndexData mVertexData;
 	SSMeshRenderData mRenderData;
-	SSMaterialProxy mMaterialProxy;
+	std::shared_ptr<SSMaterialProxy> mMaterialProxy;
 
 	friend class SSGameObjectManager;
 	DirectX::XMFLOAT3 mPosition;

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "SSConstantBufferData.h"
+#include <memory>
 
-class CORE_API SSMaterialProxy
+class CORE_API SSMaterialProxy : public std::enable_shared_from_this<SSMaterialProxy>
 {
 public:
 
@@ -13,16 +14,18 @@ public:
 
 	void SetVSConstantParam(const std::string& InName, const SSConstantBufferData& InData);
 	const SSConstantBufferData* GetVSConstantParam(const std::string& InName) const;
-
+	
+	void SetPSConstantParam(const std::string& InName, const SSConstantBufferData& InData);
 	const SSConstantBufferData* GetPSConstantParam(const std::string& InName) const;
 
 	void SetVSTextureParam(const std::string& InName, const std::string& InTextureName);
-	void SetPSConstantParam(const std::string& InName, const SSConstantBufferData& InData);
+	
 	void SetPSTextureParam(const std::string& InName, const std::string& InTextureName);
 	void SetVertexShaderName(const std::string& InVSName) { VertexShaderName = InVSName; }
 	void SetPixelShaderName(const std::string& InPSName) { PixelShaderName = InPSName; }
 
 	const std::map<std::string, SSConstantBufferData>& GetVSConstantBufferMap() const { return VSConstantBufferMap; }
+	const std::map<std::string, SSConstantBufferData>& GetPSConstantBufferMap() const { return PSConstantBufferMap; }
 
 private:
 	std::string VertexShaderName;

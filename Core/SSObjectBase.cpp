@@ -8,6 +8,7 @@ SSObjectBase::SSObjectBase()
 {
 	mPosition = XMFLOAT3(0, 0, 0);
 	mScale = XMFLOAT3(1, 1, 1);
+	mMaterialProxy = std::make_shared<SSMaterialProxy>();
 }
 
 SSObjectBase::~SSObjectBase()
@@ -40,10 +41,12 @@ const SSMeshRenderData& SSObjectBase::GetRenderData()
 	return mRenderData;
 }
 
-const SSMaterialProxy& SSObjectBase::GetMaterialProxy()
+
+std::shared_ptr<SSMaterialProxy> SSObjectBase::GetMaterialProxySharedPtr()
 {
-	return mMaterialProxy;
+	return mMaterialProxy->shared_from_this();
 }
+
 
 XMMATRIX SSObjectBase::GetModelTransform()
 {
