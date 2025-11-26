@@ -107,7 +107,7 @@ void SSRenderingObject::CreateRenderCmdList()
 		const int SlotIndex = ps->GetConstantBufferSlotIndex(k);
 		if (SlotIndex != -1)
 		{
-			SSConstantBufferData* ConstantBufferData = const_cast<SSConstantBufferData*>(mMaterialProxy->GetVSConstantParam(k));
+			SSConstantBufferData* ConstantBufferData = const_cast<SSConstantBufferData*>(mMaterialProxy->GetPSConstantParam(k));
 			check(ConstantBufferData != nullptr);
 			SSDX11ConstantBuffer* ConstantBuffer = ps->GetConstantBuffer(k);
 			ConstantBuffer->SetBufferData(v);

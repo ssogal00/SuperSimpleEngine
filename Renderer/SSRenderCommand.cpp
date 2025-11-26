@@ -104,6 +104,7 @@ void SSRenderCmdSetPSConstantBuffer::Execute(ID3D11DeviceContext* inDeviceContex
 SSRenderCmdUpdateConstantBuffer::SSRenderCmdUpdateConstantBuffer(SSDX11Buffer* ptrBuffer, std::string InBufferName, SSConstantBufferData* InBufferData)
 	: mBuffer(ptrBuffer), mBufferName(InBufferName), mBufferData(InBufferData)
 {
+	
 }
 
 void SSRenderCmdUpdateConstantBuffer::Execute(ID3D11DeviceContext* inDeviceContext)
@@ -111,21 +112,9 @@ void SSRenderCmdUpdateConstantBuffer::Execute(ID3D11DeviceContext* inDeviceConte
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	HR(inDeviceContext->Map(mBuffer->GetDX11BufferPointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
 	
-	if(mBufferData)
-	{
-		memcpy_s(mappedResource.pData, mBuffer->GetBufferSize(), mBufferData->GetData(), mBuffer->GetBufferSize());
-	}
-	else
-	{
-		memcpy_s(mappedResource.pData, mBuffer->GetBufferSize(), mBuffer->GetBufferDataPtr(), mBuffer->GetBufferSize());
-	}
+	memcpy_s(mappedResource.pData, mBuffer->GetBufferSize(), mBufferData->GetData(), mBuffer->GetBufferSize());
+	
 	inDeviceContext->Unmap(mBuffer->GetDX11BufferPointer(), 0);
-
-	if (mBuffer->GetBufferSize() == 64)
-	{
-		XMMATRIX* Model = (XMMATRIX*)mappedResource.pData;
-		std::cout << mBufferName;
-	}
 }
 
 

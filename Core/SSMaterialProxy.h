@@ -19,8 +19,8 @@ public:
 	const SSConstantBufferData* GetPSConstantParam(const std::string& InName) const;
 
 	void SetVSTextureParam(const std::string& InName, const std::string& InTextureName);
-	
 	void SetPSTextureParam(const std::string& InName, const std::string& InTextureName);
+
 	void SetVertexShaderName(const std::string& InVSName) { VertexShaderName = InVSName; }
 	void SetPixelShaderName(const std::string& InPSName) { PixelShaderName = InPSName; }
 

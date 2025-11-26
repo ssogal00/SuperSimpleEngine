@@ -40,6 +40,7 @@ protected:
 	void FreeBufferData();	
 	BYTE*	mpBufferData = nullptr;
 	int		mBufferSize = 0;
+	int		GetAlignedBufferSize(int size) const { return (size + 15) & ~15; }
 };
 
 
@@ -49,7 +50,7 @@ void SSConstantBufferData::SetBufferData(const T& value)
 	if(mBufferSize != sizeof(T))
 	{
 		FreeBufferData();
-		mBufferSize = sizeof(T);
+		mBufferSize = GetAlignedBufferSize(sizeof(T));
 		mpBufferData = new BYTE[mBufferSize];
 	}
 
@@ -59,7 +60,7 @@ void SSConstantBufferData::SetBufferData(const T& value)
 template<class T>
 T* SSConstantBufferData::GetDataPtrAs() const
 {
-	check(mBufferSize == sizeof(T));
+	check(mBufferSize == GetAlignedBufferSize(sizeof(T)));
 	return reinterpret_cast<T*>(mpBufferData);
 }
 
@@ -72,6 +73,6 @@ SSConstantBufferData::SSConstantBufferData(const T& value)
 template<class T>
 T SSConstantBufferData::GetDataAs() const
 {
-	check(mBufferSize == sizeof(T));
+	check(mBufferSize == GetAlignedBufferSize(sizeof(T)));
 	return *reinterpret_cast<T*>(mpBufferData);
 }
