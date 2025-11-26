@@ -17,7 +17,6 @@ public:
 	//virtual const SSMaterialProxy& GetMaterialProxy();
 	virtual std::shared_ptr<SSMaterialProxy> GetMaterialProxySharedPtr();
 	virtual const SSMeshVertexIndexData& GetVertexData();
-	virtual std::vector<SSMeshElementRenderData> GetMeshElementRenderData();
 
 	virtual void Tick(float delta) {}
 
@@ -40,9 +39,7 @@ public:
 
 	bool IsVisible() const { return mVisible; }
 
-	void SetPSTexture(SSName name, SSName textureName);
-	void SetVSTexture(SSName name , SSName textureName);
-
+	
 
 protected:
 	virtual void CreateRenderData() {}

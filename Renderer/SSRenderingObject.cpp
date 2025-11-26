@@ -54,23 +54,7 @@ SSRenderingObject::~SSRenderingObject()
 
 void SSRenderingObject::Tick(float delta)
 {
-	/*shared_ptr<SSDX11VertexShader> vs = SSShaderManager::Get().GetVertexShader(mRenderData.VertexShaderName);
-
-	if (vs)
-	{
-		for(auto& [k, v] : mMaterialProxy->GetVSConstantBufferMap())
-		{
-			const int SlotIndex = vs->GetConstantBufferSlotIndex(k);
-			if (SlotIndex != -1)
-			{
-				const SSConstantBufferData* ConstantBufferData = mMaterialProxy->GetVSConstantParam(k);
-				BYTE* DataPtr = ConstantBufferData->GetData();
-				XMMATRIX TestMatrix = *ConstantBufferData->GetDataPtrAs<XMMATRIX>();
-				SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer(k);
-				ConstantBuffer->UpdateBufferData(DataPtr, ConstantBufferData->GetBufferSize());
-			}
-		}
-	}*/
+	
 }
 
 void SSRenderingObject::CreateRenderCmdList()

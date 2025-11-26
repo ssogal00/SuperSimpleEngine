@@ -15,26 +15,11 @@ SSObjectBase::~SSObjectBase()
 {
 }
 
-void SSObjectBase::SetPSTexture(SSName paramName, SSName texture)
-{
-	mRenderData.PSTextureMap[paramName] = texture;
-}
-
-void SSObjectBase::SetVSTexture(SSName paramName, SSName texture)
-{
-	mRenderData.VSTextureMap[paramName] = texture;
-}
-
 const SSMeshVertexIndexData& SSObjectBase::GetVertexData()
 {
 	return mVertexData;
 }
 
-std::vector<SSMeshElementRenderData> SSObjectBase::GetMeshElementRenderData()
-{
-	std::vector<SSMeshElementRenderData> dummy;
-	return std::move(dummy);
-}
 
 const SSMeshRenderData& SSObjectBase::GetRenderData()
 {

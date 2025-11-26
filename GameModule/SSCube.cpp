@@ -3,7 +3,7 @@
 #include "SSVertexTypes.h"
 #include "SSSharedRenderData.h"
 #include "FreqUsedConstantBufferTypes.h"
-#include "SSName.h"
+
 
 SSCube::SSCube()
 {
