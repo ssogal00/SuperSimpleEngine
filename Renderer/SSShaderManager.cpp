@@ -78,7 +78,26 @@ void SSShaderManager::Initialize()
                 check(false);
             }
         }
+        else if(filepath.find(".cs") != std::string_view::npos)
+        {
+            std::shared_ptr<SSDX11ComputeShader> cs = std::make_shared<SSDX11ComputeShader>();
+            std::string cstrfilepath = filepath.data();
+            std::wstring wfilepath;
+            wfilepath.assign(cstrfilepath.begin(), cstrfilepath.end());
+
+            if (cs->CompileFromFile(wfilepath) == true)
+            {
+                mComputeShaderMap[shaderName.data()] = cs;
+            }
+            else
+            {
+                check(false);
+            }
+        }
+            // @todo compute shader
     }
+
+    std::filesystem::path currentPath = std::filesystem::current_path();
 
 	for (auto& f : std::filesystem::directory_iterator("./Shader"))
 	{
@@ -110,6 +129,18 @@ void SSShaderManager::Initialize()
 			{
 				check(false);
 			}
+		}
+        else if(filename.find(".cs") != std::string::npos)
+        {
+            std::shared_ptr<SSDX11ComputeShader> cs = std::make_shared<SSDX11ComputeShader>();
+            if (cs->CompileFromFile(filepath) == true)
+            {
+                mComputeShaderMap[filename] = cs;
+            }
+            else
+            {
+                check(false);
+            }
 		}
 	}
 

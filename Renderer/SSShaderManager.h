@@ -18,6 +18,7 @@ public:
 protected:
 	std::map<std::string, std::shared_ptr<SSDX11VertexShader>> mVertexShaderMap;
 	std::map<std::string, std::shared_ptr<SSDX11PixelShader>> mPixelShaderMap;
+	std::map<std::string, std::shared_ptr<class SSDX11ComputeShader>> mComputeShaderMap;
 
 	std::map<std::string_view, std::shared_ptr<SSDX11VertexShader>> mVertexShaderMap2;
     std::map<std::string_view, std::shared_ptr<SSDX11PixelShader>> mPixelShaderMap2;

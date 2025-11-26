@@ -27,3 +27,15 @@ public:
 protected:
 	ID3D11ShaderResourceView* mpSRV = nullptr;
 };
+
+class SSDX11UnorderedAccessStructuredBuffer : public SSDX11Buffer
+{
+public:
+	SSDX11UnorderedAccessStructuredBuffer(void* pData, unsigned int nStride, unsigned int nDataCount,
+		bool bCpuWrite, bool bGpuWrite);
+
+	ID3D11UnorderedAccessView* GetUAV() { return mpUAV; }
+
+protected:
+	ID3D11UnorderedAccessView* mpUAV = nullptr;
+};

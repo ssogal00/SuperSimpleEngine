@@ -23,9 +23,7 @@ class SSShader
 public:
 	virtual ~SSShader(){}
 
-    template<class T>
-    void SetConstantBufferData(std::string bufferName, const T& data);	
-
+  
     virtual SSDX11ConstantBuffer* GetConstantBuffer(std::string bufferName) ;
 
 	virtual void SetTexture(ID3D11DeviceContext* deviceContext, std::string name, class SSDX11Texture2D* textrue ){}	
@@ -69,15 +67,6 @@ protected:
 	D3D11_SHADER_VERSION_TYPE mShaderType;
 };
 
-template<class T>
-void SSShader::SetConstantBufferData(std::string bufferName, const T& data)
-{
-    if(mConstantBufferMap.count(bufferName) > 0)
-    {
-		auto* buffer = mConstantBufferMap[bufferName];
-		buffer->SetBufferData<T>(data);
-    }
-}
 
 
 // vertex shader
@@ -90,9 +79,6 @@ public:
     virtual bool CompileFromFile(std::wstring filepath, const SSCompileContext& context) override;
     ID3D11VertexShader* GetShader() { return mVertexShader; } 
     ID3D11InputLayout* GetInputLayout() { return mInputLayout; }
-
-	template<class T>
-	void SetConstantBufferData(ID3D11DeviceContext* deviceContext, std::string bufferName, const T& data);
 
 	virtual void SetTexture(ID3D11DeviceContext* deviceContext, std::string name, class SSDX11Texture2D* texture) override;
 
@@ -108,16 +94,6 @@ protected:
 	D3D_PRIMITIVE_TOPOLOGY mPrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 };
 
-template<class T>
-void SSDX11VertexShader::SetConstantBufferData(ID3D11DeviceContext* deviceContext, std::string bufferName, const T& data)
-{	
-	if (mConstantBufferMap.count(bufferName) > 0)
-	{
-		mConstantBufferMap[bufferName]->SetBufferData<T>(deviceContext, data);
-		UINT bufferIndex = mConstantBufferMap[bufferName]->GetBufferIndex();
-		deviceContext->VSSetConstantBuffers(bufferIndex, 1, &mConstantBufferMap[bufferName]->GetBufferPointerRef());
-	}
-}
 
 // pixel shader
 class SSDX11PixelShader : public SSShader
@@ -130,9 +106,6 @@ public:
 
 	ID3D11PixelShader* GetShader()	{return mPixelShader;}
 
-	template<class T>
-	void SetConstantBufferData(ID3D11DeviceContext* deviceContext, std::string bufferName, const T& data);
-
 	virtual void SetTextureAsNull(ID3D11DeviceContext* deviceContext, std::string name)override;
 	virtual void SetTexture(ID3D11DeviceContext* deviceContext, std::string name, class SSDX11Texture2D* texture) override;
 	virtual void SetTextureAsNull(std::string name) override;
@@ -143,16 +116,15 @@ protected:
 	ID3D11PixelShader* mPixelShader;
 };
 
-template<class T>
-void SSDX11PixelShader::SetConstantBufferData(ID3D11DeviceContext* deviceContext, std::string bufferName, const T& data)
+
+class SSDX11ComputeShader : public SSShader
 {
-	if (mConstantBufferMap.count(bufferName) > 0)
-	{
-		mConstantBufferMap[bufferName]->SetBufferData<T>(deviceContext, data);
-		UINT bufferIndex = mConstantBufferMap[bufferName]->GetBufferIndex();
-		deviceContext->PSSetConstantBuffers(
-			bufferIndex,
-			1,
-			&mConstantBufferMap[bufferName]->GetBufferPointerRef());
-	}
-}
+public:
+	SSDX11ComputeShader() = default;
+	virtual ~SSDX11ComputeShader();
+	virtual bool CompileFromFile(std::wstring filepath) override;
+	ID3D11ComputeShader* GetShader() { return mComputeShader; }
+
+protected:
+	ID3D11ComputeShader* mComputeShader = nullptr;
+};

@@ -45,15 +45,6 @@ void SSShader::ReflectCompiledShader(ID3D11ShaderReflection* shaderReflection)
 
 	mShaderType = static_cast<D3D11_SHADER_VERSION_TYPE>(D3D11_SHVER_GET_TYPE(shaderDescription.Version));
 	check(mShaderType != D3D11_SHADER_VERSION_TYPE::D3D11_SHVER_RESERVED0);
-	
-	for (unsigned int i = 0; i < shaderDescription.ConstantBuffers; ++i)
-	{		
-		ID3D11ShaderReflectionConstantBuffer* constantBuffer = shaderReflection->GetConstantBufferByIndex(i);
-		D3D11_SHADER_BUFFER_DESC bufferDesc;
-		constantBuffer->GetDesc(&bufferDesc);
-		mConstantBufferMap[bufferDesc.Name] = GetDX11Device()->CreateConstantBuffer(bufferDesc.Size, i, bufferDesc.Name);
-	}
-	// @ end
 
 	//
 	for (unsigned int i = 0; i < shaderDescription.BoundResources; ++i)
@@ -69,7 +60,37 @@ void SSShader::ReflectCompiledShader(ID3D11ShaderReflection* shaderReflection)
 		{
 			mSamplerMap[desc.Name] = desc.BindPoint;
 		}
+		else if(desc.Type == D3D_SHADER_INPUT_TYPE::D3D_SIT_STRUCTURED)
+		{
+		
+		}
+		else if(desc.Type == D3D_SHADER_INPUT_TYPE::D3D_SIT_UAV_RWSTRUCTURED)
+		{
+		}
+		else
+		{
+			// other types
+		}
 	}
+	
+	for (unsigned int i = 0; i < shaderDescription.ConstantBuffers; ++i)
+	{		
+		ID3D11ShaderReflectionConstantBuffer* constantBuffer = shaderReflection->GetConstantBufferByIndex(i);
+		
+		D3D11_SHADER_BUFFER_DESC bufferDesc;
+		constantBuffer->GetDesc(&bufferDesc);
+		if(bufferDesc.Type == D3D_CBUFFER_TYPE::D3D_CT_CBUFFER)
+		{
+			// regular constant buffer
+			mConstantBufferMap[bufferDesc.Name] = GetDX11Device()->CreateConstantBuffer(bufferDesc.Size, i, bufferDesc.Name);
+		}
+		else
+		{
+		}
+	}
+	// @ end
+
+	
 }
 
 std::vector<std::string> SSShader::GetSamplerNames() 
@@ -302,6 +323,30 @@ void SSDX11VertexShader::SetSampler(ID3D11DeviceContext* deviceContext, std::str
 	 
 	 SetSampler(dxDeviceContext, name, sampler);
  }
+
+bool SSDX11ComputeShader::CompileFromFile(std::wstring filepath)
+{
+	ID3D10Blob* errorMsg = nullptr;
+	check(std::filesystem::exists(filepath));
+	D3DCompileFromFile(filepath.c_str(), nullptr, nullptr, "CSMain", "cs_5_0", 0, 0, &mShaderBuffer, &errorMsg);
+	if(errorMsg != nullptr)
+	{
+		PrintCompileError(errorMsg);
+		return false;
+	}
+	auto* dxDevice = SSDX11Renderer::Get().GetDevice();
+	HR(dxDevice->CreateComputeShader(mShaderBuffer->GetBufferPointer(), mShaderBuffer->GetBufferSize(), nullptr, &mComputeShader));
+	// @constant buffer reflection
+	ID3D11ShaderReflection* computeShaderReflection = nullptr;
+	HR(D3DReflect(mShaderBuffer->GetBufferPointer(), mShaderBuffer->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&computeShaderReflection));
+	ReflectCompiledShader(computeShaderReflection);
+	return true;
+}
+
+SSDX11ComputeShader::~SSDX11ComputeShader()
+{
+	ReleaseCOM(mComputeShader);
+}
 
 #pragma region PixelShader
 
