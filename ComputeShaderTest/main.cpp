@@ -5,6 +5,8 @@
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "dxguid.lib")
 
 struct float3 {
     float x, y, z;
@@ -39,6 +41,19 @@ int main() {
 
     ID3D11ComputeShader* computeShader = nullptr;
     HR(device->CreateComputeShader(csBlob->GetBufferPointer(), csBlob->GetBufferSize(), nullptr, &computeShader));
+    
+    ID3D11ShaderReflection* computeShaderReflection = nullptr;
+    HR(D3DReflect(csBlob->GetBufferPointer(), csBlob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&computeShaderReflection));
+
+    D3D11_SHADER_DESC shaderDescription;
+    HR(computeShaderReflection->GetDesc(&shaderDescription));
+
+    for (int i = 0; i < shaderDescription.BoundResources; ++i)
+    {
+        D3D11_SHADER_INPUT_BIND_DESC desc;
+        computeShaderReflection->GetResourceBindingDesc(i, &desc);
+        std::cout << desc.Name << std::endl;
+    }
     csBlob->Release();
 
     // --------------------------------------------------------
