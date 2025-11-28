@@ -67,6 +67,10 @@ void SSShader::ReflectCompiledShader(ID3D11ShaderReflection* shaderReflection)
 		else if(desc.Type == D3D_SHADER_INPUT_TYPE::D3D_SIT_UAV_RWSTRUCTURED)
 		{
 		}
+		else if(desc.Type == D3D_SHADER_INPUT_TYPE::D3D_SIT_CBUFFER)
+		{
+			// constant buffer
+		}
 		else
 		{
 			// other types
