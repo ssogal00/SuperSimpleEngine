@@ -30,6 +30,22 @@ enum class EVertexType : unsigned char
 	VT_PT, //
 };
 
+struct SSInstancedVertexData
+{
+public:	
+	SSInstancedVertexData(void* InInstanceDataPtr, unsigned int InInstanceStride, unsigned int InInstanceCount)
+		:InstanceDataPtr(InInstanceDataPtr)
+		,InstanceStride(InInstanceStride)
+		,InstanceCount(InInstanceCount)
+	{
+	}
+
+protected:
+	void* InstanceDataPtr = nullptr;
+	unsigned int InstanceStride = 0;
+	unsigned int InstanceCount = 0;
+};
+
 
 struct SSMeshVertexIndexData
 {
