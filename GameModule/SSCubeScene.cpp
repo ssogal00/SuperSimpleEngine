@@ -6,12 +6,12 @@
 
 void SSCubeScene::InitializeScene()
 {
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
 		std::shared_ptr<SSSphere> newSphere = std::make_shared<SSSphere>(static_cast<UINT>(20), static_cast<UINT>(20), 10.0f);
 		newSphere->SetPositionX(40);
 		//newSphere->SetPositionZ(i * 30);
-		newSphere->SetPositionY( i* 10);
+		newSphere->SetPositionY( i* 20);
 		mPBRSphereArray.push_back(newSphere);
 	}
 

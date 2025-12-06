@@ -24,8 +24,14 @@ public:
 	void SetVertexShaderName(const std::string& InVSName) { VertexShaderName = InVSName; }
 	void SetPixelShaderName(const std::string& InPSName) { PixelShaderName = InPSName; }
 
+	inline std::string GetVertexShaderName() const { return VertexShaderName; }
+	inline std::string GetPixelShaderName() const { return PixelShaderName; }
+
 	const std::map<std::string, SSConstantBufferData>& GetVSConstantBufferMap() const { return VSConstantBufferMap; }
 	const std::map<std::string, SSConstantBufferData>& GetPSConstantBufferMap() const { return PSConstantBufferMap; }
+
+	const std::map<std::string, std::string>& GetVSTextureMap() const { return VSTextureMap; }
+	const std::map<std::string, std::string>& GetPSTextureMap() const { return PSTextureMap; }
 
 private:
 	std::string VertexShaderName;

@@ -22,12 +22,13 @@ void SSCube::Tick(float delta)
 
 void SSCube::CreateRenderData()
 {		
-	mRenderData.VertexShaderName = "GBuffer.vs";
-	mRenderData.PixelShaderName = "GBuffer.ps";
-	mRenderData.PSTextureMap["DiffuseTex"] = "./Resource/Tex/rustediron/rustediron2_basecolor.dds";
-	mRenderData.PSTextureMap["NormalTex"] = "./Resource/Tex/rustediron/rustediron2_normal.dds";
-	mRenderData.PSTextureMap["MetalicTex"] = "./Resource/Tex/rustediron/rustediron2_metallic.dds";
-	mRenderData.PSTextureMap["RoughnessTex"] = "./Resource/Tex/rustediron/rustediron2_roughness.dds";		
+
+	mMaterialProxy->SetVertexShaderName("GBuffer.vs");
+	mMaterialProxy->SetPixelShaderName("GBuffer.ps");
+	mMaterialProxy->SetPSTextureParam("DiffuseTex", "./Resource/Tex/rustediron/rustediron2_basecolor.dds");
+	mMaterialProxy->SetPSTextureParam("NormalTex", "./Resource/Tex/rustediron/rustediron2_normal.dds");
+	mMaterialProxy->SetPSTextureParam("MetalicTex", "./Resource/Tex/rustediron/rustediron2_metallic.dds");
+	mMaterialProxy->SetPSTextureParam("RoughnessTex", "./Resource/Tex/rustediron/rustediron2_roughness.dds");
 
 	SSAlignedCBuffer<int, int, int, int, int> settings;
 	settings.value1 = 1; //metalic

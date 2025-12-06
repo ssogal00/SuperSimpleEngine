@@ -30,12 +30,12 @@ void SSSphere::CreateRenderData()
 {
 	SSAlignedCBuffer<int, int, int, int, int> settings;	
 	
-	mRenderData.VertexShaderName = "GBuffer.vs";
-	mRenderData.PixelShaderName = "GBuffer.ps";
-	mRenderData.PSTextureMap["DiffuseTex"] = "./Resource/Tex/rustediron/rustediron2_basecolor.dds";
-	mRenderData.PSTextureMap["NormalTex"] = "./Resource/Tex/rustediron/rustediron2_normal.dds";
-	mRenderData.PSTextureMap["MetalicTex"] = "./Resource/Tex/rustediron/rustediron2_metallic.dds";
-	mRenderData.PSTextureMap["RoughnessTex"] = "./Resource/Tex/rustediron/rustediron2_roughness.dds";
+	mMaterialProxy->SetPixelShaderName("GBuffer.ps");
+	mMaterialProxy->SetVertexShaderName("GBuffer.vs");
+	mMaterialProxy->SetPSTextureParam("DiffuseTex", "./Resource/Tex/rustediron/rustediron2_basecolor.dds");
+	mMaterialProxy->SetPSTextureParam("NormalTex", "./Resource/Tex/rustediron/rustediron2_normal.dds");
+	mMaterialProxy->SetPSTextureParam("MetalicTex", "./Resource/Tex/rustediron/rustediron2_metallic.dds");
+	mMaterialProxy->SetPSTextureParam("RoughnessTex", "./Resource/Tex/rustediron/rustediron2_roughness.dds");
 		
 	settings.value1 = 1; //metalic
 	settings.value2 = 0; //mask
@@ -87,13 +87,13 @@ void SSPBRSphere::Tick(float delta)
 
 void SSPBRSphere::CreateRenderData()
 {
-    mRenderData.VertexShaderName = "GBuffer.vs";
-    mRenderData.PixelShaderName = "GBuffer.ps";
+	mMaterialProxy->SetVertexShaderName("GBuffer.vs");
+	mMaterialProxy->SetPixelShaderName("GBuffer.ps");   
 
-    mRenderData.PSTextureMap["DiffuseTex"] = mDiffuseTexName;
-    mRenderData.PSTextureMap["NormalTex"] = mNormalTexName;
-    mRenderData.PSTextureMap["MetalicTex"] = mMetalTexName;
-    mRenderData.PSTextureMap["RoughnessTex"] = mRoughTexName;
+	mMaterialProxy->SetPSTextureParam("DiffuseTex", mDiffuseTexName);
+	mMaterialProxy->SetPSTextureParam("NormalTex", mNormalTexName);
+	mMaterialProxy->SetPSTextureParam("MetalicTex", mMetalTexName);
+	mMaterialProxy->SetPSTextureParam("RoughnessTex", mRoughTexName);
 }
 
 

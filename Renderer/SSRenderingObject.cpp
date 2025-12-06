@@ -59,8 +59,8 @@ void SSRenderingObject::Tick(float delta)
 
 void SSRenderingObject::CreateRenderCmdList()
 {
-	shared_ptr<SSDX11VertexShader> vs = SSShaderManager::Get().GetVertexShader(mRenderData.VertexShaderName);
-	shared_ptr<SSDX11PixelShader> ps = SSShaderManager::Get().GetPixelShader(mRenderData.PixelShaderName);
+	shared_ptr<SSDX11VertexShader> vs = SSShaderManager::Get().GetVertexShader(mMaterialProxy->GetVertexShaderName());
+	shared_ptr<SSDX11PixelShader> ps = SSShaderManager::Get().GetPixelShader(mMaterialProxy->GetPixelShaderName());
 	
 	RenderCmdList.push_back(new SSRenderCmdSetVS(vs));
 	RenderCmdList.push_back(new SSRenderCmdSetPS(ps));	
@@ -101,7 +101,7 @@ void SSRenderingObject::CreateRenderCmdList()
 		}
 	}
 	// @ set pixel shader texture
-	for (auto& [name, texture] : mRenderData.PSTextureMap)
+	for (auto& [name, texture] : mMaterialProxy->GetPSTextureMap())
 	{
 		const int SlotIndex = ps->GetTextureSlotIndex(name);
 		shared_ptr<SSDX11Texture2D> resource = SSTextureManager::Get().LoadTexture2D(GetDX11Device()->GetDeviceContext(), texture);
@@ -109,13 +109,13 @@ void SSRenderingObject::CreateRenderCmdList()
 	}
 
 	// @ set vertex shader texture 
-	for (auto& [name, texture] : mRenderData.VSTextureMap)
+	for (auto& [name, texture] : mMaterialProxy->GetVSTextureMap())
 	{
 		const int SlotIndex = vs->GetTextureSlotIndex(name);
 		shared_ptr<SSDX11Texture2D> resource = SSTextureManager::Get().LoadTexture2D(GetDX11Device()->GetDeviceContext(), texture);
 		RenderCmdList.push_back(new SSRenderCmdSetVSTexture(vs.get(), resource.get(), SlotIndex));
 	}
-
+	
 	if (mVertexData.bHasIndexData)
 	{
 		//
