@@ -36,8 +36,19 @@ include_directories("GameModule")
 include_directories("Core")
 
 
+# # 1. 셰이더 파일들을 모두 찾아서 변수에 저장합니다.
+file(GLOB_RECURSE SHADER_FILES 
+    "${CMAKE_CURRENT_SOURCE_DIR}/Shaders/*.vs"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Shaders/*.ps"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Shaders/*.cs"
+)
 
-add_executable(SuperSimpleEngine resource.h targetver.h SSAppWindow.h SSAppWindow.cpp SSApplication.cpp DXWindow.rc "Console/main.cpp")
+# 2. 솔루션 탐색기에서 보일 폴더(Filter) 이름을 지정합니다.
+# "Resources/Shaders" 처럼 경로 형식으로 쓰면 계층 구조가 생깁니다.
+source_group("Shaders" FILES ${SHADER_FILES})
+
+
+add_executable(SuperSimpleEngine resource.h targetver.h SSAppWindow.h SSAppWindow.cpp SSApplication.cpp DXWindow.rc "Console/main.cpp" ${SHADER_FILES})
 
 if(WIN32)
 	set_target_properties(SuperSimpleEngine PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:windows")	
@@ -75,3 +86,29 @@ set_target_properties(ConsoleApp PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:console
 set_target_properties(ConsoleApp PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:console")
 
 ###########################################################
+
+
+## ComputeShader Test app ##
+file(GLOB SOURCES "ComputeShaderTest/*.cpp")
+file(GLOB HEADERS "ComputeShaderTest/*.h")
+
+add_executable(ComputeShaderTest ${SOURCES} ${HEADERS})
+
+target_include_directories(ComputeShaderTest PUBLIC "Core" "Engine")
+
+target_link_libraries(ComputeShaderTest PRIVATE Core)
+target_compile_options(ComputeShaderTest PRIVATE /GR-)
+
+set_target_properties(ComputeShaderTest PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:console")
+set_target_properties(ComputeShaderTest PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:console")
+
+target_include_directories(ComputeShaderTest PUBLIC "Core" "Engine")
+
+target_link_libraries(ComputeShaderTest PRIVATE Core)
+target_compile_options(ComputeShaderTest PRIVATE /GR-)
+
+set_target_properties(ComputeShaderTest PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:console")
+set_target_properties(ComputeShaderTest PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:console")
+
+###########################################################
+
