@@ -23,6 +23,27 @@ void SSRenderCmdSetVS::Execute(ID3D11DeviceContext * inDeviceContext)
 	inDeviceContext->VSSetShader(mVS->GetShader(), nullptr, 0);
 }
 
+SSRenderCmdSetInstacedVertexBuffer::SSRenderCmdSetInstacedVertexBuffer(
+	std::shared_ptr<SSDX11VertexBuffer> inVB,
+	std::shared_ptr<SSDX11VertexBuffer> inInstanceVB)
+	: mVertexBuffer(inVB), mInstanceBuffer(inInstanceVB)
+{
+}
+
+void SSRenderCmdSetInstacedVertexBuffer::Execute(ID3D11DeviceContext* inDeviceContext)
+{
+	UINT strides[2] = { mVertexBuffer->GetStride(), mInstanceBuffer->GetStride() };
+	
+	UINT offsets[2] = { 0,0 };
+	
+	ID3D11Buffer* buffers[2] = 
+	{
+		(ID3D11Buffer*)mVertexBuffer->GetBufferPointer(),
+		(ID3D11Buffer*)mInstanceBuffer->GetBufferPointer()
+	};
+
+	inDeviceContext->IASetVertexBuffers(0, 2, buffers, strides, offsets);
+}
 
 void* SSRenderCmdSetVS::operator new(size_t size)
 {
@@ -47,7 +68,6 @@ void SSRenderCmdSetPS::Execute(ID3D11DeviceContext* inDeviceContext)
 SSRenderCmdSetVSTexture::SSRenderCmdSetVSTexture(SSDX11VertexShader* inVS, SSDX11Texture2D * inTex, unsigned int slotIndex)
 	:mVS(inVS), mTex(inTex),mSlotIndex(slotIndex)
 {
-
 }
 
 void SSRenderCmdSetVSTexture::Execute(ID3D11DeviceContext* inDeviceContext)
@@ -59,6 +79,17 @@ void SSRenderCmdSetVSTexture::Execute(ID3D11DeviceContext* inDeviceContext)
 		return;
 	}
 	inDeviceContext->VSSetShaderResources(mSlotIndex, 1, mTex->GetShaderResourceViewRef());
+}
+
+SSRenderCmdDrawIndexedInstanced::SSRenderCmdDrawIndexedInstanced(std::shared_ptr<SSDX11IndexBuffer> inBuffer, unsigned int InInstanceCount)
+	: mIndexBuffer(inBuffer), mInstanceCount(InInstanceCount)
+{
+}
+
+void SSRenderCmdDrawIndexedInstanced::Execute(ID3D11DeviceContext* inDeviceContext)
+{
+	inDeviceContext->IASetIndexBuffer((ID3D11Buffer*)mIndexBuffer->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0);
+	inDeviceContext->DrawIndexedInstanced(mIndexBuffer->GetIndexCount(), mInstanceCount, 0, 0, 0);
 }
 
 SSRenderCmdSetPSTexture::SSRenderCmdSetPSTexture(class SSDX11PixelShader* inPS, class SSDX11Texture2D* inTex, unsigned int slotIndex)

@@ -14,12 +14,16 @@
 
 SSRenderingObject::SSRenderingObject(SSObjectBase* pObject)
 	: mpObject(pObject)
-{
-	
+{	
 	mVertexData = pObject->GetVertexData();
 	mMaterialProxy = pObject->GetMaterialProxySharedPtr();
 	
 	mVertexBuffer = GetDX11Device()->CreateVertexBuffer(mVertexData.Stride, mVertexData.Count, mVertexData.DataPtr);
+
+	if (mVertexData.bHasInstanceData)
+	{
+		mInstancedDataBuffer = GetDX11Device()->CreateVertexBuffer(	mVertexData.InstanceStride,	mVertexData.InstanceCount,	mVertexData.InstanceDataPtr);
+	}
 	
 	// setup index data
 	if(mVertexData.bHasIndexData)
@@ -61,10 +65,18 @@ void SSRenderingObject::CreateRenderCmdList()
 {
 	shared_ptr<SSDX11VertexShader> vs = SSShaderManager::Get().GetVertexShader(mMaterialProxy->GetVertexShaderName());
 	shared_ptr<SSDX11PixelShader> ps = SSShaderManager::Get().GetPixelShader(mMaterialProxy->GetPixelShaderName());
-	
+
 	RenderCmdList.push_back(new SSRenderCmdSetVS(vs));
-	RenderCmdList.push_back(new SSRenderCmdSetPS(ps));	
-	RenderCmdList.push_back(new SSRenderCmdSetVertexBuffer(mVertexBuffer));
+	RenderCmdList.push_back(new SSRenderCmdSetPS(ps));
+
+	if (mVertexData.bHasInstanceData)
+	{
+		RenderCmdList.push_back(new SSRenderCmdSetInstacedVertexBuffer(mVertexBuffer, mInstancedDataBuffer));		
+	}
+	else
+	{
+		RenderCmdList.push_back(new SSRenderCmdSetVertexBuffer(mVertexBuffer));
+	}	
 
 	if (mVertexData.bHasIndexData)
 	{
@@ -118,6 +130,14 @@ void SSRenderingObject::CreateRenderCmdList()
 	
 	if (mVertexData.bHasIndexData)
 	{
+		if (mVertexData.bHasInstanceData)
+		{
+			RenderCmdList.push_back(new SSRenderCmdDrawIndexedInstanced(mIndexBuffer, mVertexData.InstanceCount));
+		}
+		else	
+		{
+			RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer));
+		}
 		//
 		RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer));
 	}

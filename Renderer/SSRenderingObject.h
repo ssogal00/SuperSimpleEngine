@@ -30,6 +30,7 @@ protected:
 	std::shared_ptr<SSMaterialProxy> mMaterialProxy;
 
 	std::shared_ptr<class SSDX11VertexBuffer> mVertexBuffer = nullptr;
+	std::shared_ptr<class SSDX11VertexBuffer> mInstancedDataBuffer = nullptr;	
 	std::shared_ptr<class SSDX11InstancedVertexBuffer> mInstancedVertexBuffer = nullptr;
 	std::shared_ptr<class SSDX11IndexBuffer> mIndexBuffer = nullptr;
 

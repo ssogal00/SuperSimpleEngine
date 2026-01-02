@@ -24,7 +24,6 @@ void SSRenderTargetCube::Draw(ID3D11DeviceContext *deviceContext)
 }
 
 
-
 void SSCubeMapRenderingSphere::Draw(ID3D11DeviceContext* deviceContext)
 {
     deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

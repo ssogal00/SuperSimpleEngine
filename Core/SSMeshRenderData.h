@@ -27,7 +27,6 @@ public:
 	SSInstancedVertexData() = default;
 	SSInstancedVertexData(const SSInstancedVertexData& rhs) = default;
 
-
 	void* InstanceDataPtr = nullptr;
 	unsigned int InstanceStride = 0;
 	unsigned int InstanceCount = 0;
