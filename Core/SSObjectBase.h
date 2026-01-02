@@ -13,8 +13,7 @@ public:
 	virtual void Destroy() {}	
 	virtual void Draw(ID3D11DeviceContext* deviceContext) {}
 	
-	virtual const SSMeshRenderData& GetRenderData();
-	//virtual const SSMaterialProxy& GetMaterialProxy();
+	
 	virtual std::shared_ptr<SSMaterialProxy> GetMaterialProxySharedPtr();
 	virtual const SSMeshVertexIndexData& GetVertexData();
 
@@ -39,7 +38,9 @@ public:
 
 	bool IsVisible() const { return mVisible; }
 
-	
+	bool IsInstanced() const { return false; }
+
+	void SetInstancedData(const SSInstancedVertexData& instanceData) {}
 
 protected:
 	virtual void CreateRenderData() {}
@@ -60,7 +61,6 @@ protected:
 	float mPitch = 0;
 	float mRoll = 0;
 	UINT mObjectId = 0;
-
 	
 	std::shared_ptr<class SSMaterial> mMaterial;
 	

@@ -33,9 +33,10 @@ protected:
 class GAMEMODULE_API SSInstancedSphere : public SSSphere
 {
 public:
-    SSInstancedSphere(UINT instanceCount, UINT sector, UINT stack, float radius);
+    SSInstancedSphere(UINT sector, UINT stack, float radius, const SSInstancedVertexData& instancedData);
 
 protected:
+	void CreateVertexData() override;
     virtual void CreateInstanceData() override;
     UINT mInstanceCount = 1; // at least one
 };

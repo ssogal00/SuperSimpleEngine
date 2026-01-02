@@ -16,6 +16,7 @@ public:
 	std::map<UINT, SSObjectBase*>& GetGameObjectMap() { return mGameObjectMap; }
 
 	UINT IssueObjectId() { return mNextObjectId++; }
+
 protected:	
 	friend class SSGameObject;
 	

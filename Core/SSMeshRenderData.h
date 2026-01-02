@@ -6,22 +6,6 @@
 
 using namespace DirectX;
 
-enum class EInstanceDataType : unsigned char
-{
-    IDT_FLOAT2,
-    IDT_FLOAT3,
-    IDT_FLOAT4,
-};
-
-struct SSInstanceData
-{
-public:
-    std::vector<XMFLOAT2> Float2InstancedData;
-    std::vector<XMFLOAT3> Float3InstancedData;
-    std::vector<XMFLOAT4> Float4InstancedData;
-
-    EInstanceDataType InstanceDataType = EInstanceDataType::IDT_FLOAT3;
-};
 
 enum class EVertexType : unsigned char
 {
@@ -40,7 +24,10 @@ public:
 	{
 	}
 
-protected:
+	SSInstancedVertexData() = default;
+	SSInstancedVertexData(const SSInstancedVertexData& rhs) = default;
+
+
 	void* InstanceDataPtr = nullptr;
 	unsigned int InstanceStride = 0;
 	unsigned int InstanceCount = 0;
@@ -59,6 +46,12 @@ public:
     std::vector<unsigned int> IndexData;	
 	D3D_PRIMITIVE_TOPOLOGY PrimitiveType = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	bool bHasIndexData = false;
+
+	// instanced data
+	unsigned int InstanceStride = 0;
+	unsigned int InstanceCount = 0;
+	void* InstanceDataPtr = nullptr;
+	bool bHasInstanceData = false;
 };
 
 // graphics api independent render data (whether it's opengl or directx...)

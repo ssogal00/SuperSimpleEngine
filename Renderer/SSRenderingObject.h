@@ -39,4 +39,6 @@ protected:
 	bool bIsTranslucent	 = false;
 
 	class SSMaterial* mMaterial = nullptr;
+
+	unsigned int mInstanceCount = 0;
 };

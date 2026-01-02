@@ -21,12 +21,6 @@ const SSMeshVertexIndexData& SSObjectBase::GetVertexData()
 }
 
 
-const SSMeshRenderData& SSObjectBase::GetRenderData()
-{
-	return mRenderData;
-}
-
-
 std::shared_ptr<SSMaterialProxy> SSObjectBase::GetMaterialProxySharedPtr()
 {
 	return mMaterialProxy->shared_from_this();

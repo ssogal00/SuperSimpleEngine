@@ -15,7 +15,7 @@
 SSRenderingObject::SSRenderingObject(SSObjectBase* pObject)
 	: mpObject(pObject)
 {
-	mRenderData = pObject->GetRenderData();
+	
 	mVertexData = pObject->GetVertexData();
 	mMaterialProxy = pObject->GetMaterialProxySharedPtr();
 	

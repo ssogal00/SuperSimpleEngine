@@ -97,8 +97,9 @@ void SSPBRSphere::CreateRenderData()
 }
 
 
-SSInstancedSphere::SSInstancedSphere(UINT instanceCount, UINT sector, UINT stack, float radius)
+SSInstancedSphere::SSInstancedSphere( UINT sector, UINT stack, float radius, const SSInstancedVertexData& instancedData)
 : SSSphere(sector,stack, radius)
+, mInstanceData(instancedData)
 {
     CreateInstanceData();
 }
@@ -106,4 +107,18 @@ SSInstancedSphere::SSInstancedSphere(UINT instanceCount, UINT sector, UINT stack
 void SSInstancedSphere::CreateInstanceData()
 {
 
+}
+
+void SSInstancedSphere::CreateVertexData()
+{
+	SSSimpleVertexData VertexData = SSSharedRenderData::Get().GetSphereVertexData();
+	mVertexData.Count = VertexData.Count;
+	mVertexData.Stride = VertexData.Stride;
+	mVertexData.DataPtr = VertexData.DataPtr;
+	mVertexData.bHasIndexData = false;
+
+	mVertexData.bHasInstanceData = true;
+	mVertexData.InstanceCount = mInstanceData.InstanceCount;
+	mVertexData.InstanceStride = mInstanceData.InstanceStride;
+	mVertexData.InstanceDataPtr = mInstanceData.InstanceDataPtr;
 }

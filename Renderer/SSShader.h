@@ -67,8 +67,6 @@ protected:
 	D3D11_SHADER_VERSION_TYPE mShaderType;
 };
 
-
-
 // vertex shader
 class SSDX11VertexShader : public SSShader
 {

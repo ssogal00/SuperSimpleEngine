@@ -22,7 +22,6 @@ void SSCube::Tick(float delta)
 
 void SSCube::CreateRenderData()
 {		
-
 	mMaterialProxy->SetVertexShaderName("GBuffer.vs");
 	mMaterialProxy->SetPixelShaderName("GBuffer.ps");
 	mMaterialProxy->SetPSTextureParam("DiffuseTex", "./Resource/Tex/rustediron/rustediron2_basecolor.dds");
