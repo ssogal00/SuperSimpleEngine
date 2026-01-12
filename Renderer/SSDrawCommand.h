@@ -52,16 +52,6 @@ public :
 };
 
 
-class SSChangeRenderTargetCmd : public SSDrawCmdBase
-{
-public:
-	SSChangeRenderTargetCmd(IRenderTarget* renderTarget);
-	
-	virtual void Do(SSDX11Device* deviceContext) override;
-protected:
-	IRenderTarget* mRenderTarget = nullptr;
-};
-
 class SSDrawCommand  : public SSDrawCmdBase
 {
 public:
