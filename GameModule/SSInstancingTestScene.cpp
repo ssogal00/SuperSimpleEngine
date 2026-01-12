@@ -7,13 +7,13 @@ void SSInstancingTestScene::InitializeScene()
 {
 	SSInstancedVertexData instanceData;	
 
-	const int instanceCount = 100;
+	const int instanceCount = 10;
 
 	for(int i = 0; i < instanceCount; ++i)
 	{
-		float x = static_cast<float>((i % 10) * 2.0f);
+		float x = static_cast<float>((i % 10) * 15.0f);
 		float y = 0.0f;
-		float z = static_cast<float>((i / 10) * 2.0f);
+		float z = static_cast<float>((i / 10) * 15.0f);
 		InstancePositions.push_back(XMFLOAT3(x, y, z));
 	}
 

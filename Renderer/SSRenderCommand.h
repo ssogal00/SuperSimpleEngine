@@ -154,6 +154,7 @@ private:
 	std::shared_ptr<SSDX11IndexBuffer> mIndexBuffer;
 };
 
+// draw with index buffer
 class SSRenderCmdDrawIndexed : public SSRenderCmdBase
 {
 public:
@@ -163,6 +164,7 @@ private:
 	std::shared_ptr<SSDX11IndexBuffer> mIndexBuffer;
 };
 
+// draw without index buffer
 class SSRenderCmdDrawWithoutIndex :public SSRenderCmdBase
 {
 public:
@@ -172,6 +174,23 @@ private:
 	unsigned int mVertexCount = 0;
 };
 
+// without index but instanced
+class SSRenderCmdDrawWithoutIndexInstanced : public SSRenderCmdBase
+{
+public:
+	SSRenderCmdDrawWithoutIndexInstanced(std::shared_ptr<class SSDX11VertexBuffer> inInstanceVB,
+		unsigned int InVertexCount,
+		unsigned int InInstanceCount);
+
+	virtual void Execute(ID3D11DeviceContext* inDeviceContext) override;
+private:
+	std::shared_ptr<SSDX11VertexBuffer> mInstanceBuffer;
+	unsigned int mInstanceCount = 0;
+	unsigned int mVertexCount = 0;
+};
+
+
+// with index instanced
 class SSRenderCmdDrawIndexedInstanced : public SSRenderCmdBase
 {
 public:
@@ -179,6 +198,7 @@ public:
 	virtual void Execute(ID3D11DeviceContext* inDeviceContext) override;
 private:
 	std::shared_ptr<SSDX11IndexBuffer> mIndexBuffer;
+	
 	unsigned int mInstanceCount = 0;
 };
 

@@ -19,8 +19,8 @@ protected:
 	UINT mStackCount = 5;
 	float mRadius = 5.0f;
 
-	void CreateVertexData() override;
-	void CreateRenderData() override;
+	virtual void CreateVertexData() override;
+	virtual void CreateRenderData() override;
 
 	float mRoughness = 0.1f;
 	float mMetalic = 0.9f;	
@@ -36,8 +36,7 @@ public:
     SSInstancedSphere(UINT sector, UINT stack, float radius, const SSInstancedVertexData& instancedData);	
 protected:
 	void CreateVertexData() override;
-    virtual void CreateInstanceData() override;
-
+	void CreateRenderData() override;
 	SSInstancedVertexData mInstanceData;
 };
 

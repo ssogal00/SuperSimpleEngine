@@ -206,11 +206,14 @@ void SSDX11VertexShader::CreateInputLayout(ID3D11ShaderReflection* shaderReflect
 
 		// instanced
 		string_view vertexAttributeName = inputDesc.SemanticName;
-		bool bInstanced = std::find(context.InstancedAttributes.begin(), context.InstancedAttributes.end(), vertexAttributeName) != context.InstancedAttributes.end();
+
+		bool bInstanced = vertexAttributeName.find("INSTANCE") != std::string::npos;
+
 		if(bInstanced)
         {
 		    inputDescriptions[i].InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA;
 		    inputDescriptions[i].InstanceDataStepRate = 1;
+			inputDescriptions[i].InputSlot = 1;
             inputDescriptions[i].AlignedByteOffset = 0;
         }
 		else
@@ -218,10 +221,10 @@ void SSDX11VertexShader::CreateInputLayout(ID3D11ShaderReflection* shaderReflect
             inputDescriptions[i].InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
             inputDescriptions[i].InstanceDataStepRate = 0;
             inputDescriptions[i].AlignedByteOffset = i == 0 ? 0 : D3D11_APPEND_ALIGNED_ELEMENT;
+			inputDescriptions[i].InputSlot = 0;
         }
 
 		inputDescriptions[i].SemanticIndex = semanticIndexMap[inputDesc.SemanticName];
-		inputDescriptions[i].InputSlot = 0;
 
 		byteOffset += SSDXTranslator::GetDXGIFormatByteSize(format);
 	}

@@ -101,17 +101,36 @@ SSInstancedSphere::SSInstancedSphere( UINT sector, UINT stack, float radius, con
 : SSSphere(sector,stack, radius)
 , mInstanceData(instancedData)
 {
-    CreateInstanceData();
+	CreateVertexData();
+	CreateRenderData();
 }
 
-void SSInstancedSphere::CreateInstanceData()
+void SSInstancedSphere::CreateRenderData()
 {
+	mMaterialProxy->SetVertexShaderName("DeferredInstanced.vs");
+	mMaterialProxy->SetPixelShaderName("GBuffer.ps");
+	
+	SSAlignedCBuffer<int, int, int, int, int> settings;
 
+	settings.value1 = 1; //metalic
+	settings.value2 = 0; //mask
+	settings.value3 = 1; //normal
+	settings.value4 = 1; // roghness
+	settings.value5 = 1; // diffuse
+	SSConstantBufferData Data{ settings };
+
+	mMaterialProxy->SetPSTextureParam("DiffuseTex", "./Resource/Tex/rustediron/rustediron2_basecolor.dds");
+	mMaterialProxy->SetPSTextureParam("NormalTex", "./Resource/Tex/rustediron/rustediron2_normal.dds");
+	mMaterialProxy->SetPSTextureParam("MetalicTex", "./Resource/Tex/rustediron/rustediron2_metallic.dds");
+	mMaterialProxy->SetPSTextureParam("RoughnessTex", "./Resource/Tex/rustediron/rustediron2_roughness.dds");
+
+	mMaterialProxy->SetPSConstantParam("TextureExist", Data);
 }
 
 void SSInstancedSphere::CreateVertexData()
 {
 	SSSimpleVertexData VertexData = SSSharedRenderData::Get().GetSphereVertexData();
+
 	mVertexData.Count = VertexData.Count;
 	mVertexData.Stride = VertexData.Stride;
 	mVertexData.DataPtr = VertexData.DataPtr;

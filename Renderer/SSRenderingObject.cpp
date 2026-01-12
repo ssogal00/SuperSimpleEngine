@@ -138,12 +138,17 @@ void SSRenderingObject::CreateRenderCmdList()
 		{
 			RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer));
 		}
-		//
-		RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer));
 	}
 	else
 	{
-		RenderCmdList.push_back(new SSRenderCmdDrawWithoutIndex(mVertexBuffer->GetVertexCount()));
+		if (mVertexData.bHasInstanceData)
+		{
+			RenderCmdList.push_back(new SSRenderCmdDrawWithoutIndexInstanced(mInstancedDataBuffer, mVertexData.Count, mVertexData.InstanceCount));
+		}
+		else
+		{
+			RenderCmdList.push_back(new SSRenderCmdDrawWithoutIndex(mVertexBuffer->GetVertexCount()));
+		}
 	}
 }
 

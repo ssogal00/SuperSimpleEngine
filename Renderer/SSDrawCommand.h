@@ -62,15 +62,6 @@ protected:
 	IRenderTarget* mRenderTarget = nullptr;
 };
 
-class SSDepthStateChangeCmd: public SSDrawCmdBase
-{
-public:
-	SSDepthStateChangeCmd();
-protected:
-	
-};
-
-
 class SSDrawCommand  : public SSDrawCmdBase
 {
 public:

@@ -92,6 +92,22 @@ void SSRenderCmdDrawIndexedInstanced::Execute(ID3D11DeviceContext* inDeviceConte
 	inDeviceContext->DrawIndexedInstanced(mIndexBuffer->GetIndexCount(), mInstanceCount, 0, 0, 0);
 }
 
+SSRenderCmdDrawWithoutIndexInstanced::SSRenderCmdDrawWithoutIndexInstanced(std::shared_ptr<SSDX11VertexBuffer> inInstanceVB,  
+	unsigned int InVertexCount, unsigned int InInstanceCount)
+	: mInstanceBuffer(inInstanceVB), mVertexCount(InVertexCount), mInstanceCount(InInstanceCount)
+{	
+}
+
+void SSRenderCmdDrawWithoutIndexInstanced::Execute(ID3D11DeviceContext* inDeviceContext)
+{
+	auto stride = mInstanceBuffer->GetStride();
+	UINT offset = 0;
+	check(mVertexCount > 0);
+	check(mInstanceCount > 0);
+	inDeviceContext->IASetVertexBuffers(1, 1, (ID3D11Buffer* const*)mInstanceBuffer->GetBufferPointerRef(), &stride, &offset);
+	inDeviceContext->DrawInstanced(mVertexCount, mInstanceCount, 0, 0);
+}
+
 SSRenderCmdSetPSTexture::SSRenderCmdSetPSTexture(class SSDX11PixelShader* inPS, class SSDX11Texture2D* inTex, unsigned int slotIndex)
 	: mPS(inPS), mTex(inTex), mSlotIndex(slotIndex)
 {
