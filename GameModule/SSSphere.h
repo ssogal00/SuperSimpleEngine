@@ -34,6 +34,7 @@ class GAMEMODULE_API SSInstancedSphere : public SSSphere
 {
 public:
     SSInstancedSphere(UINT sector, UINT stack, float radius, const SSInstancedVertexData& instancedData);	
+	void Tick(float delta) override;
 protected:
 	void CreateVertexData() override;
 	void CreateRenderData() override;

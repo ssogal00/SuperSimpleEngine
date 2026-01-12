@@ -141,3 +141,9 @@ void SSInstancedSphere::CreateVertexData()
 	mVertexData.InstanceStride = mInstanceData.InstanceStride;
 	mVertexData.InstanceDataPtr = mInstanceData.InstanceDataPtr;
 }
+
+void SSInstancedSphere::Tick(float delta)
+{
+	SSGameObject::Tick(delta);
+	//mYaw += 1.f * delta;
+}

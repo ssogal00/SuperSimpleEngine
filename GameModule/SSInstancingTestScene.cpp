@@ -7,21 +7,26 @@ void SSInstancingTestScene::InitializeScene()
 {
 	SSInstancedVertexData instanceData;	
 
-	const int instanceCount = 10;
-
-	for(int i = 0; i < instanceCount; ++i)
+	const int x = 5;
+	const int y = 5;
+	int instanceCount = 0;
+	for(int i = -x/2; i < x / 2; ++i)
 	{
-		float x = static_cast<float>((i % 10) * 15.0f);
-		float y = 0.0f;
-		float z = static_cast<float>((i / 10) * 15.0f);
-		InstancePositions.push_back(XMFLOAT3(x, y, z));
+		for(int j = -y/2; j < y / 2; ++j)
+		{
+			float posX = 50.f;
+			float posY = static_cast<float>(i * 20.0f);
+			float posZ = static_cast<float>(j * 20.0f);
+			InstancePositions.push_back(XMFLOAT3(posX, posY, posZ));
+			instanceCount++;
+		}
 	}
-
 	instanceData.InstanceCount = instanceCount;
 	instanceData.InstanceStride = sizeof(XMFLOAT3);
 	instanceData.InstanceDataPtr = InstancePositions.data();
 
 	InstancedSphereObject = std::make_shared<SSInstancedSphere>(static_cast<UINT>(20), static_cast<UINT>(20), 2.0f,instanceData);
+	InstancedSphereObject->SetPositionX(50);
 }
 
 void SSInstancingTestScene::DestroyScene()
