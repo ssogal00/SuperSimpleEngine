@@ -25,7 +25,6 @@ protected:
 
 	SSObjectBase* mpObject = nullptr;
 
-	SSMeshRenderData mRenderData;
 	SSMeshVertexIndexData mVertexData;
 	std::shared_ptr<SSMaterialProxy> mMaterialProxy;
 

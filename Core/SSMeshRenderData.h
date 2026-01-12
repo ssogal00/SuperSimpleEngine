@@ -52,17 +52,3 @@ public:
 	void* InstanceDataPtr = nullptr;
 	bool bHasInstanceData = false;
 };
-
-// graphics api independent render data (whether it's opengl or directx...)
-struct SSMeshRenderData
-{
-public:
-	std::string VertexShaderName;
-	std::string PixelShaderName;
-	//
-	std::map<std::string, SSConstantBufferData> VSConstantBufferMap;
-	std::map<std::string, SSConstantBufferData> PSConstantBufferMap;
-
-	std::map<std::string, std::string> VSTextureMap;
-	std::map<std::string, std::string> PSTextureMap;
-};

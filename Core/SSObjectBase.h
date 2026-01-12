@@ -13,7 +13,6 @@ public:
 	virtual void Destroy() {}	
 	virtual void Draw(ID3D11DeviceContext* deviceContext) {}
 	
-	
 	virtual std::shared_ptr<SSMaterialProxy> GetMaterialProxySharedPtr();
 	virtual const SSMeshVertexIndexData& GetVertexData();
 
@@ -48,7 +47,6 @@ protected:
 	virtual void CreateInstanceData() {}
 
 	SSMeshVertexIndexData mVertexData;
-	SSMeshRenderData mRenderData;
 	std::shared_ptr<SSMaterialProxy> mMaterialProxy;
 
 	friend class SSGameObjectManager;

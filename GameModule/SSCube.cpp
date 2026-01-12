@@ -37,8 +37,8 @@ void SSCube::CreateRenderData()
 	settings.value5 = 1; // diffuse
 
 	SSConstantBufferData proxy{ settings };	
-	
-	mRenderData.PSConstantBufferMap["TextureExist"] = std::move(proxy);
+
+	mMaterialProxy->SetPSConstantParam("TextureExist", proxy);
 }
 
 void SSCube::CreateVertexData()
