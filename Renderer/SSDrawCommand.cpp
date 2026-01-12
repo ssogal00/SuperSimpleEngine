@@ -28,16 +28,6 @@ void SSDrawObjectCommand::Do(SSDX11Device* device)
 }
 
 
-SSChangeRenderTargetCmd::SSChangeRenderTargetCmd(IRenderTarget* renderTarget)
-	: mRenderTarget(renderTarget)
-{	
-}
-
-void SSChangeRenderTargetCmd::Do(SSDX11Device* device)
-{
-	//mRenderTarget->SetCurrentRenderTarget(device);	
-}
-
 
 SSDrawCommand::SSDrawCommand(std::shared_ptr<SSDX11VertexShader> vs, std::shared_ptr<SSDX11PixelShader> ps, std::shared_ptr<SSObjectBase> object)
 	: mpVS(vs), mpPS(ps), mObject(object)
