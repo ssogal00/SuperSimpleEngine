@@ -168,7 +168,7 @@ namespace GLTF {
     public:
         static SSGLTF_V2 LoadGLTFFile(const std::string& InPath);
 
-
+        static std::vector<XMFLOAT3> ParseVector3s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength);
         
     protected:
         std::vector<std::string> Images;

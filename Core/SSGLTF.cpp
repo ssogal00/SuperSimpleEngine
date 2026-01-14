@@ -4,6 +4,37 @@
 #include <filesystem>
 
 namespace GLTF {
+
+	std::vector<XMFLOAT3> SSGLTF_V2::ParseVector3s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength)
+	{
+		std::vector<XMFLOAT3> Result;
+		HANDLE FileHandle = CreateFileA(InPath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		check(FileHandle != INVALID_HANDLE_VALUE);
+		DWORD BytesRead = 0;
+		std::vector<uint8_t> BufferData;
+		BufferData.resize(InByteLength);
+		SetFilePointer(FileHandle, static_cast<LONG>(InOffset), NULL, FILE_BEGIN);
+		BOOL ReadResult = ReadFile(FileHandle, BufferData.data(), static_cast<DWORD>(InByteLength), &BytesRead, NULL);
+		check(ReadResult == TRUE);
+
+		Result.resize(InCount);
+
+		const uint8_t* DataPtr = BufferData.data();
+
+		for (int i = 0; i < InCount; ++i)
+		{
+			float X = *reinterpret_cast<const float*>(DataPtr + i * 12 + 0);
+			float Y = *reinterpret_cast<const float*>(DataPtr + i * 12 + 4);
+			float Z = *reinterpret_cast<const float*>(DataPtr + i * 12 + 8);
+			Result[i] = XMFLOAT3(X, Y, Z);
+		}
+
+		CloseHandle(FileHandle);
+		
+		return Result;
+	}
+
+
 	SSGLTF_V2 SSGLTF_V2::LoadGLTFFile(const std::string& InPath)
 	{
 		simdjson::dom::parser Parser;
@@ -156,30 +187,21 @@ namespace GLTF {
 					Buffer& PositionBuffer = Result.Buffers[PositionBufferView.Buffer];
 					PositionBuffer.Uri;
 					std::string UriPath = BasePath + "/" + PositionBuffer.Uri;
-					HANDLE FileHandle = CreateFileA(UriPath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-					check(FileHandle != INVALID_HANDLE_VALUE);
-					DWORD BytesRead = 0;
-					std::vector<uint8_t> BufferData;
-					BufferData.resize(PositionBufferView.ByteLength);
-					SetFilePointer(FileHandle, static_cast<LONG>(PositionBufferView.ByteOffset), NULL, FILE_BEGIN);
-					BOOL ReadResult = ReadFile(FileHandle, BufferData.data(), static_cast<DWORD>(PositionBufferView.ByteLength), &BytesRead, NULL);
-					check(ReadResult == TRUE);
-
-					Result.Positions.resize(PositionAccessor.Count);
-
-					const uint8_t* DataPtr = BufferData.data();
-
-					for (int i = 0; i < PositionAccessor.Count; ++i)
-					{
-						float X = *reinterpret_cast<const float*>(DataPtr + i * 12 + 0);
-						float Y = *reinterpret_cast<const float*>(DataPtr + i * 12 + 4);
-						float Z = *reinterpret_cast<const float*>(DataPtr + i * 12 + 8);
-						Result.Positions[i] = XMFLOAT3(X, Y, Z);
-					}
-
-					CloseHandle(FileHandle);
+					Result.Positions = ParseVector3s(UriPath, PositionBufferView.ByteOffset, PositionAccessor.Count, PositionBufferView.ByteLength);
 				}
-				// Similar loading can be done for Normals, Texcoords, etc.
+
+				if(Primitive.Attributes.find("NORMAL") != Primitive.Attributes.end())
+				{
+					int AccessorIndex = Primitive.Attributes["NORMAL"];
+					Accessor& NormalAccessor = Result.Accessors[AccessorIndex];
+					BufferView& NormalBufferView = Result.BufferViews[NormalAccessor.BufferView];
+					Buffer& NormalBuffer = Result.Buffers[NormalBufferView.Buffer];
+					NormalBuffer.Uri;
+					std::string UriPath = BasePath + "/" + NormalBuffer.Uri;
+					Result.Normals = ParseVector3s(UriPath, NormalBufferView.ByteOffset, NormalAccessor.Count, NormalBufferView.ByteLength);
+				}
+
+				
 			}
 		}
 
