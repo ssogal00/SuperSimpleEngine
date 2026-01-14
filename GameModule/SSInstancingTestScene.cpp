@@ -2,9 +2,14 @@
 
 #include "SSInstancingTestScene.h"
 #include "SSSphere.h"
+#include "SSGLTF.h"
+
 
 void SSInstancingTestScene::InitializeScene()
 {
+	GLTF::SSGLTF_V2 Result = GLTF::SSGLTF_V2::LoadGLTFFile("./Resource/GLTF/DamagedHelmet/glTF/DamagedHelmet.gltf");
+
+
 	SSInstancedVertexData instanceData;	
 
 	const int x = 5;

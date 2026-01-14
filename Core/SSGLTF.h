@@ -63,6 +63,14 @@ namespace GLTF {
         int64_t ByteStride;
     };
 
+    class CORE_API TextureInfo
+    {
+    public:
+        int Sampler;
+        int Source;
+        std::string Name;
+    };
+
 
     class CORE_API MinMax
     {
@@ -127,10 +135,25 @@ namespace GLTF {
         int Index;
     };
 
+    class CORE_API PBRMetallicRoughness
+    {
+    public:
+        XMFLOAT3 BaseColorFactor;
+        float MetallicFactor;
+        float RoughnessFactor;
+
+        MetallicRoughnessTexture MetallicRoughnessTex;
+		BaseColorTexture BaseColorTex;
+		NormalTexture NormalTex;
+		EmissiveTexture EmissiveTex;
+    };
+
     class CORE_API Material
     {
     public:
-        
+		bool DoubleSided;
+        std::string Name;
+		PBRMetallicRoughness ThisMaterialPBRMetallicRoughness;
     };
 
     class CORE_API Mesh
@@ -152,6 +175,7 @@ namespace GLTF {
 		std::vector<Buffer> Buffers;
 		std::vector<Material> Materials;
 		std::vector<Mesh> Meshes;
+		std::vector<TextureInfo> Textures;
     };
 };
 

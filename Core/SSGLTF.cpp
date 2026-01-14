@@ -19,12 +19,12 @@ namespace GLTF {
 			{
 				auto PrimitiveObject = PrimitiveElement.get_object();
 				Primitive Prim{};
-				Prim.Mode = static_cast<int>(PrimitiveObject["mode"].get_int64().take_value());
+				// Prim.Mode = static_cast<int>(PrimitiveObject["mode"].get_int64().take_value());
 				auto AttributesObject = PrimitiveObject["attributes"].get_object();
 				for (auto Attribute : AttributesObject)
 				{
 					auto Key = Attribute.key;
-					auto Value = static_cast<int>(Attribute.value);
+					auto Value = static_cast<int>(Attribute.value.get_int64().take_value());
 					Prim.Attributes[std::string(Key)] = Value;
 				}
 				Prim.Indices = static_cast<int>(PrimitiveObject["indices"].get_int64().take_value());
@@ -77,31 +77,62 @@ namespace GLTF {
 			Buffer BufferObject{};
 			BufferObject.ByteLength = static_cast<int>(ByteLength.get_int64().take_value());
 			BufferObject.Uri = Uri.get_string().take_value();
-
 			Result.Buffers.push_back(BufferObject);
 		}
 
-		for(auto Element : GLTFJson["buffers"].get_array())
+		for(auto Element: GLTFJson["materials"].get_array())
 		{
 			auto JsonObject = Element.get_object();
-			auto ByteLength = JsonObject["byteLength"];
-			auto Uri = JsonObject["uri"];
-			Buffer BufferObject{};
-			BufferObject.ByteLength = static_cast<int>(ByteLength.get_int64().take_value());
-			BufferObject.Uri = Uri.get_string().take_value();
-			Result.Buffers.push_back(BufferObject);
+			
+			Material MaterialObject{};
+
+			auto PbrObject = JsonObject["pbrMetallicRoughness"].get_object();
+			PBRMetallicRoughness PbrMetallicRoughnessObject{};
+			if (PbrObject.at_key("baseColorTexture").error() == simdjson::error_code::SUCCESS)
+			{
+				PbrMetallicRoughnessObject.BaseColorTex.Index = static_cast<int>(PbrObject["baseColorTexture"]["index"].get_int64().take_value());
+			}
+
+			if (PbrObject.at_key("metallicRoughnessTexture").error() == simdjson::error_code::SUCCESS)
+			{
+				PbrMetallicRoughnessObject.MetallicRoughnessTex.Index = static_cast<int>(PbrObject["metallicRoughnessTexture"]["index"].get_int64().take_value());
+			}
+
+			if(PbrObject.at_key("baseColorFactor").error() == simdjson::error_code::SUCCESS)
+			{
+				auto ColorArray = PbrObject["baseColorFactor"].get_array();
+				PbrMetallicRoughnessObject.BaseColorFactor.x = static_cast<float>(ColorArray.at(0).get_double().take_value());
+				PbrMetallicRoughnessObject.BaseColorFactor.y = static_cast<float>(ColorArray.at(1).get_double().take_value());
+				PbrMetallicRoughnessObject.BaseColorFactor.z = static_cast<float>(ColorArray.at(2).get_double().take_value());
+			}
+
+			if(PbrObject.at_key("metallicFactor").error() == simdjson::error_code::SUCCESS)
+			{
+				PbrMetallicRoughnessObject.MetallicFactor = static_cast<float>(PbrObject["metallicFactor"].get_double().take_value());
+			}
+
+			if(PbrObject.at_key("roughnessFactor").error() == simdjson::error_code::SUCCESS)
+			{
+				PbrMetallicRoughnessObject.RoughnessFactor = static_cast<float>(PbrObject["roughnessFactor"].get_double().take_value());
+			}
+
+			MaterialObject.ThisMaterialPBRMetallicRoughness = PbrMetallicRoughnessObject;
+
+			Result.Materials.push_back(MaterialObject);
 		}
 
-
-
-		for (auto Image : GLTFJson["images"].get_array())
+		for (auto Texture : GLTFJson["textures"].get_array())
 		{
-			auto JsonObject = Image.get_object();
-
-			auto Uri = JsonObject["uri"];
+			auto JsonObject = Texture.get_object();
+			TextureInfo TextureObject{};
+			TextureObject.Sampler = static_cast<int>(JsonObject["sampler"].get_int64().take_value());
+			TextureObject.Source = static_cast<int>(JsonObject["source"].get_int64().take_value());
+			if (JsonObject["name"].get_string().error() == simdjson::error_code::SUCCESS)
+			{
+				TextureObject.Name = JsonObject["name"].get_string().take_value();
+			}
+			Result.Textures.push_back(TextureObject);
 		}
-
-
 
 		return Result;
 	}
