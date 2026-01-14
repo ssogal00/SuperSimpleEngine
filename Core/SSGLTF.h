@@ -49,18 +49,18 @@ namespace GLTF {
     public:
         int ByteLength;
         int Type;
-        int Uri;
+        std::string Uri;
     };
 
     class CORE_API BufferView
     {
     public:
-        int Buffer;
-        int ByteLength;
-        int ByteOffset;
-        int Target;
+        int64_t Buffer;
+        int64_t ByteLength;
+        int64_t ByteOffset;
+        int64_t Target;
         std::string Name;
-        int ByteStride;
+        int64_t ByteStride;
     };
 
 
@@ -149,6 +149,9 @@ namespace GLTF {
         std::vector<std::string> Images;
         std::vector<Accessor> Accessors;
         std::vector<BufferView> BufferViews;
+		std::vector<Buffer> Buffers;
+		std::vector<Material> Materials;
+		std::vector<Mesh> Meshes;
     };
 };
 

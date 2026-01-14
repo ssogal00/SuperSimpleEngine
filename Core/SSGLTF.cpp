@@ -10,6 +10,30 @@ namespace GLTF {
 
 		SSGLTF_V2 Result{};
 
+		for(auto Element: GLTFJson["meshes"].get_array())
+		{
+			auto JsonObject = Element.get_object();
+			Mesh MeshObject{};
+			MeshObject.Name = JsonObject["name"].get_string().take_value();
+			for (auto PrimitiveElement : JsonObject["primitives"].get_array())
+			{
+				auto PrimitiveObject = PrimitiveElement.get_object();
+				Primitive Prim{};
+				Prim.Mode = static_cast<int>(PrimitiveObject["mode"].get_int64().take_value());
+				auto AttributesObject = PrimitiveObject["attributes"].get_object();
+				for (auto Attribute : AttributesObject)
+				{
+					auto Key = Attribute.key;
+					auto Value = static_cast<int>(Attribute.value);
+					Prim.Attributes[std::string(Key)] = Value;
+				}
+				Prim.Indices = static_cast<int>(PrimitiveObject["indices"].get_int64().take_value());
+				Prim.Material = static_cast<int>(PrimitiveObject["material"].get_int64().take_value());
+				MeshObject.Primitives.push_back(Prim);
+			}
+			Result.Meshes.push_back(MeshObject);
+		}
+
 		for (auto Element : GLTFJson["accessors"].get_array())
 		{
 			auto JsonObject = Element.get_object();
@@ -40,7 +64,35 @@ namespace GLTF {
 			{
 				View.Name = JsonObject["name"].get_string().take_value();
 			}
+
+			Result.BufferViews.push_back(View);
 		}
+
+		for (auto Element : GLTFJson["buffers"].get_array())
+		{
+			auto JsonObject = Element.get_object();
+			auto ByteLength = JsonObject["byteLength"];
+			auto Uri = JsonObject["uri"];
+
+			Buffer BufferObject{};
+			BufferObject.ByteLength = static_cast<int>(ByteLength.get_int64().take_value());
+			BufferObject.Uri = Uri.get_string().take_value();
+
+			Result.Buffers.push_back(BufferObject);
+		}
+
+		for(auto Element : GLTFJson["buffers"].get_array())
+		{
+			auto JsonObject = Element.get_object();
+			auto ByteLength = JsonObject["byteLength"];
+			auto Uri = JsonObject["uri"];
+			Buffer BufferObject{};
+			BufferObject.ByteLength = static_cast<int>(ByteLength.get_int64().take_value());
+			BufferObject.Uri = Uri.get_string().take_value();
+			Result.Buffers.push_back(BufferObject);
+		}
+
+
 
 		for (auto Image : GLTFJson["images"].get_array())
 		{
