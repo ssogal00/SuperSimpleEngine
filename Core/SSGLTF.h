@@ -168,6 +168,8 @@ namespace GLTF {
     public:
         static SSGLTF_V2 LoadGLTFFile(const std::string& InPath);
 
+
+        
     protected:
         std::vector<std::string> Images;
         std::vector<Accessor> Accessors;
@@ -176,6 +178,10 @@ namespace GLTF {
 		std::vector<Material> Materials;
 		std::vector<Mesh> Meshes;
 		std::vector<TextureInfo> Textures;
+
+		std::vector<XMFLOAT3> Positions;
+		std::vector<XMFLOAT3> Normals;
+		std::vector<XMFLOAT2> Texcoords;
     };
 };
 

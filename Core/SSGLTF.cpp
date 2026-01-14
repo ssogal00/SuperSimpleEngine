@@ -1,6 +1,7 @@
 #include "SSGLTF.h"
 #include "simdjson.h"
 #include "simdjson/error.h"
+#include <filesystem>
 
 namespace GLTF {
 	SSGLTF_V2 SSGLTF_V2::LoadGLTFFile(const std::string& InPath)
@@ -10,6 +11,7 @@ namespace GLTF {
 
 		SSGLTF_V2 Result{};
 
+#pragma region ParseGLTF
 		for(auto Element: GLTFJson["meshes"].get_array())
 		{
 			auto JsonObject = Element.get_object();
@@ -132,6 +134,53 @@ namespace GLTF {
 				TextureObject.Name = JsonObject["name"].get_string().take_value();
 			}
 			Result.Textures.push_back(TextureObject);
+		}
+
+#pragma endregion
+
+		
+
+		for (auto& Mesh : Result.Meshes)
+		{
+			for (auto& Primitive : Mesh.Primitives)
+			{
+				std::string BasePath = std::filesystem::path(InPath).parent_path().string();
+				
+
+				// Load Positions
+				if (Primitive.Attributes.find("POSITION") != Primitive.Attributes.end())
+				{
+					int AccessorIndex = Primitive.Attributes["POSITION"];
+					Accessor& PositionAccessor = Result.Accessors[AccessorIndex];
+					BufferView& PositionBufferView = Result.BufferViews[PositionAccessor.BufferView];
+					Buffer& PositionBuffer = Result.Buffers[PositionBufferView.Buffer];
+					PositionBuffer.Uri;
+					std::string UriPath = BasePath + "/" + PositionBuffer.Uri;
+					HANDLE FileHandle = CreateFileA(UriPath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+					check(FileHandle != INVALID_HANDLE_VALUE);
+					DWORD BytesRead = 0;
+					std::vector<uint8_t> BufferData;
+					BufferData.resize(PositionBufferView.ByteLength);
+					SetFilePointer(FileHandle, static_cast<LONG>(PositionBufferView.ByteOffset), NULL, FILE_BEGIN);
+					BOOL ReadResult = ReadFile(FileHandle, BufferData.data(), static_cast<DWORD>(PositionBufferView.ByteLength), &BytesRead, NULL);
+					check(ReadResult == TRUE);
+
+					Result.Positions.resize(PositionAccessor.Count);
+
+					const uint8_t* DataPtr = BufferData.data();
+
+					for (int i = 0; i < PositionAccessor.Count; ++i)
+					{
+						float X = *reinterpret_cast<const float*>(DataPtr + i * 12 + 0);
+						float Y = *reinterpret_cast<const float*>(DataPtr + i * 12 + 4);
+						float Z = *reinterpret_cast<const float*>(DataPtr + i * 12 + 8);
+						Result.Positions[i] = XMFLOAT3(X, Y, Z);
+					}
+
+					CloseHandle(FileHandle);
+				}
+				// Similar loading can be done for Normals, Texcoords, etc.
+			}
 		}
 
 		return Result;
