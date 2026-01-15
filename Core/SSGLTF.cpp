@@ -303,6 +303,12 @@ namespace GLTF {
 
 		for (auto& Mesh : Result.Meshes)
 		{
+			unsigned int CurrentPositionOffset = 0;
+			unsigned int CurrentNormalOffset = 0;
+			unsigned int CurrentTangentOffset = 0;
+			unsigned int CurrentTexcoordOffset = 0;
+			unsigned int CurrentIndexOffset = 0;
+
 			for (auto& Primitive : Mesh.Primitives)
 			{
 				std::string BasePath = std::filesystem::path(InPath).parent_path().string();
@@ -319,6 +325,8 @@ namespace GLTF {
 					PositionBuffer.Uri;
 					std::string UriPath = BasePath + "/" + PositionBuffer.Uri;
 					Result.MeshVertexDataMap[MeshKey].Positions = ParseVector3s(UriPath, PositionBufferView.ByteOffset, PositionAccessor.Count, PositionBufferView.ByteLength);
+					Result.MeshVertexDataMap[MeshKey].PostionOffsetInBytes = CurrentPositionOffset;
+					CurrentPositionOffset += static_cast<unsigned int>(PositionBufferView.ByteLength);
 				}
 
 				if(Primitive.Attributes.find("NORMAL") != Primitive.Attributes.end())
@@ -330,6 +338,8 @@ namespace GLTF {
 					NormalBuffer.Uri;
 					std::string UriPath = BasePath + "/" + NormalBuffer.Uri;
 					Result.MeshVertexDataMap[MeshKey].Normals = ParseVector3s(UriPath, NormalBufferView.ByteOffset, NormalAccessor.Count, NormalBufferView.ByteLength);
+					Result.MeshVertexDataMap[MeshKey].NormalOffsetInBytes = CurrentNormalOffset;
+					CurrentNormalOffset += static_cast<unsigned int>(NormalBufferView.ByteLength);
 				}
 
 				if(Primitive.Attributes.find("TANGENT") != Primitive.Attributes.end())
@@ -341,6 +351,8 @@ namespace GLTF {
 					TangentBuffer.Uri;
 					std::string UriPath = BasePath + "/" + TangentBuffer.Uri;
 					Result.MeshVertexDataMap[MeshKey].Tangents = ParseVector4s(UriPath, TangentBufferView.ByteOffset, TangentAccessor.Count, TangentBufferView.ByteLength);
+					Result.MeshVertexDataMap[MeshKey].TangentsOffsetInBytes = CurrentTangentOffset;
+					CurrentTangentOffset += static_cast<unsigned int>(TangentBufferView.ByteLength);
 				}
 
 				if(Primitive.Attributes.find("TEXCOORD_0") != Primitive.Attributes.end())
@@ -352,6 +364,8 @@ namespace GLTF {
 					TexcoordBuffer.Uri;
 					std::string UriPath = BasePath + "/" + TexcoordBuffer.Uri;
 					Result.MeshVertexDataMap[MeshKey].Texcoords = ParseVector2s(UriPath, TexcoordBufferView.ByteOffset, TexcoordAccessor.Count, TexcoordBufferView.ByteLength);
+					Result.MeshVertexDataMap[MeshKey].TexcoordsOffsetInBytes = CurrentTexcoordOffset;
+					CurrentTexcoordOffset += static_cast<unsigned int>(TexcoordBufferView.ByteLength);
 				}
 
 				if(Primitive.Indices != -1)
@@ -363,6 +377,8 @@ namespace GLTF {
 					IndexBuffer.Uri;
 					std::string UriPath = BasePath + "/" + IndexBuffer.Uri;
 					Result.MeshVertexDataMap[MeshKey].Indices = ParseUInt16s(UriPath, IndexBufferView.ByteOffset, IndexAccessor.Count, IndexBufferView.ByteLength);
+					Result.MeshVertexDataMap[MeshKey].IndexOffsetInBytes = CurrentIndexOffset;
+					CurrentIndexOffset += static_cast<unsigned int>(IndexBufferView.ByteLength);
 				}
 			}
 		}

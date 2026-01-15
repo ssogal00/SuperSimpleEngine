@@ -185,6 +185,11 @@ namespace GLTF {
         std::vector<XMFLOAT2> Texcoords;
 		std::vector<uint16_t> Indices;
 
+        unsigned int PostionOffsetInBytes = 0;
+        unsigned int NormalOffsetInBytes = 0;
+        unsigned int TangentsOffsetInBytes = 0;
+        unsigned int TexcoordsOffsetInBytes = 0;
+        unsigned int IndexOffsetInBytes = 0;
     };
 
     class CORE_API SSGLTF_V2

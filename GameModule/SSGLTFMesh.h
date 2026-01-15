@@ -6,4 +6,6 @@
 class GAMEMODULE_API SSGLTFMesh
 {
 public:
+
+
 };

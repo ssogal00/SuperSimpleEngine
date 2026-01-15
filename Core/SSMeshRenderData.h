@@ -40,10 +40,12 @@ public:
 	unsigned int Stride = 0;
 	unsigned int Count	= 0;
 	void* DataPtr = nullptr;
+	unsigned int VertexBufferOffset = 0;
 	
 	// index datas 
     std::vector<unsigned int> IndexData;	
 	D3D_PRIMITIVE_TOPOLOGY PrimitiveType = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	unsigned int IndexBufferOffset = 0;
 	bool bHasIndexData = false;
 
 	// instanced data
