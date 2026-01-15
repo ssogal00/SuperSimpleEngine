@@ -54,3 +54,26 @@ public:
 	void* InstanceDataPtr = nullptr;
 	bool bHasInstanceData = false;
 };
+
+struct VertexAttributeData
+{
+public:
+	unsigned int Stride = 0;
+	unsigned int Count = 0;
+	void* DataPtr = nullptr;
+	unsigned int VertexBufferOffset = 0;
+};
+
+struct SSGLTFMeshVertexIndexData
+{
+public:
+	std::vector<unsigned int> PositionOffsetList;
+	std::vector<unsigned int> NormalOffsetList;
+	std::vector<unsigned int> TangentOffsetList;
+	std::vector<unsigned int> TexcoordOffsetList;
+	std::vector<unsigned int> IndexOffsetList;
+
+
+
+	unsigned int Count = 0;
+};

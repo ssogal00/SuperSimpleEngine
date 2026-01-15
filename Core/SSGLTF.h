@@ -213,6 +213,20 @@ namespace GLTF {
 
 		std::map<std::string, GLTFVertexData> MeshVertexDataMap;
 
+
+		// we only need these merged data for creating single big buffers
+        std::vector<XMFLOAT3> MergedPositions;
+        std::vector<XMFLOAT3> MergedNormals;
+		std::vector<XMFLOAT4> MergedTangents;
+		std::vector<XMFLOAT2> MergedTexcoords;
+		std::vector<uint16_t> MergedIndices;
+
+        std::vector<unsigned int> PositionOffsetListInBytes;
+        std::vector<unsigned int> NormalOffsetListInBytes;
+        std::vector<unsigned int> TangentOffsetListInBytes;
+        std::vector<unsigned int> TexcoordOffsetListInBytes;
+        std::vector<unsigned int> IndexOffsetListInBytes;
+
     };
 };
 

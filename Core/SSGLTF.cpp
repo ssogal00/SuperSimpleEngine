@@ -301,14 +301,14 @@ namespace GLTF {
 #pragma endregion
 
 
+		unsigned int CurrentPositionOffset = 0;
+		unsigned int CurrentNormalOffset = 0;
+		unsigned int CurrentTangentOffset = 0;
+		unsigned int CurrentTexcoordOffset = 0;
+		unsigned int CurrentIndexOffset = 0;
+
 		for (auto& Mesh : Result.Meshes)
 		{
-			unsigned int CurrentPositionOffset = 0;
-			unsigned int CurrentNormalOffset = 0;
-			unsigned int CurrentTangentOffset = 0;
-			unsigned int CurrentTexcoordOffset = 0;
-			unsigned int CurrentIndexOffset = 0;
-
 			for (auto& Primitive : Mesh.Primitives)
 			{
 				std::string BasePath = std::filesystem::path(InPath).parent_path().string();
@@ -326,9 +326,15 @@ namespace GLTF {
 					std::string UriPath = BasePath + "/" + PositionBuffer.Uri;
 					Result.MeshVertexDataMap[MeshKey].Positions = ParseVector3s(UriPath, PositionBufferView.ByteOffset, PositionAccessor.Count, PositionBufferView.ByteLength);
 					Result.MeshVertexDataMap[MeshKey].PostionOffsetInBytes = CurrentPositionOffset;
+					
+					Result.MergedPositions.insert(Result.MergedPositions.end(),
+						Result.MeshVertexDataMap[MeshKey].Positions.begin(),
+						Result.MeshVertexDataMap[MeshKey].Positions.end());
+
+					Result.PositionOffsetListInBytes.push_back(CurrentPositionOffset);
 					CurrentPositionOffset += static_cast<unsigned int>(PositionBufferView.ByteLength);
 				}
-
+				// Parse Normals
 				if(Primitive.Attributes.find("NORMAL") != Primitive.Attributes.end())
 				{
 					int AccessorIndex = Primitive.Attributes["NORMAL"];
@@ -339,9 +345,16 @@ namespace GLTF {
 					std::string UriPath = BasePath + "/" + NormalBuffer.Uri;
 					Result.MeshVertexDataMap[MeshKey].Normals = ParseVector3s(UriPath, NormalBufferView.ByteOffset, NormalAccessor.Count, NormalBufferView.ByteLength);
 					Result.MeshVertexDataMap[MeshKey].NormalOffsetInBytes = CurrentNormalOffset;
+
+					Result.MergedNormals.insert(Result.MergedNormals.end(),
+						Result.MeshVertexDataMap[MeshKey].Normals.begin(),
+						Result.MeshVertexDataMap[MeshKey].Normals.end());
+
+					Result.NormalOffsetListInBytes.push_back(CurrentNormalOffset);
+
 					CurrentNormalOffset += static_cast<unsigned int>(NormalBufferView.ByteLength);
 				}
-
+				// Parse Tangents
 				if(Primitive.Attributes.find("TANGENT") != Primitive.Attributes.end())
 				{
 					int AccessorIndex = Primitive.Attributes["TANGENT"];
@@ -352,6 +365,13 @@ namespace GLTF {
 					std::string UriPath = BasePath + "/" + TangentBuffer.Uri;
 					Result.MeshVertexDataMap[MeshKey].Tangents = ParseVector4s(UriPath, TangentBufferView.ByteOffset, TangentAccessor.Count, TangentBufferView.ByteLength);
 					Result.MeshVertexDataMap[MeshKey].TangentsOffsetInBytes = CurrentTangentOffset;
+
+					Result.MergedTangents.insert(Result.MergedTangents.end(),
+					Result.MeshVertexDataMap[MeshKey].Tangents.begin(),
+					Result.MeshVertexDataMap[MeshKey].Tangents.end());
+
+					Result.TangentOffsetListInBytes.push_back(CurrentTangentOffset);
+
 					CurrentTangentOffset += static_cast<unsigned int>(TangentBufferView.ByteLength);
 				}
 
@@ -365,6 +385,13 @@ namespace GLTF {
 					std::string UriPath = BasePath + "/" + TexcoordBuffer.Uri;
 					Result.MeshVertexDataMap[MeshKey].Texcoords = ParseVector2s(UriPath, TexcoordBufferView.ByteOffset, TexcoordAccessor.Count, TexcoordBufferView.ByteLength);
 					Result.MeshVertexDataMap[MeshKey].TexcoordsOffsetInBytes = CurrentTexcoordOffset;
+
+					Result.MergedTexcoords.insert(Result.MergedTexcoords.end(),
+						Result.MeshVertexDataMap[MeshKey].Texcoords.begin(),
+						Result.MeshVertexDataMap[MeshKey].Texcoords.end());
+
+					Result.TexcoordOffsetListInBytes.push_back(CurrentTexcoordOffset);
+
 					CurrentTexcoordOffset += static_cast<unsigned int>(TexcoordBufferView.ByteLength);
 				}
 
@@ -378,6 +405,13 @@ namespace GLTF {
 					std::string UriPath = BasePath + "/" + IndexBuffer.Uri;
 					Result.MeshVertexDataMap[MeshKey].Indices = ParseUInt16s(UriPath, IndexBufferView.ByteOffset, IndexAccessor.Count, IndexBufferView.ByteLength);
 					Result.MeshVertexDataMap[MeshKey].IndexOffsetInBytes = CurrentIndexOffset;
+
+					Result.MergedIndices.insert(Result.MergedIndices.end(),
+						Result.MeshVertexDataMap[MeshKey].Indices.begin(),
+						Result.MeshVertexDataMap[MeshKey].Indices.end());
+
+					Result.IndexOffsetListInBytes.push_back(CurrentIndexOffset);
+
 					CurrentIndexOffset += static_cast<unsigned int>(IndexBufferView.ByteLength);
 				}
 			}
