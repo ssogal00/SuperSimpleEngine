@@ -83,6 +83,26 @@ namespace GLTF {
 		return Result;
 	}
 
+	std::vector<uint16_t> SSGLTF_V2::ParseUInt16s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength)
+	{
+		std::vector<uint16_t> Result;
+		OpenFileAndSetPointer FileReader(InPath, InOffset);
+		DWORD BytesRead = 0;
+		std::vector<uint8_t> BufferData;
+		BufferData.resize(InByteLength);
+		BOOL ReadResult = ReadFile(FileReader.GetFileHandle(),
+			BufferData.data(), static_cast<DWORD>(InByteLength), &BytesRead, NULL);
+		check(ReadResult == TRUE);
+		Result.resize(InCount);
+		const uint8_t* DataPtr = BufferData.data();
+		for (int i = 0; i < InCount; ++i)
+		{
+			uint16_t Value = *reinterpret_cast<const uint16_t*>(DataPtr + i * 2);
+			Result[i] = Value;
+		}
+		return Result;
+	}
+
 	std::vector<XMFLOAT4> SSGLTF_V2::ParseVector4s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength)
 	{
 		std::vector<XMFLOAT4> Result;
@@ -138,7 +158,17 @@ namespace GLTF {
 					auto Value = static_cast<int>(Attribute.value.get_int64().take_value());
 					Prim.Attributes[std::string(Key)] = Value;
 				}
-				Prim.Indices = static_cast<int>(PrimitiveObject["indices"].get_int64().take_value());
+
+				if (PrimitiveObject.at_key("indices").error() == simdjson::error_code::SUCCESS)
+				{
+					Prim.Indices = static_cast<int>(PrimitiveObject["indices"].get_int64().take_value());
+				}
+				else
+				{
+					Prim.Indices = -1;
+				}
+
+
 				Prim.Material = static_cast<int>(PrimitiveObject["material"].get_int64().take_value());
 				MeshObject.Primitives.push_back(Prim);
 			}
@@ -322,6 +352,17 @@ namespace GLTF {
 					TexcoordBuffer.Uri;
 					std::string UriPath = BasePath + "/" + TexcoordBuffer.Uri;
 					Result.MeshVertexDataMap[MeshKey].Texcoords = ParseVector2s(UriPath, TexcoordBufferView.ByteOffset, TexcoordAccessor.Count, TexcoordBufferView.ByteLength);
+				}
+
+				if(Primitive.Indices != -1)
+				{
+					int AccessorIndex = Primitive.Indices;
+					Accessor& IndexAccessor = Result.Accessors[AccessorIndex];
+					BufferView& IndexBufferView = Result.BufferViews[IndexAccessor.BufferView];
+					Buffer& IndexBuffer = Result.Buffers[IndexBufferView.Buffer];
+					IndexBuffer.Uri;
+					std::string UriPath = BasePath + "/" + IndexBuffer.Uri;
+					Result.MeshVertexDataMap[MeshKey].Indices = ParseUInt16s(UriPath, IndexBufferView.ByteOffset, IndexAccessor.Count, IndexBufferView.ByteLength);
 				}
 			}
 		}

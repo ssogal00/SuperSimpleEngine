@@ -101,7 +101,7 @@ namespace GLTF {
     public:
         int Mode;
         std::map<std::string, int> Attributes;
-        int Indices;
+        int Indices = -1;
         int Material;
     };
 
@@ -183,6 +183,8 @@ namespace GLTF {
         std::vector<XMFLOAT3> Normals;
         std::vector<XMFLOAT4> Tangents;
         std::vector<XMFLOAT2> Texcoords;
+		std::vector<uint16_t> Indices;
+
     };
 
     class CORE_API SSGLTF_V2
@@ -193,6 +195,7 @@ namespace GLTF {
         static std::vector<XMFLOAT3> ParseVector3s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength);
 		static std::vector<XMFLOAT2> ParseVector2s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength);
 		static std::vector<XMFLOAT4> ParseVector4s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength);
+		static std::vector<uint16_t> ParseUInt16s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength);
         
     protected:
         std::vector<std::string> Images;
