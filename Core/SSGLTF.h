@@ -163,12 +163,27 @@ namespace GLTF {
         std::vector<Primitive> Primitives;
     };
 
+    class CORE_API OpenFileAndSetPointer
+    {
+    public:
+        OpenFileAndSetPointer(const std::string& InPath, int64_t InOffset);
+        ~OpenFileAndSetPointer();
+        HANDLE GetFileHandle() const {
+            return FileHandle; ;
+        }
+
+    protected:
+        HANDLE FileHandle = INVALID_HANDLE_VALUE;
+    };
+
     class CORE_API SSGLTF_V2
     {
     public:
         static SSGLTF_V2 LoadGLTFFile(const std::string& InPath);
 
         static std::vector<XMFLOAT3> ParseVector3s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength);
+		static std::vector<XMFLOAT2> ParseVector2s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength);
+		static std::vector<XMFLOAT4> ParseVector4s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength);
         
     protected:
         std::vector<std::string> Images;
@@ -181,6 +196,7 @@ namespace GLTF {
 
 		std::vector<XMFLOAT3> Positions;
 		std::vector<XMFLOAT3> Normals;
+        std::vector<XMFLOAT4> Tangents;
 		std::vector<XMFLOAT2> Texcoords;
     };
 };

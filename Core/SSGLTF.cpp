@@ -5,16 +5,39 @@
 
 namespace GLTF {
 
+	OpenFileAndSetPointer::OpenFileAndSetPointer(const std::string& InPath, int64_t InOffset)
+	{
+		FileHandle = CreateFileA(InPath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (FileHandle == INVALID_HANDLE_VALUE)
+		{
+			check(false);
+		}
+		LARGE_INTEGER li;
+		li.QuadPart = InOffset;
+		SetFilePointerEx(FileHandle, li, NULL, FILE_BEGIN);
+	}
+
+	OpenFileAndSetPointer::~OpenFileAndSetPointer()
+	{
+		if (FileHandle != INVALID_HANDLE_VALUE)
+		{
+			CloseHandle(FileHandle);
+			FileHandle = INVALID_HANDLE_VALUE;
+		}
+	}
+
 	std::vector<XMFLOAT3> SSGLTF_V2::ParseVector3s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength)
 	{
 		std::vector<XMFLOAT3> Result;
-		HANDLE FileHandle = CreateFileA(InPath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		check(FileHandle != INVALID_HANDLE_VALUE);
+
+		OpenFileAndSetPointer FileReader(InPath, InOffset);
+
 		DWORD BytesRead = 0;
 		std::vector<uint8_t> BufferData;
 		BufferData.resize(InByteLength);
-		SetFilePointer(FileHandle, static_cast<LONG>(InOffset), NULL, FILE_BEGIN);
-		BOOL ReadResult = ReadFile(FileHandle, BufferData.data(), static_cast<DWORD>(InByteLength), &BytesRead, NULL);
+		
+		BOOL ReadResult = ReadFile(FileReader.GetFileHandle(), 
+			BufferData.data(), static_cast<DWORD>(InByteLength), &BytesRead, NULL);
 		check(ReadResult == TRUE);
 
 		Result.resize(InCount);
@@ -28,12 +51,67 @@ namespace GLTF {
 			float Z = *reinterpret_cast<const float*>(DataPtr + i * 12 + 8);
 			Result[i] = XMFLOAT3(X, Y, Z);
 		}
-
-		CloseHandle(FileHandle);
 		
 		return Result;
 	}
 
+	std::vector<XMFLOAT2> SSGLTF_V2::ParseVector2s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength)
+	{
+		std::vector<XMFLOAT2> Result;
+
+		OpenFileAndSetPointer FileReader(InPath, InOffset);
+
+		DWORD BytesRead = 0;
+		std::vector<uint8_t> BufferData;
+		BufferData.resize(InByteLength);
+
+		BOOL ReadResult = ReadFile(FileReader.GetFileHandle(),
+			BufferData.data(), static_cast<DWORD>(InByteLength), &BytesRead, NULL);
+		check(ReadResult == TRUE);
+
+		Result.resize(InCount);
+
+		const uint8_t* DataPtr = BufferData.data();
+
+		for (int i = 0; i < InCount; ++i)
+		{
+			float X = *reinterpret_cast<const float*>(DataPtr + i * 12 + 0);
+			float Y = *reinterpret_cast<const float*>(DataPtr + i * 12 + 4);
+			Result[i] = XMFLOAT2(X, Y);
+		}
+
+		return Result;
+	}
+
+	std::vector<XMFLOAT4> SSGLTF_V2::ParseVector4s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength)
+	{
+		std::vector<XMFLOAT4> Result;
+
+		OpenFileAndSetPointer FileReader(InPath, InOffset);
+
+		DWORD BytesRead = 0;
+		std::vector<uint8_t> BufferData;
+		BufferData.resize(InByteLength);
+
+		BOOL ReadResult = ReadFile(FileReader.GetFileHandle(),
+			BufferData.data(), static_cast<DWORD>(InByteLength), &BytesRead, NULL);
+		check(ReadResult == TRUE);
+
+		Result.resize(InCount);
+
+		const uint8_t* DataPtr = BufferData.data();
+
+		for (int i = 0; i < InCount; ++i)
+		{
+			float X = *reinterpret_cast<const float*>(DataPtr + i * 12 + 0);
+			float Y = *reinterpret_cast<const float*>(DataPtr + i * 12 + 4);
+			float Z = *reinterpret_cast<const float*>(DataPtr + i * 12 + 8);
+			float W = *reinterpret_cast<const float*>(DataPtr + i * 12 + 12);
+			Result[i] = XMFLOAT4(X, Y, Z, W);
+		}
+
+		return Result;
+	}
 
 	SSGLTF_V2 SSGLTF_V2::LoadGLTFFile(const std::string& InPath)
 	{
@@ -169,7 +247,6 @@ namespace GLTF {
 
 #pragma endregion
 
-		
 
 		for (auto& Mesh : Result.Meshes)
 		{
@@ -201,7 +278,27 @@ namespace GLTF {
 					Result.Normals = ParseVector3s(UriPath, NormalBufferView.ByteOffset, NormalAccessor.Count, NormalBufferView.ByteLength);
 				}
 
-				
+				if(Primitive.Attributes.find("TANGENT") != Primitive.Attributes.end())
+				{
+					int AccessorIndex = Primitive.Attributes["TANGENT"];
+					Accessor& TangentAccessor = Result.Accessors[AccessorIndex];
+					BufferView& TangentBufferView = Result.BufferViews[TangentAccessor.BufferView];
+					Buffer& TangentBuffer = Result.Buffers[TangentBufferView.Buffer];
+					TangentBuffer.Uri;
+					std::string UriPath = BasePath + "/" + TangentBuffer.Uri;
+					Result.Tangents = ParseVector4s(UriPath, TangentBufferView.ByteOffset, TangentAccessor.Count, TangentBufferView.ByteLength);
+				}
+
+				if(Primitive.Attributes.find("TEXCOORD_0") != Primitive.Attributes.end())
+				{
+					int AccessorIndex = Primitive.Attributes["TEXCOORD_0"];
+					Accessor& TexcoordAccessor = Result.Accessors[AccessorIndex];
+					BufferView& TexcoordBufferView = Result.BufferViews[TexcoordAccessor.BufferView];
+					Buffer& TexcoordBuffer = Result.Buffers[TexcoordBufferView.Buffer];
+					TexcoordBuffer.Uri;
+					std::string UriPath = BasePath + "/" + TexcoordBuffer.Uri;
+					Result.Texcoords = ParseVector2s(UriPath, TexcoordBufferView.ByteOffset, TexcoordAccessor.Count, TexcoordBufferView.ByteLength);
+				}
 			}
 		}
 
