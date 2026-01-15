@@ -169,8 +169,31 @@ namespace GLTF {
 			BufferView View{};
 			View.Buffer = JsonObject["buffer"].get_int64().take_value();
 			View.ByteLength = JsonObject["byteLength"].get_int64().take_value();
-			View.ByteOffset =  JsonObject["byteOffset"].get_int64().take_value();
-			View.Target = JsonObject["target"].get_int64().take_value();
+			if(JsonObject.at_key("byteOffset").error() == simdjson::error_code::SUCCESS)
+			{
+				View.ByteOffset = JsonObject["byteOffset"].get_int64().take_value();
+			}
+			else
+			{
+				View.ByteOffset = 0;
+			}
+			
+			if(JsonObject.at_key("byteStride").error() == simdjson::error_code::SUCCESS)
+			{
+				View.ByteStride = JsonObject["byteStride"].get_int64().take_value();
+			}
+			else
+			{
+				View.ByteStride = 0;
+			}
+			if (JsonObject.at_key("target").error() == simdjson::error_code::SUCCESS)
+			{
+				View.Target = JsonObject["target"].get_int64().take_value();
+			}
+			else
+			{
+				View.Target = 0;
+			}
 			if (JsonObject["name"].get_string().error() == simdjson::error_code::SUCCESS)
 			{
 				View.Name = JsonObject["name"].get_string().take_value();
@@ -254,6 +277,7 @@ namespace GLTF {
 			{
 				std::string BasePath = std::filesystem::path(InPath).parent_path().string();
 				
+				std::string MeshKey = Mesh.Name;
 
 				// Load Positions
 				if (Primitive.Attributes.find("POSITION") != Primitive.Attributes.end())
@@ -264,7 +288,7 @@ namespace GLTF {
 					Buffer& PositionBuffer = Result.Buffers[PositionBufferView.Buffer];
 					PositionBuffer.Uri;
 					std::string UriPath = BasePath + "/" + PositionBuffer.Uri;
-					Result.Positions = ParseVector3s(UriPath, PositionBufferView.ByteOffset, PositionAccessor.Count, PositionBufferView.ByteLength);
+					Result.MeshVertexDataMap[MeshKey].Positions = ParseVector3s(UriPath, PositionBufferView.ByteOffset, PositionAccessor.Count, PositionBufferView.ByteLength);
 				}
 
 				if(Primitive.Attributes.find("NORMAL") != Primitive.Attributes.end())
@@ -275,7 +299,7 @@ namespace GLTF {
 					Buffer& NormalBuffer = Result.Buffers[NormalBufferView.Buffer];
 					NormalBuffer.Uri;
 					std::string UriPath = BasePath + "/" + NormalBuffer.Uri;
-					Result.Normals = ParseVector3s(UriPath, NormalBufferView.ByteOffset, NormalAccessor.Count, NormalBufferView.ByteLength);
+					Result.MeshVertexDataMap[MeshKey].Normals = ParseVector3s(UriPath, NormalBufferView.ByteOffset, NormalAccessor.Count, NormalBufferView.ByteLength);
 				}
 
 				if(Primitive.Attributes.find("TANGENT") != Primitive.Attributes.end())
@@ -286,7 +310,7 @@ namespace GLTF {
 					Buffer& TangentBuffer = Result.Buffers[TangentBufferView.Buffer];
 					TangentBuffer.Uri;
 					std::string UriPath = BasePath + "/" + TangentBuffer.Uri;
-					Result.Tangents = ParseVector4s(UriPath, TangentBufferView.ByteOffset, TangentAccessor.Count, TangentBufferView.ByteLength);
+					Result.MeshVertexDataMap[MeshKey].Tangents = ParseVector4s(UriPath, TangentBufferView.ByteOffset, TangentAccessor.Count, TangentBufferView.ByteLength);
 				}
 
 				if(Primitive.Attributes.find("TEXCOORD_0") != Primitive.Attributes.end())
@@ -297,7 +321,7 @@ namespace GLTF {
 					Buffer& TexcoordBuffer = Result.Buffers[TexcoordBufferView.Buffer];
 					TexcoordBuffer.Uri;
 					std::string UriPath = BasePath + "/" + TexcoordBuffer.Uri;
-					Result.Texcoords = ParseVector2s(UriPath, TexcoordBufferView.ByteOffset, TexcoordAccessor.Count, TexcoordBufferView.ByteLength);
+					Result.MeshVertexDataMap[MeshKey].Texcoords = ParseVector2s(UriPath, TexcoordBufferView.ByteOffset, TexcoordAccessor.Count, TexcoordBufferView.ByteLength);
 				}
 			}
 		}

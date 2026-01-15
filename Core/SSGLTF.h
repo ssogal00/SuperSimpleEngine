@@ -176,6 +176,15 @@ namespace GLTF {
         HANDLE FileHandle = INVALID_HANDLE_VALUE;
     };
 
+    class CORE_API GLTFVertexData
+    {
+    public:
+        std::vector<XMFLOAT3> Positions;
+        std::vector<XMFLOAT3> Normals;
+        std::vector<XMFLOAT4> Tangents;
+        std::vector<XMFLOAT2> Texcoords;
+    };
+
     class CORE_API SSGLTF_V2
     {
     public:
@@ -194,10 +203,8 @@ namespace GLTF {
 		std::vector<Mesh> Meshes;
 		std::vector<TextureInfo> Textures;
 
-		std::vector<XMFLOAT3> Positions;
-		std::vector<XMFLOAT3> Normals;
-        std::vector<XMFLOAT4> Tangents;
-		std::vector<XMFLOAT2> Texcoords;
+		std::map<std::string, GLTFVertexData> MeshVertexDataMap;
+
     };
 };
 

@@ -7,7 +7,7 @@
 
 void SSInstancingTestScene::InitializeScene()
 {
-	GLTF::SSGLTF_V2 Result = GLTF::SSGLTF_V2::LoadGLTFFile("./Resource/GLTF/DamagedHelmet/glTF/DamagedHelmet.gltf");
+	GLTF::SSGLTF_V2 Result = GLTF::SSGLTF_V2::LoadGLTFFile("./Resource/GLTF/FlightHelmet/glTF/FlightHelmet.gltf");
 
 
 	SSInstancedVertexData instanceData;	
