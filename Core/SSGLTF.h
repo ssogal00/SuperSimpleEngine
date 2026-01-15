@@ -3,12 +3,12 @@
 namespace GLTF {
     enum CORE_API ComponentType
     {
-        BYTE = 5120,
-        UNSIGNED_BYTE = 5121,
-        SHORT = 5122,
-        UNSIGNED_SHORT = 5123,
-        UNSIGNED_INT = 5125,
-        FLOAT = 5126,
+        COMPONENT_BYTE = 5120,
+        COMPONENT_UNSIGNED_BYTE = 5121,
+        COMPONENT_SHORT = 5122,
+        COMPONENT_UNSIGNED_SHORT = 5123,
+        COMPONENT_UNSIGNED_INT = 5125,
+        COMPONENT_FLOAT = 5126,
     };
 
     enum CORE_API AttributeType

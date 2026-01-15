@@ -205,26 +205,26 @@ void SSRenderCmdDrawIndexed::Execute(ID3D11DeviceContext* inDeviceContext)
 	inDeviceContext->DrawIndexed(mIndexBuffer->GetIndexCount(), 0, 0);
 }
 
-SSRenderCmdSetVertexBuffer::SSRenderCmdSetVertexBuffer(std::shared_ptr<SSDX11VertexBuffer> inVB)
-	:mVertexBuffer(inVB)
+SSRenderCmdSetVertexBuffer::SSRenderCmdSetVertexBuffer(std::shared_ptr<SSDX11VertexBuffer> inVB, unsigned int inOffset)
+	:mVertexBuffer(inVB), mOffset(inOffset)
 {
 }
 
 void SSRenderCmdSetVertexBuffer::Execute(ID3D11DeviceContext* inDeviceContext)
 {	
 	auto stride = mVertexBuffer->GetStride();
-	UINT offset = 0;
+	UINT offset = mOffset;
 	inDeviceContext->IASetVertexBuffers(0, 1, (ID3D11Buffer* const*)mVertexBuffer->GetBufferPointerRef(), &stride, &offset);
 }
 
-SSRenderCmdSetIndexBuffer::SSRenderCmdSetIndexBuffer(std::shared_ptr<SSDX11IndexBuffer> inIB)
-	: mIndexBuffer(inIB)
+SSRenderCmdSetIndexBuffer::SSRenderCmdSetIndexBuffer(std::shared_ptr<SSDX11IndexBuffer> inIB, unsigned int inOffset)
+	: mIndexBuffer(inIB),mOffset(inOffset)
 {
 }
 
 void SSRenderCmdSetIndexBuffer::Execute(ID3D11DeviceContext* inDeviceContext)
 {
-	inDeviceContext->IASetIndexBuffer((ID3D11Buffer*)mIndexBuffer->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0);
+	inDeviceContext->IASetIndexBuffer((ID3D11Buffer*)mIndexBuffer->GetBufferPointer(), DXGI_FORMAT_R32_UINT, mOffset);
 }
 
 SSRenderCmdDrawWithoutIndex::SSRenderCmdDrawWithoutIndex(unsigned int InVertexCount)

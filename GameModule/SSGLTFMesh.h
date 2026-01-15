@@ -1,4 +1,9 @@
 #pragma once
 
+#include <windows.h>
+#include "SSGLTF.h"
 
-#include "SSGLTFMesh.h"
+class GAMEMODULE_API SSGLTFMesh
+{
+public:
+};
