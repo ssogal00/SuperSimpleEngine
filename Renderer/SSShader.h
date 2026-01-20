@@ -2,6 +2,7 @@
 
 #include "SSRendererModulePCH.h"
 #include "SSDX11ConstantBuffer.h"
+#include "SSDX11StructuredBuffer.h"
 #include "SSName.h"
 #include "wrl/client.h"
 #include <map>
@@ -57,6 +58,7 @@ protected:
 	ComPtr<ID3DBlob> mShaderBuffer = nullptr;
 
 	std::map<std::string, SSDX11ConstantBuffer*> mConstantBufferMap;
+	std::map<std::string, SSDX11StructuredBuffer*> mStructuredBufferMap;
 	std::map<std::string, UINT> mTextureMap;
 	std::map<std::string, UINT> mSamplerMap;
 

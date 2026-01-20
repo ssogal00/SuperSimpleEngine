@@ -55,14 +55,6 @@ public:
 	bool bHasInstanceData = false;
 };
 
-struct VertexAttributeData
-{
-public:
-	unsigned int Stride = 0;
-	unsigned int Count = 0;
-	void* DataPtr = nullptr;
-	unsigned int VertexBufferOffset = 0;
-};
 
 struct SSGLTFMeshVertexIndexData
 {
@@ -73,7 +65,13 @@ public:
 	std::vector<unsigned int> TexcoordOffsetList;
 	std::vector<unsigned int> IndexOffsetList;
 
-
-
 	unsigned int Count = 0;
+};
+
+struct SSManualFetchMeshVertexData
+{
+	std::vector<XMFLOAT3> PositionList;
+	std::vector<XMFLOAT3> NormalList;
+	std::vector<XMFLOAT4> TangentList;
+	std::vector<XMFLOAT2> TexcoordList;
 };

@@ -14,8 +14,11 @@ public:
 	SSDX11StructuredBuffer(void* pData, unsigned int nStride, unsigned int nDataCount);
 	ID3D11ShaderResourceView* GetSRV() { return mpSRV; }
 
+	void UpdateBufferData(ID3D11DeviceContext* deviceContext, void* InDataPtr, unsigned int InDataLength);
+
 protected:
 	ID3D11ShaderResourceView* mpSRV = nullptr;
+	BYTE* mBufferData = nullptr;
 };
 
 // RWStructuredBuffer<T> in HLSL

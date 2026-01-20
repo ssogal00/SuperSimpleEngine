@@ -112,6 +112,9 @@ void SSDX11ConstantBuffer::SubmitDataToDevice(ID3D11DeviceContext* deviceContext
 { 	
 	check(deviceContext);    
 
+	check(mBufferDescription.CPUAccessFlags & D3D11_CPU_ACCESS_WRITE);  
+	check(mBufferDescription.Usage == D3D11_USAGE_DYNAMIC);
+
     D3D11_MAPPED_SUBRESOURCE mappedResource;
 	HR(deviceContext->Map(mpBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
     memcpy_s(mappedResource.pData, mBufferSize, mBufferData, mBufferSize);

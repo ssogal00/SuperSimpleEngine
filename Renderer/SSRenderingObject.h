@@ -7,7 +7,7 @@ class SSRenderingObject
 {
 public:
 	SSRenderingObject(class SSObjectBase* pObject);
-	SSRenderingObject(){}
+	virtual SSRenderingObject(){}
 	
 	virtual ~SSRenderingObject();
 	virtual void Draw(ID3D11DeviceContext* deviceContext);

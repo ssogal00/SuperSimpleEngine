@@ -3,7 +3,6 @@
 #include "SSDX11Renderer.h"
 
 
-
 SSDX11StructuredBuffer::SSDX11StructuredBuffer(void* pData, unsigned int nStride, unsigned int nDataCount)
 {
 	mBufferDescription.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
@@ -27,6 +26,11 @@ SSDX11StructuredBuffer::SSDX11StructuredBuffer(void* pData, unsigned int nStride
 	HR(SSDX11Renderer::Get().GetDevice()->CreateShaderResourceView(mpBuffer.Get(), &srvDesc, &mpSRV));
 }
 
+void SSDX11StructuredBuffer::UpdateBufferData(ID3D11DeviceContext* deviceContext, void* pData, unsigned int nDataSize)
+{
+	deviceContext->UpdateSubresource(mpBuffer.Get(), 0, nullptr, pData, 0, 0);
+}
+
 SSDX11UnorderedAccessStructuredBuffer::SSDX11UnorderedAccessStructuredBuffer(void* pData, unsigned int nStride, unsigned int nDataCount)
 {
 	mBufferDescription.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
@@ -47,3 +51,4 @@ SSDX11UnorderedAccessStructuredBuffer::SSDX11UnorderedAccessStructuredBuffer(voi
 
 	HR(SSDX11Renderer::Get().GetDevice()->CreateUnorderedAccessView(mpBuffer.Get(), &uavDesc, &mpUAV));
 }
+
