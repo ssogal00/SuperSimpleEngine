@@ -12,5 +12,9 @@
 #define CORE_API __declspec(dllimport)
 #endif
 
+#ifndef GAMEMODULE_API
+#define GAMEMODULE_API __declspec(dllimport)
+#endif
+
 #include "SSCore.h"
 

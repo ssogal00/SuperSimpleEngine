@@ -41,6 +41,8 @@ public:
 
 	void SetInstancedData(const SSInstancedVertexData& instanceData) {}
 
+	virtual std::string GetObjectType() const { return "ObjectBase"; }
+
 protected:
 	virtual void CreateRenderData() {}
 	virtual void CreateVertexData() {}
