@@ -40,6 +40,9 @@ private:
 	std::map<std::string, SSConstantBufferData> VSConstantBufferMap;
 	std::map<std::string, SSConstantBufferData> PSConstantBufferMap;
 
+	std::map < std::string, unsigned int> VSStructuredBufferSlotMap;
+	std::map < std::string, unsigned int> PSStructuredBufferSlotMap;
+
 	std::map<std::string, std::string> VSTextureMap;
 	std::map<std::string, std::string> PSTextureMap;
 

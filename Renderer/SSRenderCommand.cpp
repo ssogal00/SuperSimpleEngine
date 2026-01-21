@@ -242,3 +242,13 @@ void SSRenderCmdSetDepthStencilState::Execute(ID3D11DeviceContext* inDeviceConte
 {
 	//inDeviceContext->OMSetDepthStencilState();
 }
+
+SSRenderCmdSetVSShaderResource::SSRenderCmdSetVSShaderResource(SSDX11StructuredBuffer* inBuffer, unsigned int slotIndex)
+	: mBuffer(inBuffer), mSlotIndex(slotIndex)
+{
+}
+
+void SSRenderCmdSetVSShaderResource::Execute(ID3D11DeviceContext* inDeviceContext)
+{
+	inDeviceContext->VSSetShaderResources(mSlotIndex, 1, mBuffer->GetSRVPointerRef());
+}

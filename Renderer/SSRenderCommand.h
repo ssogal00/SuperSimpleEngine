@@ -112,6 +112,18 @@ protected:
 	SSConstantBufferData* mBufferData=nullptr;
 };
 
+class SSRenderCmdSetVSShaderResource : public SSRenderCmdBase
+{
+public:
+	SSRenderCmdSetVSShaderResource(class SSDX11StructuredBuffer* inBuffer, unsigned int slotIndex);
+protected:
+	virtual void Execute(ID3D11DeviceContext* inDeviceContext) override;
+
+	SSDX11StructuredBuffer* mBuffer;
+
+	unsigned int mSlotIndex;
+};
+
 
 class SSRenderCmdSetRenderTarget : public SSRenderCmdBase
 {

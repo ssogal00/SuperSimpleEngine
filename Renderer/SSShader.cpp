@@ -62,10 +62,11 @@ void SSShader::ReflectCompiledShader(ID3D11ShaderReflection* shaderReflection)
 		}
 		else if(desc.Type == D3D_SHADER_INPUT_TYPE::D3D_SIT_STRUCTURED)
 		{
-		
+			mStructuredBufferSlotMap[desc.Name] = desc.BindPoint;
 		}
 		else if(desc.Type == D3D_SHADER_INPUT_TYPE::D3D_SIT_UAV_RWSTRUCTURED)
 		{
+			mUAVBufferSlotMap[desc.Name] = desc.BindPoint;	
 		}
 		else if(desc.Type == D3D_SHADER_INPUT_TYPE::D3D_SIT_CBUFFER)
 		{

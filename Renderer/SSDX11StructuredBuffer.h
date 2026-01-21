@@ -16,6 +16,8 @@ public:
 
 	void UpdateBufferData(ID3D11DeviceContext* deviceContext, void* InDataPtr, unsigned int InDataLength);
 
+	ID3D11ShaderResourceView* const* GetSRVPointerRef() { return &mpSRV; }
+
 protected:
 	ID3D11ShaderResourceView* mpSRV = nullptr;
 	BYTE* mBufferData = nullptr;

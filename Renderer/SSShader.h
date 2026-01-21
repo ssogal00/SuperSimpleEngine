@@ -58,7 +58,8 @@ protected:
 	ComPtr<ID3DBlob> mShaderBuffer = nullptr;
 
 	std::map<std::string, SSDX11ConstantBuffer*> mConstantBufferMap;
-	std::map<std::string, SSDX11StructuredBuffer*> mStructuredBufferMap;
+	std::map<std::string, unsigned int> mStructuredBufferSlotMap;
+	std::map<std::string, unsigned int> mUAVBufferSlotMap;
 	std::map<std::string, UINT> mTextureMap;
 	std::map<std::string, UINT> mSamplerMap;
 
