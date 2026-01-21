@@ -306,6 +306,7 @@ namespace GLTF {
 		unsigned int CurrentTangentOffset = 0;
 		unsigned int CurrentTexcoordOffset = 0;
 		unsigned int CurrentIndexOffset = 0;
+		unsigned int CurrentIndexCount = 0;
 
 		for (auto& Mesh : Result.Meshes)
 		{
@@ -413,6 +414,8 @@ namespace GLTF {
 					Result.IndexOffsetListInBytes.push_back(CurrentIndexOffset);
 
 					CurrentIndexOffset += static_cast<unsigned int>(IndexBufferView.ByteLength);
+
+					Result.IndexCountList.push_back(static_cast<unsigned int>(IndexAccessor.Count));
 				}
 			}
 		}
