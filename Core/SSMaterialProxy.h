@@ -30,6 +30,9 @@ public:
 	const std::map<std::string, SSConstantBufferData>& GetVSConstantBufferMap() const { return VSConstantBufferMap; }
 	const std::map<std::string, SSConstantBufferData>& GetPSConstantBufferMap() const { return PSConstantBufferMap; }
 
+	const std::map<std::string, unsigned int>& GetVSStructuredBufferSlotMap() const { return VSStructuredBufferSlotMap; }
+	const std::map<std::string, unsigned int>& GetPSStructuredBufferSlotMap() const { return PSStructuredBufferSlotMap; }
+
 	const std::map<std::string, std::string>& GetVSTextureMap() const { return VSTextureMap; }
 	const std::map<std::string, std::string>& GetPSTextureMap() const { return PSTextureMap; }
 

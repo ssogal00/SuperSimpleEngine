@@ -74,4 +74,5 @@ struct SSManualFetchMeshVertexData
 	std::vector<XMFLOAT3> NormalList;
 	std::vector<XMFLOAT4> TangentList;
 	std::vector<XMFLOAT2> TexcoordList;
+	std::vector<unsigned int> IndexList;
 };

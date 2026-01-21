@@ -9,7 +9,7 @@ cbuffer Proj : register(b2) { float4x4 proj; };
 // STRUCTURED BUFFERS //
 ///////////////////////
 // 각 요소를 별도의 배열(SoA 형태)로 선언합니다.
-StructuredBuffer<float3> PosBuffer      : register(t0);
+StructuredBuffer<float3> PositionBuffer      : register(t0);
 StructuredBuffer<float3> NormalBuffer   : register(t1);
 StructuredBuffer<float2> TexBuffer      : register(t2);
 StructuredBuffer<float4> TangentBuffer  : register(t3);
@@ -32,19 +32,19 @@ struct PixelInputType
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
 // 이제 VertexInputType 대신 ID들을 직접 인자로 받습니다.
-PixelInputType VSMain(uint vID : SV_VertexID, uint iID : SV_InstanceID)
+PixelInputType VSMain(uint vID : SV_VertexID)
 {
     PixelInputType output;
 
     // 1. 배열 인덱싱을 통한 데이터 페칭 (SoA 방식 접근)
-    float3 rawPos = PosBuffer[vID];
+    float3 rawPos = PositionBuffer[vID];
     float3 rawNormal = NormalBuffer[vID];
     float2 rawTex = TexBuffer[vID];
     float4 rawTangent = TangentBuffer[vID];
-    float3 instanceOffset = InstanceBuffer[iID];
+    
 
     // 2. 인스턴스 오프셋이 적용된 로컬 위치 계산
-    float4 localPosWithOffset = float4(rawPos + instanceOffset, 1.0f);
+    float4 localPosWithOffset = float4(rawPos, 1.0f);
 
     // 3. 행렬 계산
     float4x4 ModelView = mul(model, view);

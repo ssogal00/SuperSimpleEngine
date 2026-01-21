@@ -8,19 +8,22 @@
 #include "SSFreqUsedNames.h"
 #include "SSTextureManager.h"
 #include "SSRenderCommand.h"
+#include "SSShader.h"
 
 SSGLTFRenderingObject::SSGLTFRenderingObject(SSObjectBase* InGameObject)
 {
 	mGLTFMeshObject = static_cast<SSGLTFMeshObject*>(InGameObject);
-	
-	if (mMeshVertexData.PositionList.size() > 0)
-	{
-		mPositionBuffer = new SSDX11StructuredBuffer(mMeshVertexData.PositionList.data(), sizeof(XMFLOAT3), mMeshVertexData.PositionList.size());
-	}
-	
-	mNormalBuffer		= new SSDX11StructuredBuffer(mMeshVertexData.NormalList.data(), sizeof(XMFLOAT3), mMeshVertexData.NormalList.size());
-	mTangentBuffer		= new SSDX11StructuredBuffer(mMeshVertexData.TangentList.data(), sizeof(XMFLOAT3), mMeshVertexData.TangentList.size());
-	mTexcoordBuffer		= new SSDX11StructuredBuffer(mMeshVertexData.TexcoordList.data(), sizeof(XMFLOAT2), mMeshVertexData.TexcoordList.size());
+
+	GLTF::SSGLTF_V2& GLTFDataRef = mGLTFMeshObject->mGLTFData;
+
+	mPositionBuffer = new SSDX11StructuredBuffer(GLTFDataRef.MergedPositions.data(), 
+		sizeof(XMFLOAT3), GLTFDataRef.MergedPositions.size());
+
+	mNormalBuffer		= new SSDX11StructuredBuffer(GLTFDataRef.MergedNormals.data(), sizeof(XMFLOAT3), GLTFDataRef.MergedNormals.size());
+	mTangentBuffer		= new SSDX11StructuredBuffer(GLTFDataRef.MergedTangents.data(), sizeof(XMFLOAT4), GLTFDataRef.MergedTangents.size());
+	mTexcoordBuffer		= new SSDX11StructuredBuffer(GLTFDataRef.MergedTexcoords.data(), sizeof(XMFLOAT2), GLTFDataRef.MergedTexcoords.size());
+
+	mIndexBuffer = GetDX11Device()->CreateIndexBuffer(GLTFDataRef.MergedIndices);
 
 	CreateRenderCmdList();
 }
@@ -53,4 +56,83 @@ void SSGLTFRenderingObject::CreateRenderCmdList()
 	RenderCmdList.push_back(new SSRenderCmdSetVS(vs));
 	RenderCmdList.push_back(new SSRenderCmdSetPS(ps));
 
+	std::map<std::string, unsigned int> vsStructuredBufferSlotMap = vs->GetStructuredBufferSlotMap();
+
+	// 
+	for (auto& [name, slot] : vsStructuredBufferSlotMap)
+	{
+		if (name.find("Position") != std::string::npos)
+		{
+			RenderCmdList.push_back(new SSRenderCmdSetVSShaderResource(mPositionBuffer, slot));
+		}
+		else if (name.find("Normal") != std::string::npos)
+		{
+			RenderCmdList.push_back(new SSRenderCmdSetVSShaderResource(mNormalBuffer, slot));
+		}
+		else if (name.find("Tangent") != std::string::npos)
+		{
+			RenderCmdList.push_back(new SSRenderCmdSetVSShaderResource(mTangentBuffer, slot));
+		}
+		else if (name.find("Tex") != std::string::npos)
+		{
+			RenderCmdList.push_back(new SSRenderCmdSetVSShaderResource(mTexcoordBuffer, slot));
+		}
+	}
+
+	for (auto& [k, v] : mMaterialProxy->GetVSConstantBufferMap())
+	{
+		const int SlotIndex = vs->GetConstantBufferSlotIndex(k);
+		if (SlotIndex != -1)
+		{
+			SSConstantBufferData* ConstantBufferData = const_cast<SSConstantBufferData*>(mMaterialProxy->GetVSConstantParam(k));
+			check(ConstantBufferData != nullptr);
+			SSDX11ConstantBuffer* ConstantBuffer = vs->GetConstantBuffer(k);
+			ConstantBuffer->SetBufferData(v);
+
+			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer, k, ConstantBufferData));
+			RenderCmdList.push_back(new SSRenderCmdSetVSConstantBuffer(vs.get(), ConstantBuffer, SlotIndex));
+		}
+	}
+
+	for (auto& [k, v] : mMaterialProxy->GetPSConstantBufferMap())
+	{
+		const int SlotIndex = ps->GetConstantBufferSlotIndex(k);
+		if (SlotIndex != -1)
+		{
+			SSConstantBufferData* ConstantBufferData = const_cast<SSConstantBufferData*>(mMaterialProxy->GetPSConstantParam(k));
+			check(ConstantBufferData != nullptr);
+			SSDX11ConstantBuffer* ConstantBuffer = ps->GetConstantBuffer(k);
+			ConstantBuffer->SetBufferData(v);
+
+			RenderCmdList.push_back(new SSRenderCmdUpdateConstantBuffer(ConstantBuffer, k, ConstantBufferData));
+			RenderCmdList.push_back(new SSRenderCmdSetPSConstantBuffer(ps.get(), ConstantBuffer, SlotIndex));
+		}
+	}
+	// @ set pixel shader texture
+	for (auto& [name, texture] : mMaterialProxy->GetPSTextureMap())
+	{
+		const int SlotIndex = ps->GetTextureSlotIndex(name);
+		shared_ptr<SSDX11Texture2D> resource = SSTextureManager::Get().LoadTexture2D(GetDX11Device()->GetDeviceContext(), texture);
+		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), resource.get(), SlotIndex));
+	}
+
+	// @ set vertex shader texture 
+	for (auto& [name, texture] : mMaterialProxy->GetVSTextureMap())
+	{
+		const int SlotIndex = vs->GetTextureSlotIndex(name);
+		shared_ptr<SSDX11Texture2D> resource = SSTextureManager::Get().LoadTexture2D(GetDX11Device()->GetDeviceContext(), texture);
+		RenderCmdList.push_back(new SSRenderCmdSetVSTexture(vs.get(), resource.get(), SlotIndex));
+	}
+
+	GLTF::SSGLTF_V2& GLTFDataRef = mGLTFMeshObject->mGLTFData;
+
+	unsigned int StartOffset = 0;
+	for(auto& IndexCount: GLTFDataRef.IndexCountList)
+	{
+		RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer, IndexCount, StartOffset, 0));
+		StartOffset += IndexCount;
+	}
 }
+
+
+

@@ -173,10 +173,14 @@ private:
 class SSRenderCmdDrawIndexed : public SSRenderCmdBase
 {
 public:
+	SSRenderCmdDrawIndexed(class std::shared_ptr<SSDX11IndexBuffer> inBuffer, unsigned int InIndexCount, unsigned int InStartIndexLocation = 0, int InBaseVertexLocation = 0);
 	SSRenderCmdDrawIndexed(class std::shared_ptr<SSDX11IndexBuffer> inBuffer);
 	virtual void Execute(ID3D11DeviceContext* inDeviceContext) override;
 private:
 	std::shared_ptr<SSDX11IndexBuffer> mIndexBuffer;
+	unsigned int mIndexCount = 0;
+	unsigned int mStartIndexLocation = 0;
+	int mBaseVertexLocation = 0;
 };
 
 // draw without index buffer

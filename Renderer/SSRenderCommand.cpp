@@ -199,10 +199,23 @@ SSRenderCmdDrawIndexed::SSRenderCmdDrawIndexed(std::shared_ptr<SSDX11IndexBuffer
 {
 }
 
+SSRenderCmdDrawIndexed::SSRenderCmdDrawIndexed(std::shared_ptr<SSDX11IndexBuffer> inBuffer, unsigned int InIndexCount, unsigned int InStartIndexLocation, int InBaseVertexLocation)
+	: mIndexBuffer(inBuffer), mIndexCount(InIndexCount), mStartIndexLocation(InStartIndexLocation), mBaseVertexLocation(InBaseVertexLocation)
+{
+}
+
 void SSRenderCmdDrawIndexed::Execute(ID3D11DeviceContext* inDeviceContext)
 {
 	inDeviceContext->IASetIndexBuffer((ID3D11Buffer*)mIndexBuffer->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0);
-	inDeviceContext->DrawIndexed(mIndexBuffer->GetIndexCount(), 0, 0);
+	
+	if(mIndexCount > 0)
+	{
+		inDeviceContext->DrawIndexed(mIndexCount, mStartIndexLocation, mBaseVertexLocation);
+	}
+	else
+	{
+		inDeviceContext->DrawIndexed(mIndexBuffer->GetIndexCount(), 0, 0);
+	}
 }
 
 SSRenderCmdSetVertexBuffer::SSRenderCmdSetVertexBuffer(std::shared_ptr<SSDX11VertexBuffer> inVB, unsigned int inOffset)

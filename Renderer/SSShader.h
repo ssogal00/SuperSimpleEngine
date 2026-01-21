@@ -38,6 +38,8 @@ public:
 
 	inline std::map<std::string, SSDX11ConstantBuffer*> GetConstantBufferMap() { return mConstantBufferMap; }
 
+	std::map<std::string, unsigned int> GetStructuredBufferSlotMap() { return mStructuredBufferSlotMap; }
+
 	ID3DBlob* GetCompiledShader() { return mShaderBuffer.Get(); }
 
     virtual bool CompileFromFile(std::wstring filepath) { return true; }

@@ -13,8 +13,9 @@ public:
 
 
 	virtual std::string GetObjectType() const override { return "GLTFMeshObject"; }
-
+	
+	GLTF::SSGLTF_V2 mGLTFData;
 private:
 	std::string mGLTFFilePath;
-	GLTF::SSGLTF_V2 mGLTFData;
+	
 };
