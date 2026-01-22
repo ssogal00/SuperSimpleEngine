@@ -184,6 +184,14 @@ namespace GLTF {
 			AccessorObject.BufferView = static_cast<int>(JsonObject["bufferView"].get_int64().take_value());
 			AccessorObject.ComponentType = static_cast<ComponentType>(JsonObject["componentType"].get_int64().take_value());
 			AccessorObject.Count = static_cast<int>(JsonObject["count"].get_int64().take_value());
+			if(JsonObject.at_key("byteOffset").error() == simdjson::error_code::SUCCESS)
+			{
+				AccessorObject.ByteOffset = static_cast<int>(JsonObject["byteOffset"].get_int64().take_value());
+			}
+			else
+			{
+				AccessorObject.ByteOffset = 0;
+			}
 			
 			if (JsonObject["name"].get_string().error() == simdjson::error_code::SUCCESS)
 			{
@@ -325,7 +333,10 @@ namespace GLTF {
 					Buffer& PositionBuffer = Result.Buffers[PositionBufferView.Buffer];
 					PositionBuffer.Uri;
 					std::string UriPath = BasePath + "/" + PositionBuffer.Uri;
-					Result.MeshVertexDataMap[MeshKey].Positions = ParseVector3s(UriPath, PositionBufferView.ByteOffset, PositionAccessor.Count, PositionBufferView.ByteLength);
+
+					int64_t PositionByteOffset = PositionBufferView.ByteOffset + PositionAccessor.ByteOffset;
+
+					Result.MeshVertexDataMap[MeshKey].Positions = ParseVector3s(UriPath, PositionByteOffset, PositionAccessor.Count, PositionBufferView.ByteLength);
 					Result.PositionCountList.push_back(static_cast<unsigned int>(Result.MergedPositions.size()));
 
 					Result.MergedPositions.insert(Result.MergedPositions.end(),
@@ -342,8 +353,10 @@ namespace GLTF {
 					Buffer& NormalBuffer = Result.Buffers[NormalBufferView.Buffer];
 					NormalBuffer.Uri;
 					std::string UriPath = BasePath + "/" + NormalBuffer.Uri;
-					Result.MeshVertexDataMap[MeshKey].Normals = ParseVector3s(UriPath, NormalBufferView.ByteOffset, NormalAccessor.Count, NormalBufferView.ByteLength);
-				
+
+					int64_t NormalByteOffset = NormalBufferView.ByteOffset + NormalAccessor.ByteOffset;
+
+					Result.MeshVertexDataMap[MeshKey].Normals = ParseVector3s(UriPath, NormalByteOffset, NormalAccessor.Count, NormalBufferView.ByteLength);
 
 					Result.MergedNormals.insert(Result.MergedNormals.end(),
 						Result.MeshVertexDataMap[MeshKey].Normals.begin(),
@@ -361,8 +374,8 @@ namespace GLTF {
 					Buffer& TangentBuffer = Result.Buffers[TangentBufferView.Buffer];
 					TangentBuffer.Uri;
 					std::string UriPath = BasePath + "/" + TangentBuffer.Uri;
-					Result.MeshVertexDataMap[MeshKey].Tangents = ParseVector4s(UriPath, TangentBufferView.ByteOffset, TangentAccessor.Count, TangentBufferView.ByteLength);
-					
+					int64_t TangentByteOffset = TangentBufferView.ByteOffset + TangentAccessor.ByteOffset;
+					Result.MeshVertexDataMap[MeshKey].Tangents = ParseVector4s(UriPath, TangentByteOffset, TangentAccessor.Count, TangentBufferView.ByteLength);
 
 					Result.MergedTangents.insert(Result.MergedTangents.end(),
 					Result.MeshVertexDataMap[MeshKey].Tangents.begin(),
@@ -381,7 +394,10 @@ namespace GLTF {
 					Buffer& TexcoordBuffer = Result.Buffers[TexcoordBufferView.Buffer];
 					TexcoordBuffer.Uri;
 					std::string UriPath = BasePath + "/" + TexcoordBuffer.Uri;
-					Result.MeshVertexDataMap[MeshKey].Texcoords = ParseVector2s(UriPath, TexcoordBufferView.ByteOffset, TexcoordAccessor.Count, TexcoordBufferView.ByteLength);
+					
+					int64_t TexcoordByteOffset = TexcoordBufferView.ByteOffset + TexcoordAccessor.ByteOffset;
+
+					Result.MeshVertexDataMap[MeshKey].Texcoords = ParseVector2s(UriPath, TexcoordByteOffset, TexcoordAccessor.Count, TexcoordBufferView.ByteLength);
 
 					Result.MergedTexcoords.insert(Result.MergedTexcoords.end(),
 						Result.MeshVertexDataMap[MeshKey].Texcoords.begin(),
@@ -399,7 +415,10 @@ namespace GLTF {
 					IndexBuffer.Uri;
 					std::string UriPath = BasePath + "/" + IndexBuffer.Uri;
 					std::vector<uint16_t> Indices;
-					Indices = ParseUInt16s(UriPath, IndexBufferView.ByteOffset, IndexAccessor.Count, IndexBufferView.ByteLength);
+
+					int64_t IndexByteOffset = IndexBufferView.ByteOffset + IndexAccessor.ByteOffset;
+
+					Indices = ParseUInt16s(UriPath, IndexByteOffset, IndexAccessor.Count, IndexBufferView.ByteLength);
 					Result.MeshVertexDataMap[MeshKey].Indices = Indices;
 
 					Result.MergedIndices.insert(Result.MergedIndices.end(),
