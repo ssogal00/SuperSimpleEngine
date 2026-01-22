@@ -129,11 +129,12 @@ void SSGLTFRenderingObject::CreateRenderCmdList()
 	GLTF::SSGLTF_V2& GLTFDataRef = mGLTFMeshObject->mGLTFData;
 
 	unsigned int StartIndexLocation = 0;
+
 	for(size_t i=0; i< GLTFDataRef.IndexCountList.size(); ++i)
-	{
+	{  
 		unsigned int IndexCount = GLTFDataRef.IndexCountList[i];
 
-		int baseVertexLocation = GLTFDataRef.PositionOffsetListInBytes[i] / sizeof(DirectX::XMFLOAT3);
+		int baseVertexLocation = GLTFDataRef.PositionCountList[i];
 
 		RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer, IndexCount, StartIndexLocation, baseVertexLocation));
 

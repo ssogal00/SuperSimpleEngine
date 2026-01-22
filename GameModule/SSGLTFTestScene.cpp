@@ -5,7 +5,7 @@
 
 void SSGLTFTestScene::InitializeScene()
 {
-	TestMesh = std::make_shared<SSGLTFMeshObject>("./Resource/GLTF/DamagedHelmet/glTF/DamagedHelmet.gltf");
+	TestMesh = std::make_shared<SSGLTFMeshObject>("./Resource/GLTF/FlightHelmet/glTF/FlightHelmet.gltf");
 
 }
 

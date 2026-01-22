@@ -232,12 +232,8 @@ namespace GLTF {
 
         
 
-        std::vector<unsigned int> PositionOffsetListInBytes;
-        std::vector<unsigned int> NormalOffsetListInBytes;
-        std::vector<unsigned int> TangentOffsetListInBytes;
-        std::vector<unsigned int> TexcoordOffsetListInBytes;
-        std::vector<unsigned int> IndexOffsetListInBytes;
-		std::vector<unsigned int> IndexCountList;
+        std::vector<unsigned int> IndexCountList;
+		std::vector<unsigned int> PositionCountList;
 
         unsigned int SectionCount = 0;
     };
