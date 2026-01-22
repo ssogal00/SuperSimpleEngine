@@ -1,8 +1,7 @@
 #include "SSRenderingObjectManager.h"
-#include "SSRenderingObjectManager.h"
-#include "SSRenderingObjectManager.h"
 #include "SSRenderingObject.h"
 #include "SSGameObjectManager.h"
+#include "SSRenderingObjectFactory.h"
 
 SSRenderingObjectManager::SSRenderingObjectManager()
 {
@@ -37,7 +36,8 @@ void SSRenderingObjectManager::UpdateObjects()
 	{
 		if (mRenderingObjectMap.count(k) == 0)
 		{
-			mRenderingObjectMap[k] = new SSRenderingObject(v);
+			//mRenderingObjectMap[k] = new SSRenderingObject(v);
+			mRenderingObjectMap[k] = SSRenderingObjectFactory::CreateRenderingObject(v);
 		}
 	}
 	

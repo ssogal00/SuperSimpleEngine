@@ -75,8 +75,8 @@ namespace GLTF {
 
 		for (int i = 0; i < InCount; ++i)
 		{
-			float X = *reinterpret_cast<const float*>(DataPtr + i * 12 + 0);
-			float Y = *reinterpret_cast<const float*>(DataPtr + i * 12 + 4);
+			float X = *reinterpret_cast<const float*>(DataPtr + i * 8 + 0);
+			float Y = *reinterpret_cast<const float*>(DataPtr + i * 8 + 4);
 			Result[i] = XMFLOAT2(X, Y);
 		}
 
@@ -123,10 +123,10 @@ namespace GLTF {
 
 		for (int i = 0; i < InCount; ++i)
 		{
-			float X = *reinterpret_cast<const float*>(DataPtr + i * 12 + 0);
-			float Y = *reinterpret_cast<const float*>(DataPtr + i * 12 + 4);
-			float Z = *reinterpret_cast<const float*>(DataPtr + i * 12 + 8);
-			float W = *reinterpret_cast<const float*>(DataPtr + i * 12 + 12);
+			float X = *reinterpret_cast<const float*>(DataPtr + i * 16 + 0);
+			float Y = *reinterpret_cast<const float*>(DataPtr + i * 16 + 4);
+			float Z = *reinterpret_cast<const float*>(DataPtr + i * 16 + 8);
+			float W = *reinterpret_cast<const float*>(DataPtr + i * 16 + 12);
 			Result[i] = XMFLOAT4(X, Y, Z, W);
 		}
 
@@ -411,11 +411,9 @@ namespace GLTF {
 						Result.MeshVertexDataMap[MeshKey].Indices.begin(),
 						Result.MeshVertexDataMap[MeshKey].Indices.end());
 
-					Result.IndexOffsetListInBytes.push_back(CurrentIndexOffset);
+					Result.IndexOffsetListInBytes.push_back(Result.MergedIndices.size() * sizeof(unsigned int));
 
-					CurrentIndexOffset += static_cast<unsigned int>(IndexBufferView.ByteLength);
-
-					Result.IndexCountList.push_back(static_cast<unsigned int>(IndexAccessor.Count));
+					Result.IndexCountList.push_back(Result.MeshVertexDataMap[MeshKey].Indices.size());
 				}
 			}
 		}

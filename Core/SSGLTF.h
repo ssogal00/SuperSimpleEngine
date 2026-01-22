@@ -1,5 +1,14 @@
 #pragma once
 
+#include <string>
+#include <vector>
+#include <map>
+#include <cstdint>
+#include <windows.h>
+#include <DirectXMath.h>
+
+#include "SSCore.h"
+
 namespace GLTF {
     enum CORE_API ComponentType
     {

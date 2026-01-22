@@ -158,6 +158,4 @@ void SSRenderingObject::Draw(ID3D11DeviceContext* deviceContext)
 	{
 		Cmd->Execute(deviceContext);
 	}
-
-	return;	
 }

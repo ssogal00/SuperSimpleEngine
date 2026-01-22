@@ -7,6 +7,7 @@
 #include "SSCameraManager.h"
 #include "SSCubeScene.h"
 #include "SSInstancingTestScene.h"
+#include "SSGLTFTestScene.h"
 
 SSGameThread::SSGameThread(DWORD gameThreadId)
 {
@@ -34,7 +35,9 @@ void SSGameThread::Start(DWORD gameThreadId)
 	// mCurrentGameScene = new SSCubeScene();
 	// mCurrentGameScene->InitializeScene();
 
-	mCurrentGameScene = new SSInstancingTestScene();
+	//mCurrentGameScene = new SSInstancingTestScene();
+	//mCurrentGameScene->InitializeScene();
+	mCurrentGameScene = new SSGLTFTestScene();
 	mCurrentGameScene->InitializeScene();
 }
 

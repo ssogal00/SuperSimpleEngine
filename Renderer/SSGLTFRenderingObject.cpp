@@ -14,6 +14,8 @@ SSGLTFRenderingObject::SSGLTFRenderingObject(SSObjectBase* InGameObject)
 {
 	mGLTFMeshObject = static_cast<SSGLTFMeshObject*>(InGameObject);
 
+	mMaterialProxy = InGameObject->GetMaterialProxySharedPtr();
+
 	GLTF::SSGLTF_V2& GLTFDataRef = mGLTFMeshObject->mGLTFData;
 
 	mPositionBuffer = new SSDX11StructuredBuffer(GLTFDataRef.MergedPositions.data(), 
@@ -126,11 +128,16 @@ void SSGLTFRenderingObject::CreateRenderCmdList()
 
 	GLTF::SSGLTF_V2& GLTFDataRef = mGLTFMeshObject->mGLTFData;
 
-	unsigned int StartOffset = 0;
-	for(auto& IndexCount: GLTFDataRef.IndexCountList)
+	unsigned int StartIndexLocation = 0;
+	for(size_t i=0; i< GLTFDataRef.IndexCountList.size(); ++i)
 	{
-		RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer, IndexCount, StartOffset, 0));
-		StartOffset += IndexCount;
+		unsigned int IndexCount = GLTFDataRef.IndexCountList[i];
+
+		int baseVertexLocation = GLTFDataRef.PositionOffsetListInBytes[i] / sizeof(DirectX::XMFLOAT3);
+
+		RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer, IndexCount, StartIndexLocation, baseVertexLocation));
+
+		StartIndexLocation += IndexCount;
 	}
 }
 

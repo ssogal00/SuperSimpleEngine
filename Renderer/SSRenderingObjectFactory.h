@@ -1,8 +1,11 @@
 
 #pragma once
 
+class SSRenderingObject;
+class SSGameObject;
+
 class SSRenderingObjectFactory
 {
 public:
-	SSRenderingObject* CreateRenderingObject(SSGameObject*);
+	static SSRenderingObject* CreateRenderingObject(class SSObjectBase* InGameObject);
 };
