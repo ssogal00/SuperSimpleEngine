@@ -336,12 +336,17 @@ namespace GLTF {
 
 					int64_t PositionByteOffset = PositionBufferView.ByteOffset + PositionAccessor.ByteOffset;
 
-					Result.MeshVertexDataMap[MeshKey].Positions = ParseVector3s(UriPath, PositionByteOffset, PositionAccessor.Count, PositionBufferView.ByteLength);
-					Result.PositionCountList.push_back(static_cast<unsigned int>(Result.MergedPositions.size()));
+					std::vector<XMFLOAT3> PositionList;
+					
+					PositionList = ParseVector3s(UriPath, PositionByteOffset, PositionAccessor.Count, PositionBufferView.ByteLength);
+					
+					Result.MeshVertexDataMap[MeshKey].Positions = PositionList;
+
+					Result.PositionCountList.push_back(static_cast<unsigned int>(PositionList.size()));
 
 					Result.MergedPositions.insert(Result.MergedPositions.end(),
-						Result.MeshVertexDataMap[MeshKey].Positions.begin(),
-						Result.MeshVertexDataMap[MeshKey].Positions.end());
+						PositionList.begin(),
+						PositionList.end());
 
 				}
 				// Parse Normals
