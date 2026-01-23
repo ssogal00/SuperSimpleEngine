@@ -17,7 +17,10 @@
 * 로직 계산(Update)과 화면 출력(Render)이 병렬로 처리되어 프레임 드랍을 최소화하고 안정적인 FPS를 유지합니다.
 
 ### 3. Module based build system
-* 빌드 최적화를 위해 각 기능별로 모듈을 분산하고 종속성을 관리했습니다. 
+* 빌드 최적화를 위해 각 기능별로 모듈을 분산하고 종속성을 관리했습니다.
+
+### 4. Physically Based Rendering 
+* 물리기반렌더링 구현 
 
 ## 🛠 Technical Highlights (Refinement)
 
