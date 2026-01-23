@@ -1,8 +1,59 @@
 # SuperSimpleEngine
-Super Simple DirectX11 Renderer 
-Only on Windows
 
 ![alt tag](https://github.com/ssogal00/SuperSimpleEngine/blob/RenderingRefactoring/ScreenShot/screenshot.png)
+
+
+15년 차 전문가의 포트폴리오에 걸맞게, 단순히 기능 나열에 그치지 않고 **설계 철학과 기술적 도전 과제**가 잘 드러나도록 리드미를 구성해 보았습니다.
+
+제시해주신 3가지 핵심 특징을 중심으로, 엔진의 안정성과 확장성을 보여줄 수 있는 '리소스 동기화' 및 '추상화' 레이어에 대한 내용을 추가하여 내용을 꾸며보았습니다.
+
+---
+
+**SuperSimpleEngine**은 성능과 유연성을 동시에 확보하기 위해 설계된 DirectX 11 기반의 고성능 3D 게임 엔진입니다. 데이터 중심 설계(Data-Driven)와 멀티쓰레드 아키텍처를 통해 현대적인 렌더링 파이프라인의 기초를 학습하고 구현하는 것을 목표로 합니다.
+
+## 🚀 Key Features
+
+### 1. DirectX 11 Rendering Pipeline
+
+
+### 2. Data-Driven Rendering Architecture
+
+* 엔진 로직과 렌더링 데이터를 분리하여, 데이터 구조의 변경이 코드 전체에 미치는 영향을 최소화했습니다.
+
+
+### 3. Multi-Threaded Design (Thread Separation)
+
+* **Game Thread**와 **Render Thread**를 물리적으로 분리하여 하드웨어 성능을 최대한 활용합니다.
+* 로직 계산(Update)과 화면 출력(Render)이 병렬로 처리되어 프레임 드랍을 최소화하고 안정적인 FPS를 유지합니다.---
+
+## 🛠 Technical Highlights (Refinement)
+
+엔진의 완성도를 높이기 위해 다음과 같은 기술적 요소들이 포함되어 있습니다.
+
+* **Render Data Synchronization**: 게임 쓰레드에서 생성된 데이터를 렌더 쓰레드로 안전하게 전달하기 위한 **Producer-Consumer 패턴** 기반의 큐잉 시스템 혹은 데이터 스냅샷 메커니즘을 적용했습니다.
+
+## 💻 Tech Stack
+
+* **Language**: C++
+* **Graphics API**: DirectX 11
+* **Build System**: CMake (or Visual Studio Solution)
+* **Target Platform**: Windows (x64)
+
+## 🏗 Project Architecture
+
+```text
+SuperSimpleEngine/
+├── Core/               # Engine Framework & Threading
+├── Graphics/           # DX11 Wrapper & Renderer
+├── Resources/          # Material, Mesh, Shader Data
+├── Shaders/            # HLSL Source Codes
+└── Common/             # Math & Utilities
+
+```
+
+---
+
+
 
 # How to build
 1. CMake required
