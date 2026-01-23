@@ -3,13 +3,7 @@
 ![alt tag](https://github.com/ssogal00/SuperSimpleEngine/blob/RenderingRefactoring/ScreenShot/screenshot.png)
 
 
-15년 차 전문가의 포트폴리오에 걸맞게, 단순히 기능 나열에 그치지 않고 **설계 철학과 기술적 도전 과제**가 잘 드러나도록 리드미를 구성해 보았습니다.
-
-제시해주신 3가지 핵심 특징을 중심으로, 엔진의 안정성과 확장성을 보여줄 수 있는 '리소스 동기화' 및 '추상화' 레이어에 대한 내용을 추가하여 내용을 꾸며보았습니다.
-
----
-
-**SuperSimpleEngine**은 성능과 유연성을 동시에 확보하기 위해 설계된 DirectX 11 기반의 고성능 3D 게임 엔진입니다. 데이터 중심 설계(Data-Driven)와 멀티쓰레드 아키텍처를 통해 현대적인 렌더링 파이프라인의 기초를 학습하고 구현하는 것을 목표로 합니다.
+**SuperSimpleEngine**은 성능과 유연성을 동시에 확보하기 위해 설계된 DirectX 11 기반의 3D 게임 엔진입니다. 데이터 중심 설계(Data-Driven)와 멀티쓰레드 아키텍처를 통해 현대적인 렌더링 파이프라인의 기초를 학습하고 구현하는 것을 목표로 합니다.
 
 ## 🚀 Key Features
 
