@@ -32,17 +32,6 @@
 * **Build System**: CMake (or Visual Studio Solution)
 * **Target Platform**: Windows (x64)
 
-## 🏗 Project Architecture
-
-```text
-SuperSimpleEngine/
-├── Core/               # Engine Framework & Threading
-├── Graphics/           # DX11 Wrapper & Renderer
-├── Resources/          # Material, Mesh, Shader Data
-├── Shaders/            # HLSL Source Codes
-└── Common/             # Math & Utilities
-
-```
 
 ---
 
