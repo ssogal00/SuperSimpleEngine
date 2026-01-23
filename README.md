@@ -7,18 +7,17 @@
 
 ## 🚀 Key Features
 
-### 1. DirectX 11 Rendering Pipeline
-
-
-### 2. Data-Driven Rendering Architecture
+### 1. Data-Driven Rendering Architecture
 
 * 엔진 로직과 렌더링 데이터를 분리하여, 데이터 구조의 변경이 코드 전체에 미치는 영향을 최소화했습니다.
 
-
-### 3. Multi-Threaded Design (Thread Separation)
+### 2. Multi-Threaded Design (Thread Separation)
 
 * **Game Thread**와 **Render Thread**를 물리적으로 분리하여 하드웨어 성능을 최대한 활용합니다.
-* 로직 계산(Update)과 화면 출력(Render)이 병렬로 처리되어 프레임 드랍을 최소화하고 안정적인 FPS를 유지합니다.---
+* 로직 계산(Update)과 화면 출력(Render)이 병렬로 처리되어 프레임 드랍을 최소화하고 안정적인 FPS를 유지합니다.
+
+### 3. Module based build system
+* 빌드 최적화를 위해 각 기능별로 모듈을 분산하고 종속성을 관리했습니다. 
 
 ## 🛠 Technical Highlights (Refinement)
 
