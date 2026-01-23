@@ -14,6 +14,8 @@ SSGLTFRenderingObject::SSGLTFRenderingObject(SSObjectBase* InGameObject)
 {
 	mGLTFMeshObject = static_cast<SSGLTFMeshObject*>(InGameObject);
 
+	mGLTFMeshObject->SetScale(5,5,5);
+
 	mMaterialProxy = InGameObject->GetMaterialProxySharedPtr();
 
 	GLTF::SSGLTF_V2& GLTFDataRef = mGLTFMeshObject->mGLTFData;
@@ -126,19 +128,27 @@ void SSGLTFRenderingObject::CreateRenderCmdList()
 		RenderCmdList.push_back(new SSRenderCmdSetVSTexture(vs.get(), resource.get(), SlotIndex));
 	}
 
+	RenderCmdList.push_back(new SSSetPrimivitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+
 	GLTF::SSGLTF_V2& GLTFDataRef = mGLTFMeshObject->mGLTFData;
 
 	unsigned int StartIndexLocation = 0;
 
-	for(size_t i=0; i< GLTFDataRef.IndexCountList.size(); ++i)
+	unsigned int StartVertexLocation = 0;
+
+	for(size_t i = 0; i< GLTFDataRef.IndexCountList.size(); ++i)
 	{  
 		unsigned int IndexCount = GLTFDataRef.IndexCountList[i];
 
-		int baseVertexLocation = GLTFDataRef.PositionCountList[i];
+		unsigned int PositionCount = GLTFDataRef.PositionCountList[i];
 
-		RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer, IndexCount, StartIndexLocation, baseVertexLocation));
+		if(i == 1)
+		{
+			RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer, IndexCount, StartIndexLocation, StartVertexLocation));
+		}
 
 		StartIndexLocation += IndexCount;
+		StartVertexLocation += PositionCount;
 	}
 }
 

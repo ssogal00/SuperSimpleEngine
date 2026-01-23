@@ -9,6 +9,18 @@ public:
 	virtual ~SSRenderCmdBase();
 };
 
+class SSSetPrimivitiveTopology : public SSRenderCmdBase
+{
+	public:
+		SSSetPrimivitiveTopology(D3D11_PRIMITIVE_TOPOLOGY inTopology)
+		:mTopology(inTopology)
+	{
+	}
+	virtual void Execute(ID3D11DeviceContext* inDeviceContext) override;
+private:
+	D3D11_PRIMITIVE_TOPOLOGY mTopology;
+};
+
 // set current vertex shader
 class SSRenderCmdSetVS : public SSRenderCmdBase
 {

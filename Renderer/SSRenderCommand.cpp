@@ -11,6 +11,14 @@ SSRenderCmdBase::~SSRenderCmdBase()
 {	
 }
 
+void SSSetPrimivitiveTopology::Execute(ID3D11DeviceContext* inDeviceContext)
+{
+	if (inDeviceContext)
+	{
+		inDeviceContext->IASetPrimitiveTopology(mTopology);
+	}
+}
+
 void SSRenderCmdSetVS::Execute(ID3D11DeviceContext * inDeviceContext)
 {
 	if (GetDX11Device()->GetBoundVertexShader() == mVS->GetShader())
@@ -18,7 +26,7 @@ void SSRenderCmdSetVS::Execute(ID3D11DeviceContext * inDeviceContext)
 		return;
 	}
 	D3D_PRIMITIVE_TOPOLOGY PrimitiveType = mVS->GetPrimitiveType();
-	inDeviceContext->IAGetPrimitiveTopology(&PrimitiveType);
+	inDeviceContext->IASetPrimitiveTopology(PrimitiveType);
 	inDeviceContext->IASetInputLayout(mVS->GetInputLayout());
 	inDeviceContext->VSSetShader(mVS->GetShader(), nullptr, 0);
 }

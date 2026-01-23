@@ -32,7 +32,7 @@ void SSGameThread::Start(DWORD gameThreadId)
 	mGameThreadId = gameThreadId;
 	mGameThreadDoneEventHandle = CreateEvent(nullptr, false, false, "GameThreadEventHandle");
 
-	// mCurrentGameScene = new SSCubeScene();
+	//mCurrentGameScene = new SSCubeScene();
 	// mCurrentGameScene->InitializeScene();
 
 	//mCurrentGameScene = new SSInstancingTestScene();
