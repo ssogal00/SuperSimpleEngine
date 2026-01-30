@@ -34,6 +34,11 @@ XMMATRIX SSObjectBase::GetModelTransform()
 		* XMMatrixTranslation(mPosition.x, mPosition.y, mPosition.z);
 }
 
+void SSObjectBase::SetYaw(float fYaw)
+{
+	mYaw = fYaw;
+}
+
 void SSObjectBase::SetPositionX(float x)
 {
 	mPosition.x = x;

@@ -35,6 +35,8 @@ public:
 	virtual void SetScaleY(float y);
 	virtual void SetScaleZ(float z);
 
+	virtual void SetYaw(float fYaw);
+
 	bool IsVisible() const { return mVisible; }
 
 	bool IsInstanced() const { return false; }

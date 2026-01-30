@@ -33,6 +33,8 @@ public:
 	void SetCurrentCameraFOV(float fov);
 	void SetCurrentCameraAspectRatio(float ratio);
 
+	void MoveUp(float fAmount);
+	void MoveDown(float fAmount);
 	void MoveFoward(float amount);
 	void MoveBackward(float amount);
 	void RotateYaw(float amount);

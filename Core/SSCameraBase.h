@@ -30,6 +30,8 @@ public:
 	virtual void RotatePitch(float amount){}
 	virtual void MoveFoward(float amount){}
 	virtual void MoveBackward(float amount){}
+	virtual void MoveUp(float amount) {}
+	virtual void MoveDown(float amount) {}
 
 	void SetFOV(float fov) { mFOV = fov; }
 	float GetFOV() { return mFOV; }
