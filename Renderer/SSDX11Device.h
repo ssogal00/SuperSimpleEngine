@@ -58,6 +58,7 @@ public:
 
 	virtual std::shared_ptr<class SSDX11VertexBuffer>	CreateVertexBuffer(unsigned int stride, unsigned int count, void* ptrData);
 	virtual std::shared_ptr<class SSDX11IndexBuffer>	CreateIndexBuffer(std::vector<unsigned int>& inData);
+	virtual std::shared_ptr<class SSDX11IndexBuffer>	CreateIndexBuffer(std::vector<unsigned short>& inData);
 
 	class SSDX11RenderTargetTexture2D*					CreateRenderTargetTexture2D(const UINT width, const UINT height, DXGI_FORMAT eFormat, bool bGeneratedMips = false, UINT maxMipCount = 1);
 	void												ResizeRenderTargetTexture2D(SSDX11RenderTargetTexture2D* InRT2D, const UINT InWidth, const UINT InHeight);

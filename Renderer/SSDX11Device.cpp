@@ -132,6 +132,31 @@ std::shared_ptr<SSDX11IndexBuffer> SSDX11Device::CreateIndexBuffer(std::vector<u
 	return Result;
 }
 
+
+std::shared_ptr<SSDX11IndexBuffer> SSDX11Device::CreateIndexBuffer(std::vector<unsigned short>& inData)
+{
+	D3D11_BUFFER_DESC bufferDesc{};
+	bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
+	bufferDesc.ByteWidth = static_cast<UINT>(sizeof(unsigned short) * inData.size());
+
+	D3D11_SUBRESOURCE_DATA indexSubresourceData;
+	indexSubresourceData.pSysMem = &inData[0];
+	indexSubresourceData.SysMemPitch = 0;
+	indexSubresourceData.SysMemSlicePitch = 0;
+
+	ID3D11Buffer* ptrBuffer = nullptr;
+
+	HR(mDevice->CreateBuffer(&bufferDesc, &indexSubresourceData, &ptrBuffer));
+
+	std::shared_ptr<SSDX11IndexBuffer> Result = make_shared<SSDX11IndexBuffer>(ptrBuffer, static_cast<unsigned int>(inData.size()));
+
+	return Result;
+}
+
 SSDX11RenderTargetTexture2D* SSDX11Device::CreateRenderTargetTexture2D(const UINT width, const UINT height, DXGI_FORMAT eFormat, bool bGeneratedMips, UINT maxMipCount)
 {
 	auto Tuple = InternalCreateRenderTargetTexture2D(width, height, eFormat, maxMipCount);
