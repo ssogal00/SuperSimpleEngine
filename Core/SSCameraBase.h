@@ -40,7 +40,7 @@ public:
 	virtual ~SSCameraBase() {}
 
 	virtual void Update(){}
-
+	virtual void Tick(float DeltaSeconds) {}
 protected:
 
 	virtual void UpdateViewMatrix(){}

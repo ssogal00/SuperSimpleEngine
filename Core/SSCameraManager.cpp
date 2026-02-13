@@ -2,6 +2,7 @@
 #include "SSFreeCamera.h"
 #include "SSCameraManager.h"
 #include "SSMathHelper.h"
+#include "SSOrbitCamera.h"
 
 SSCameraManager& SSCameraManager::Get()
 {
@@ -26,7 +27,8 @@ SSCameraManager* SSCameraManager::mInstance = nullptr;
 
 SSCameraManager::SSCameraManager()
 {
-    mCurrentCamera = new SSFreeCamera();
+    // mCurrentCamera = new SSFreeCamera();
+	mCurrentCamera = new SSOrbitCamera();
 }
 
 SSCameraManager::~SSCameraManager()
@@ -88,6 +90,8 @@ void SSCameraManager::UpdateMVP()
 
 void SSCameraManager::Tick(float DeltaTime)
 {
+	mCurrentCamera->Tick(DeltaTime);
+
 	UpdateCurrentCamera();
 
 	mGameThreadMVP = mCurrentMVP;

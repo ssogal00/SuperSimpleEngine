@@ -318,7 +318,6 @@ namespace GLTF {
 
 		for (auto& Mesh : Result.Meshes)
 		{
-			//if (Mesh.Name == "Hose_low" || Mesh.Name == "RubberWood_low")
 			{
 				for (auto& Primitive : Mesh.Primitives)
 				{
