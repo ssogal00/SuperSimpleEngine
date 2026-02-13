@@ -209,7 +209,7 @@ namespace GLTF {
         static std::vector<XMFLOAT3> ParseVector3s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength);
 		static std::vector<XMFLOAT2> ParseVector2s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength);
 		static std::vector<XMFLOAT4> ParseVector4s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength);
-		static std::vector<uint16_t> ParseUInt16s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength);
+		static std::vector<uint16_t> ParseUInt16s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength, uint16_t IndexOffset = 0);
         
     protected:
         std::vector<std::string> Images;

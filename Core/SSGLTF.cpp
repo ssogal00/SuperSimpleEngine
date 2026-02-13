@@ -83,7 +83,7 @@ namespace GLTF {
 		return Result;
 	}
 
-	std::vector<uint16_t> SSGLTF_V2::ParseUInt16s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength)
+	std::vector<uint16_t> SSGLTF_V2::ParseUInt16s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength, uint16_t IndexOffset)
 	{
 		std::vector<uint16_t> Result;
 		OpenFileAndSetPointer FileReader(InPath, InOffset);
@@ -98,7 +98,7 @@ namespace GLTF {
 		for (int i = 0; i < InCount; ++i)
 		{
 			uint16_t Value = *reinterpret_cast<const uint16_t*>(DataPtr + i * 2);
-			Result[i] = Value;
+			Result[i] = Value + IndexOffset;
 		}
 		return Result;
 	}
@@ -318,13 +318,41 @@ namespace GLTF {
 
 		for (auto& Mesh : Result.Meshes)
 		{
-			if (Mesh.Name == "Hose_low" || Mesh.Name == "RubberWood_low")
+			//if (Mesh.Name == "Hose_low" || Mesh.Name == "RubberWood_low")
 			{
 				for (auto& Primitive : Mesh.Primitives)
 				{
 					std::string BasePath = std::filesystem::path(InPath).parent_path().string();
 
 					std::string MeshKey = Mesh.Name;
+
+					if (Primitive.Indices != -1)
+					{
+						int AccessorIndex = Primitive.Indices;
+						Accessor& IndexAccessor = Result.Accessors[AccessorIndex];
+						BufferView& IndexBufferView = Result.BufferViews[IndexAccessor.BufferView];
+						Buffer& IndexBuffer = Result.Buffers[IndexBufferView.Buffer];
+						IndexBuffer.Uri;
+						std::string UriPath = BasePath + "/" + IndexBuffer.Uri;
+						std::vector<uint16_t> Indices;
+
+						int64_t IndexByteOffset = IndexAccessor.ByteOffset + IndexBufferView.ByteOffset;
+						int64_t Length = IndexAccessor.Count * 2;
+
+						uint16_t IndexOffset = static_cast<uint16_t>(Result.MergedPositions.size());
+
+						Indices = ParseUInt16s(UriPath, IndexByteOffset, IndexAccessor.Count, Length, IndexOffset);
+
+						Result.MeshVertexDataMap[MeshKey].Indices = Indices;
+
+						Result.MergedIndices.insert(Result.MergedIndices.end(),
+							Indices.begin(),
+							Indices.end());
+
+						Result.IndexCountList.push_back(Indices.size());
+
+						Result.MeshNameToIndexCount[MeshKey] = static_cast<unsigned int>(Indices.size());
+					}
 
 					// Load Positions
 					if (Primitive.Attributes.find("POSITION") != Primitive.Attributes.end())
@@ -410,30 +438,7 @@ namespace GLTF {
 							Result.MeshVertexDataMap[MeshKey].Texcoords.end());
 					}
 
-					if (Primitive.Indices != -1)
-					{
-						int AccessorIndex = Primitive.Indices;
-						Accessor& IndexAccessor = Result.Accessors[AccessorIndex];
-						BufferView& IndexBufferView = Result.BufferViews[IndexAccessor.BufferView];
-						Buffer& IndexBuffer = Result.Buffers[IndexBufferView.Buffer];
-						IndexBuffer.Uri;
-						std::string UriPath = BasePath + "/" + IndexBuffer.Uri;
-						std::vector<uint16_t> Indices;
-
-						int64_t IndexByteOffset = IndexAccessor.ByteOffset + IndexBufferView.ByteOffset;
-						int64_t Length = IndexAccessor.Count * 2;
-
-						Indices = ParseUInt16s(UriPath, IndexByteOffset, IndexAccessor.Count, Length);
-						Result.MeshVertexDataMap[MeshKey].Indices = Indices;
-
-						Result.MergedIndices.insert(Result.MergedIndices.end(),
-							Indices.begin(),
-							Indices.end());
-
-						Result.IndexCountList.push_back(Indices.size());
-
-						Result.MeshNameToIndexCount[MeshKey] = static_cast<unsigned int>(Indices.size());
-					}
+					
 				}
 			}			
 		}
