@@ -3,6 +3,7 @@
 #include "SSGLTFMesh.h"
 #include "SSVertexTypes.h"
 #include "FreqUsedConstantBufferTypes.h"
+#include "SSSharedRenderData.h"
 
 
 SSGLTFMeshObject::SSGLTFMeshObject(std::string InGLTFFilePath)
@@ -32,4 +33,78 @@ SSGLTFMeshObject::SSGLTFMeshObject(std::string InGLTFFilePath)
 SSGLTFMeshObject::~SSGLTFMeshObject()
 {
 
+}
+
+
+////
+SSGLTFTestObject::SSGLTFTestObject()
+{
+	std::vector< VT_PositionNormalTexcoordTangent> CubeDataList = SSSharedRenderData::Get().GetRawCubeVertexData();
+
+	for(VT_PositionNormalTexcoordTangent& vertex : CubeDataList)
+	{
+		mGLTFData.MergedPositions.push_back(XMFLOAT3(
+			vertex.VertexAttribute1.x,
+			vertex.VertexAttribute1.y,
+			vertex.VertexAttribute1.z
+		));
+
+		mGLTFData.MergedNormals.push_back(vertex.VertexAttribute2);
+		mGLTFData.MergedTexcoords.push_back(vertex.VertexAttribute3);
+		mGLTFData.MergedTangents.push_back(vertex.VertexAttribute4);
+	}
+
+	mGLTFData.PositionCountList.push_back(CubeDataList.size());
+
+	std::vector<VT_PositionNormalTexcoordTangent> SphereDataList = SSSharedRenderData::Get().GetRawSphereVertexData();
+
+	for (VT_PositionNormalTexcoordTangent& vertex : SphereDataList)
+	{
+		XMFLOAT3 OffsetPos = XMFLOAT3(
+			vertex.VertexAttribute1.x ,
+			vertex.VertexAttribute1.y ,
+			vertex.VertexAttribute1.z
+		);
+		mGLTFData.MergedPositions.push_back(OffsetPos);
+		mGLTFData.MergedNormals.push_back(vertex.VertexAttribute2);
+		mGLTFData.MergedTexcoords.push_back(vertex.VertexAttribute3);
+		mGLTFData.MergedTangents.push_back(vertex.VertexAttribute4);
+	}
+
+	mGLTFData.PositionCountList.push_back(SphereDataList.size());
+
+	auto CubeIndexData = SSSharedRenderData::Get().GetCubeIndexData();	
+	
+	for (UINT index : CubeIndexData)
+	{
+		mGLTFData.MergedIndices.push_back(static_cast<uint16_t>(index));
+	}
+	mGLTFData.IndexCountList.push_back(CubeIndexData.size());
+
+	auto SphereIndexData = SSSharedRenderData::Get().GetSphereIndexData();
+
+	for (UINT index : SphereIndexData)
+	{
+		mGLTFData.MergedIndices.push_back(static_cast<uint16_t>(index));
+	}
+	
+	mGLTFData.IndexCountList.push_back(SphereIndexData.size());
+
+	mMaterialProxy->SetPixelShaderName("GBuffer.ps");
+	mMaterialProxy->SetVertexShaderName("DeferredInstancedManualFetch.vs");
+	mMaterialProxy->SetPSTextureParam("DiffuseTex", "./Resource/Tex/rustediron/rustediron2_basecolor.dds");
+	mMaterialProxy->SetPSTextureParam("NormalTex", "./Resource/Tex/rustediron/rustediron2_normal.dds");
+	mMaterialProxy->SetPSTextureParam("MetalicTex", "./Resource/Tex/rustediron/rustediron2_metallic.dds");
+	mMaterialProxy->SetPSTextureParam("RoughnessTex", "./Resource/Tex/rustediron/rustediron2_roughness.dds");
+
+	SSAlignedCBuffer<int, int, int, int, int> settings;
+
+	settings.value1 = 1; //metalic
+	settings.value2 = 0; //mask
+	settings.value3 = 1; //normal
+	settings.value4 = 1; // roghness
+	settings.value5 = 1; // diffuse
+
+	SSConstantBufferData Data{ settings };
+	mMaterialProxy->SetPSConstantParam("TextureExist", Data);
 }

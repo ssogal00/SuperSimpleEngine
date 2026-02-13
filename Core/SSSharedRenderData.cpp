@@ -126,6 +126,8 @@ void SSSharedRenderData::CreateSphereVertexData()
 	std::vector<XMFLOAT4> tempTangentList;
 
 	std::vector< VT_PositionNormalTexcoordTangent > vertexArray;	
+
+	UINT CurrentIndex = 0;
 	
 	for (UINT i = 0; i < stackCount; ++i)
 	{
@@ -192,6 +194,12 @@ void SSSharedRenderData::CreateSphereVertexData()
 			//  /
 			// V3-----V4
 
+
+			UINT V1Index = CurrentIndex++;
+			UINT V2Index = CurrentIndex++;
+			UINT V3Index = CurrentIndex++;
+			UINT V4Index = CurrentIndex++;
+
 			tempVertexList.push_back(V1);
 			tempVertexList.push_back(V2);
 			tempVertexList.push_back(V3);
@@ -199,6 +207,14 @@ void SSSharedRenderData::CreateSphereVertexData()
 			tempVertexList.push_back(V3);
 			tempVertexList.push_back(V2);
 			tempVertexList.push_back(V4);
+
+			mSphereIndexData.push_back(V1Index);
+			mSphereIndexData.push_back(V2Index);
+			mSphereIndexData.push_back(V3Index);
+
+			mSphereIndexData.push_back(V3Index);
+			mSphereIndexData.push_back(V2Index);
+			mSphereIndexData.push_back(V4Index);
 
 			tempNormalList.push_back(norm1);
 			tempNormalList.push_back(norm2);

@@ -138,17 +138,29 @@ void SSGLTFRenderingObject::CreateRenderCmdList()
 
 	check(GLTFDataRef.IndexCountList.size() == GLTFDataRef.PositionCountList.size());
 
-	for(size_t i = 0; i< GLTFDataRef.IndexCountList.size(); ++i)
-	{  
-		unsigned int IndexCount = GLTFDataRef.IndexCountList[i];
-
-		unsigned int PositionCount = GLTFDataRef.PositionCountList[i];
-
-		if(i == 4)
+	/*for (auto& kvp : GLTFDataRef.MeshNameToIndexCount)
+	{
+		std::string Name = kvp.first;
+		unsigned int IndexCount = kvp.second;
+		unsigned int PositionCount = GLTFDataRef.MeshNameToPositionCount[Name];
 		{
 			RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer, IndexCount, StartIndexLocation, StartVertexLocation));
 		}
 
+		StartIndexLocation += IndexCount;
+		StartVertexLocation += PositionCount;
+	}
+	*/
+	for (size_t i = 0; i< GLTFDataRef.IndexCountList.size(); ++i)
+	{  
+		unsigned int IndexCount = GLTFDataRef.IndexCountList[i];
+		unsigned int PositionCount = GLTFDataRef.PositionCountList[i];				
+		{
+			if (i == 1)
+			{
+				RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer, IndexCount, StartIndexLocation, StartVertexLocation));
+			}
+		}
 		StartIndexLocation += IndexCount;
 		StartVertexLocation += PositionCount;
 	}

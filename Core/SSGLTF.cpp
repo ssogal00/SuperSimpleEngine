@@ -318,121 +318,124 @@ namespace GLTF {
 
 		for (auto& Mesh : Result.Meshes)
 		{
-			for (auto& Primitive : Mesh.Primitives)
+			if (Mesh.Name == "Hose_low" || Mesh.Name == "RubberWood_low")
 			{
-				std::string BasePath = std::filesystem::path(InPath).parent_path().string();
-				
-				std::string MeshKey = Mesh.Name;
-
-				// Load Positions
-				if (Primitive.Attributes.find("POSITION") != Primitive.Attributes.end())
+				for (auto& Primitive : Mesh.Primitives)
 				{
-					int AccessorIndex = Primitive.Attributes["POSITION"];
-					Accessor& PositionAccessor = Result.Accessors[AccessorIndex];
-					BufferView& PositionBufferView = Result.BufferViews[PositionAccessor.BufferView];
-					Buffer& PositionBuffer = Result.Buffers[PositionBufferView.Buffer];
-					PositionBuffer.Uri;
-					std::string UriPath = BasePath + "/" + PositionBuffer.Uri;
+					std::string BasePath = std::filesystem::path(InPath).parent_path().string();
 
-					int64_t PositionByteOffset = PositionBufferView.ByteOffset + PositionAccessor.ByteOffset;
+					std::string MeshKey = Mesh.Name;
 
-					std::vector<XMFLOAT3> PositionList;
-					
-					PositionList = ParseVector3s(UriPath, PositionByteOffset, PositionAccessor.Count, PositionBufferView.ByteLength);
-					
-					Result.MeshVertexDataMap[MeshKey].Positions = PositionList;
+					// Load Positions
+					if (Primitive.Attributes.find("POSITION") != Primitive.Attributes.end())
+					{
+						int AccessorIndex = Primitive.Attributes["POSITION"];
+						Accessor& PositionAccessor = Result.Accessors[AccessorIndex];
+						BufferView& PositionBufferView = Result.BufferViews[PositionAccessor.BufferView];
+						Buffer& PositionBuffer = Result.Buffers[PositionBufferView.Buffer];
+						PositionBuffer.Uri;
+						std::string UriPath = BasePath + "/" + PositionBuffer.Uri;
 
-					Result.PositionCountList.push_back(static_cast<unsigned int>(PositionList.size()));
+						int64_t PositionByteOffset = PositionAccessor.ByteOffset + PositionBufferView.ByteOffset;
 
-					Result.MergedPositions.insert(Result.MergedPositions.end(),
-						PositionList.begin(),
-						PositionList.end());
+						std::vector<XMFLOAT3> PositionList;
+						check(PositionBufferView.ByteStride > 0);
+						int64_t ByteLength = PositionAccessor.Count * PositionBufferView.ByteStride;
+						PositionList = ParseVector3s(UriPath, PositionByteOffset, PositionAccessor.Count, ByteLength);
 
+						Result.MeshVertexDataMap[MeshKey].Positions = PositionList;
+
+						Result.PositionCountList.push_back(static_cast<unsigned int>(PositionList.size()));
+
+						Result.MergedPositions.insert(Result.MergedPositions.end(),
+							PositionList.begin(),
+							PositionList.end());
+
+						Result.MeshNameToPositionCount[MeshKey] = static_cast<unsigned int>(PositionList.size());
+					}
+					// Parse Normals
+					if (Primitive.Attributes.find("NORMAL") != Primitive.Attributes.end())
+					{
+						int AccessorIndex = Primitive.Attributes["NORMAL"];
+						Accessor& NormalAccessor = Result.Accessors[AccessorIndex];
+						BufferView& NormalBufferView = Result.BufferViews[NormalAccessor.BufferView];
+						Buffer& NormalBuffer = Result.Buffers[NormalBufferView.Buffer];
+						NormalBuffer.Uri;
+						std::string UriPath = BasePath + "/" + NormalBuffer.Uri;
+
+						int64_t NormalByteOffset = NormalAccessor.ByteOffset;
+						int64_t ByteLength = NormalBufferView.ByteStride * NormalAccessor.Count;
+
+						Result.MeshVertexDataMap[MeshKey].Normals = ParseVector3s(UriPath, NormalByteOffset, NormalAccessor.Count, ByteLength);
+
+						Result.MergedNormals.insert(Result.MergedNormals.end(),
+							Result.MeshVertexDataMap[MeshKey].Normals.begin(),
+							Result.MeshVertexDataMap[MeshKey].Normals.end());
+					}
+					// Parse Tangents
+					if (Primitive.Attributes.find("TANGENT") != Primitive.Attributes.end())
+					{
+						int AccessorIndex = Primitive.Attributes["TANGENT"];
+						Accessor& TangentAccessor = Result.Accessors[AccessorIndex];
+						BufferView& TangentBufferView = Result.BufferViews[TangentAccessor.BufferView];
+						Buffer& TangentBuffer = Result.Buffers[TangentBufferView.Buffer];
+						TangentBuffer.Uri;
+						std::string UriPath = BasePath + "/" + TangentBuffer.Uri;
+
+						int64_t TangentByteOffset = TangentBufferView.ByteOffset + TangentAccessor.ByteOffset;
+						int64_t ByteLength = TangentAccessor.Count * TangentBufferView.ByteStride;
+
+						Result.MeshVertexDataMap[MeshKey].Tangents = ParseVector4s(UriPath, TangentByteOffset, TangentAccessor.Count, ByteLength);
+
+						Result.MergedTangents.insert(Result.MergedTangents.end(),
+							Result.MeshVertexDataMap[MeshKey].Tangents.begin(),
+							Result.MeshVertexDataMap[MeshKey].Tangents.end());
+					}
+
+					if (Primitive.Attributes.find("TEXCOORD_0") != Primitive.Attributes.end())
+					{
+						int AccessorIndex = Primitive.Attributes["TEXCOORD_0"];
+						Accessor& TexcoordAccessor = Result.Accessors[AccessorIndex];
+						BufferView& TexcoordBufferView = Result.BufferViews[TexcoordAccessor.BufferView];
+						Buffer& TexcoordBuffer = Result.Buffers[TexcoordBufferView.Buffer];
+						TexcoordBuffer.Uri;
+						std::string UriPath = BasePath + "/" + TexcoordBuffer.Uri;
+
+						int64_t TexcoordByteOffset = TexcoordBufferView.ByteOffset + TexcoordAccessor.ByteOffset;
+
+						Result.MeshVertexDataMap[MeshKey].Texcoords = ParseVector2s(UriPath, TexcoordByteOffset, TexcoordAccessor.Count, TexcoordBufferView.ByteLength);
+
+						Result.MergedTexcoords.insert(Result.MergedTexcoords.end(),
+							Result.MeshVertexDataMap[MeshKey].Texcoords.begin(),
+							Result.MeshVertexDataMap[MeshKey].Texcoords.end());
+					}
+
+					if (Primitive.Indices != -1)
+					{
+						int AccessorIndex = Primitive.Indices;
+						Accessor& IndexAccessor = Result.Accessors[AccessorIndex];
+						BufferView& IndexBufferView = Result.BufferViews[IndexAccessor.BufferView];
+						Buffer& IndexBuffer = Result.Buffers[IndexBufferView.Buffer];
+						IndexBuffer.Uri;
+						std::string UriPath = BasePath + "/" + IndexBuffer.Uri;
+						std::vector<uint16_t> Indices;
+
+						int64_t IndexByteOffset = IndexAccessor.ByteOffset + IndexBufferView.ByteOffset;
+						int64_t Length = IndexAccessor.Count * 2;
+
+						Indices = ParseUInt16s(UriPath, IndexByteOffset, IndexAccessor.Count, Length);
+						Result.MeshVertexDataMap[MeshKey].Indices = Indices;
+
+						Result.MergedIndices.insert(Result.MergedIndices.end(),
+							Indices.begin(),
+							Indices.end());
+
+						Result.IndexCountList.push_back(Indices.size());
+
+						Result.MeshNameToIndexCount[MeshKey] = static_cast<unsigned int>(Indices.size());
+					}
 				}
-				// Parse Normals
-				if(Primitive.Attributes.find("NORMAL") != Primitive.Attributes.end())
-				{
-					int AccessorIndex = Primitive.Attributes["NORMAL"];
-					Accessor& NormalAccessor = Result.Accessors[AccessorIndex];
-					BufferView& NormalBufferView = Result.BufferViews[NormalAccessor.BufferView];
-					Buffer& NormalBuffer = Result.Buffers[NormalBufferView.Buffer];
-					NormalBuffer.Uri;
-					std::string UriPath = BasePath + "/" + NormalBuffer.Uri;
-
-					int64_t NormalByteOffset = NormalBufferView.ByteOffset + NormalAccessor.ByteOffset;
-
-					Result.MeshVertexDataMap[MeshKey].Normals = ParseVector3s(UriPath, NormalByteOffset, NormalAccessor.Count, NormalBufferView.ByteLength);
-
-					Result.MergedNormals.insert(Result.MergedNormals.end(),
-						Result.MeshVertexDataMap[MeshKey].Normals.begin(),
-						Result.MeshVertexDataMap[MeshKey].Normals.end());
-
-				
-					CurrentNormalOffset += static_cast<unsigned int>(NormalBufferView.ByteLength);
-				}
-				// Parse Tangents
-				if(Primitive.Attributes.find("TANGENT") != Primitive.Attributes.end())
-				{
-					int AccessorIndex = Primitive.Attributes["TANGENT"];
-					Accessor& TangentAccessor = Result.Accessors[AccessorIndex];
-					BufferView& TangentBufferView = Result.BufferViews[TangentAccessor.BufferView];
-					Buffer& TangentBuffer = Result.Buffers[TangentBufferView.Buffer];
-					TangentBuffer.Uri;
-					std::string UriPath = BasePath + "/" + TangentBuffer.Uri;
-					int64_t TangentByteOffset = TangentBufferView.ByteOffset + TangentAccessor.ByteOffset;
-					Result.MeshVertexDataMap[MeshKey].Tangents = ParseVector4s(UriPath, TangentByteOffset, TangentAccessor.Count, TangentBufferView.ByteLength);
-
-					Result.MergedTangents.insert(Result.MergedTangents.end(),
-					Result.MeshVertexDataMap[MeshKey].Tangents.begin(),
-					Result.MeshVertexDataMap[MeshKey].Tangents.end());
-
-					
-
-					
-				}
-
-				if(Primitive.Attributes.find("TEXCOORD_0") != Primitive.Attributes.end())
-				{
-					int AccessorIndex = Primitive.Attributes["TEXCOORD_0"];
-					Accessor& TexcoordAccessor = Result.Accessors[AccessorIndex];
-					BufferView& TexcoordBufferView = Result.BufferViews[TexcoordAccessor.BufferView];
-					Buffer& TexcoordBuffer = Result.Buffers[TexcoordBufferView.Buffer];
-					TexcoordBuffer.Uri;
-					std::string UriPath = BasePath + "/" + TexcoordBuffer.Uri;
-					
-					int64_t TexcoordByteOffset = TexcoordBufferView.ByteOffset + TexcoordAccessor.ByteOffset;
-
-					Result.MeshVertexDataMap[MeshKey].Texcoords = ParseVector2s(UriPath, TexcoordByteOffset, TexcoordAccessor.Count, TexcoordBufferView.ByteLength);
-
-					Result.MergedTexcoords.insert(Result.MergedTexcoords.end(),
-						Result.MeshVertexDataMap[MeshKey].Texcoords.begin(),
-						Result.MeshVertexDataMap[MeshKey].Texcoords.end());
-
-					
-				}
-
-				if(Primitive.Indices != -1)
-				{
-					int AccessorIndex = Primitive.Indices;
-					Accessor& IndexAccessor = Result.Accessors[AccessorIndex];
-					BufferView& IndexBufferView = Result.BufferViews[IndexAccessor.BufferView];
-					Buffer& IndexBuffer = Result.Buffers[IndexBufferView.Buffer];
-					IndexBuffer.Uri;
-					std::string UriPath = BasePath + "/" + IndexBuffer.Uri;
-					std::vector<uint16_t> Indices;
-
-					int64_t IndexByteOffset = IndexBufferView.ByteOffset + IndexAccessor.ByteOffset;
-
-					Indices = ParseUInt16s(UriPath, IndexByteOffset, IndexAccessor.Count, IndexBufferView.ByteLength);
-					Result.MeshVertexDataMap[MeshKey].Indices = Indices;
-
-					Result.MergedIndices.insert(Result.MergedIndices.end(),
-						Indices.begin(),
-						Indices.end());
-
-					Result.IndexCountList.push_back(Indices.size());
-				}
-			}
+			}			
 		}
 
 		return Result;

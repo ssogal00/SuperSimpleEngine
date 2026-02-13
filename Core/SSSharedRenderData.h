@@ -22,7 +22,12 @@ public:
 	SSSimpleVertexData GetScreenBlitVertexData();
 	
 	std::vector<UINT>& GetCubeIndexData() { return mCubeIndexData; }	
+	std::vector<UINT>& GetSphereIndexData() { return mSphereIndexData; }
 	std::vector<UINT>& GetScreenBlitIndexData() {return mScreenBlitIndexData;}
+
+	// 
+	std::vector<VT_PositionNormalTexcoordTangent> GetRawCubeVertexData() { return mCubeVertexData; }
+	std::vector<VT_PositionNormalTexcoordTangent> GetRawSphereVertexData() { return mSphereVertexData; }
 	
 protected:
 	void CreateCubeVertexData();
@@ -39,4 +44,5 @@ protected:
 	std::vector<UINT> mScreenBlitIndexData;
 
 	std::vector<UINT> mCubeIndexData;	
+	std::vector<UINT> mSphereIndexData;
 };

@@ -228,9 +228,10 @@ namespace GLTF {
         std::vector<XMFLOAT3> MergedNormals;
 		std::vector<XMFLOAT4> MergedTangents;
 		std::vector<XMFLOAT2> MergedTexcoords;
-		std::vector<unsigned int> MergedIndices;
+		std::vector<uint16_t> MergedIndices;
 
-        
+		std::map<std::string, unsigned int> MeshNameToIndexCount;
+		std::map<std::string, unsigned int> MeshNameToPositionCount;
 
         std::vector<unsigned int> IndexCountList;
 		std::vector<unsigned int> PositionCountList;

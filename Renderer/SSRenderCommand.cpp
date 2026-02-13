@@ -214,7 +214,7 @@ SSRenderCmdDrawIndexed::SSRenderCmdDrawIndexed(std::shared_ptr<SSDX11IndexBuffer
 
 void SSRenderCmdDrawIndexed::Execute(ID3D11DeviceContext* inDeviceContext)
 {
-	inDeviceContext->IASetIndexBuffer((ID3D11Buffer*)mIndexBuffer->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0);
+	inDeviceContext->IASetIndexBuffer((ID3D11Buffer*)mIndexBuffer->GetBufferPointer(), DXGI_FORMAT_R16_UINT, 0);
 	
 	if(mIndexCount > 0)
 	{
