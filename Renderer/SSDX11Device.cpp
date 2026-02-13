@@ -140,7 +140,7 @@ std::shared_ptr<SSDX11IndexBuffer> SSDX11Device::CreateIndexBuffer(std::vector<u
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	bufferDesc.MiscFlags = 0;
-	bufferDesc.StructureByteStride = 0;
+	bufferDesc.StructureByteStride = sizeof(unsigned short);
 	bufferDesc.ByteWidth = static_cast<UINT>(sizeof(unsigned short) * inData.size());
 
 	D3D11_SUBRESOURCE_DATA indexSubresourceData;

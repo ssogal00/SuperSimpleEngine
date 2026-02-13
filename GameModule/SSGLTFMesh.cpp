@@ -1,4 +1,4 @@
-
+﻿
 
 #include "SSGLTFMesh.h"
 #include "SSVertexTypes.h"
@@ -45,7 +45,7 @@ SSGLTFTestObject::SSGLTFTestObject()
 	{
 		mGLTFData.MergedPositions.push_back(XMFLOAT3(
 			vertex.VertexAttribute1.x,
-			vertex.VertexAttribute1.y,
+			vertex.VertexAttribute1.y-1,
 			vertex.VertexAttribute1.z
 		));
 
@@ -54,15 +54,17 @@ SSGLTFTestObject::SSGLTFTestObject()
 		mGLTFData.MergedTangents.push_back(vertex.VertexAttribute4);
 	}
 
+	
+
 	mGLTFData.PositionCountList.push_back(CubeDataList.size());
 
-	std::vector<VT_PositionNormalTexcoordTangent> SphereDataList = SSSharedRenderData::Get().GetRawSphereVertexData();
+	std::vector<VT_PositionNormalTexcoordTangent> SphereDataList = SSSharedRenderData::Get().GetRawCubeVertexData();
 
 	for (VT_PositionNormalTexcoordTangent& vertex : SphereDataList)
 	{
 		XMFLOAT3 OffsetPos = XMFLOAT3(
 			vertex.VertexAttribute1.x ,
-			vertex.VertexAttribute1.y ,
+			vertex.VertexAttribute1.y + 1.2,
 			vertex.VertexAttribute1.z
 		);
 		mGLTFData.MergedPositions.push_back(OffsetPos);
@@ -73,7 +75,9 @@ SSGLTFTestObject::SSGLTFTestObject()
 
 	mGLTFData.PositionCountList.push_back(SphereDataList.size());
 
-	auto CubeIndexData = SSSharedRenderData::Get().GetCubeIndexData();	
+	auto CubeIndexData = SSSharedRenderData::Get().GetCubeIndexData();
+
+	uint16_t PrevIndexSize = static_cast<uint16_t>(SphereDataList.size());
 	
 	for (UINT index : CubeIndexData)
 	{
@@ -81,11 +85,12 @@ SSGLTFTestObject::SSGLTFTestObject()
 	}
 	mGLTFData.IndexCountList.push_back(CubeIndexData.size());
 
-	auto SphereIndexData = SSSharedRenderData::Get().GetSphereIndexData();
+	auto SphereIndexData = SSSharedRenderData::Get().GetCubeIndexData();
 
 	for (UINT index : SphereIndexData)
 	{
-		mGLTFData.MergedIndices.push_back(static_cast<uint16_t>(index));
+		mGLTFData.MergedIndices.push_back(static_cast<uint16_t>(index) + PrevIndexSize);
+		//mGLTFData.MergedIndices.push_back(static_cast<uint16_t>(index));
 	}
 	
 	mGLTFData.IndexCountList.push_back(SphereIndexData.size());

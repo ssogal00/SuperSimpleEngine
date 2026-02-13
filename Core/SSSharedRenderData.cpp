@@ -195,10 +195,6 @@ void SSSharedRenderData::CreateSphereVertexData()
 			// V3-----V4
 
 
-			UINT V1Index = CurrentIndex++;
-			UINT V2Index = CurrentIndex++;
-			UINT V3Index = CurrentIndex++;
-			UINT V4Index = CurrentIndex++;
 
 			tempVertexList.push_back(V1);
 			tempVertexList.push_back(V2);
@@ -208,13 +204,7 @@ void SSSharedRenderData::CreateSphereVertexData()
 			tempVertexList.push_back(V2);
 			tempVertexList.push_back(V4);
 
-			mSphereIndexData.push_back(V1Index);
-			mSphereIndexData.push_back(V2Index);
-			mSphereIndexData.push_back(V3Index);
-
-			mSphereIndexData.push_back(V3Index);
-			mSphereIndexData.push_back(V2Index);
-			mSphereIndexData.push_back(V4Index);
+			
 
 			tempNormalList.push_back(norm1);
 			tempNormalList.push_back(norm2);
@@ -237,7 +227,6 @@ void SSSharedRenderData::CreateSphereVertexData()
 	tempTangentList = GenerateTangents(tempVertexList, tempNormalList, tempTexCoordList);
 
 
-	std::vector<UINT> indexArray;
 
 	for (UINT i = 0; i < tempVertexList.size(); i += 3)
 	{
@@ -256,6 +245,11 @@ void SSSharedRenderData::CreateSphereVertexData()
 		(
 			tempVertexList[i + 2], tempNormalList[i + 2], tempTexCoordList[i + 2], tempTangentList[i + 2]
 		));
+
+		mSphereIndexData.push_back(i);
+		mSphereIndexData.push_back(i+1);
+		mSphereIndexData.push_back(i+2);
+
 	}
 }
 

@@ -156,9 +156,9 @@ void SSGLTFRenderingObject::CreateRenderCmdList()
 		unsigned int IndexCount = GLTFDataRef.IndexCountList[i];
 		unsigned int PositionCount = GLTFDataRef.PositionCountList[i];				
 		{
-			if (i == 1)
+			//if(i== 1)
 			{
-				RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer, IndexCount, StartIndexLocation, StartVertexLocation));
+				RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer, IndexCount, StartIndexLocation, 0));
 			}
 		}
 		StartIndexLocation += IndexCount;
