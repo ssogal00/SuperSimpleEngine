@@ -22,4 +22,6 @@ private:
 	SSDX11StructuredBuffer* mNormalBuffer = nullptr;
 	SSDX11StructuredBuffer* mTangentBuffer = nullptr;
 	SSDX11StructuredBuffer* mTexcoordBuffer = nullptr;
+
+	std::map<unsigned int, std::shared_ptr<class SSDX11Texture2D>> mTextureMap;
 };

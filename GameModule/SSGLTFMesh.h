@@ -16,6 +16,8 @@ public:
 	
 	GLTF::SSGLTF_V2 mGLTFData;
 
+	std::string GetGLTFFilePath() const { return mGLTFFilePath; }
+
 protected:
 	SSGLTFMeshObject() = default;
 

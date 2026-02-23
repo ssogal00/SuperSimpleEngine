@@ -216,9 +216,7 @@ namespace GLTF {
         std::vector<Accessor> Accessors;
         std::vector<BufferView> BufferViews;
 		std::vector<Buffer> Buffers;
-		std::vector<Material> Materials;
 		std::vector<Mesh> Meshes;
-		std::vector<TextureInfo> Textures;
 
 		std::map<std::string, GLTFVertexData> MeshVertexDataMap;
 
@@ -232,11 +230,14 @@ namespace GLTF {
 
 		std::map<std::string, unsigned int> MeshNameToIndexCount;
 		std::map<std::string, unsigned int> MeshNameToPositionCount;
+        std::map<std::string, unsigned int> MeshNameToMaterialIndex;
+        std::map<unsigned int, Material> MaterialIndexToMaterial;
 
         std::vector<unsigned int> IndexCountList;
 		std::vector<unsigned int> PositionCountList;
 
-        unsigned int SectionCount = 0;
+        std::vector<TextureInfo> Textures;
+
     };
 };
 
