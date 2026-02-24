@@ -13,6 +13,7 @@ public:
 	virtual bool LoadFromDDSFile(std::wstring filename, bool bSRGB = false)=0;
 	virtual bool LoadFromTGAFile(std::wstring filename, bool bSRGB = false)=0;
 	virtual bool LoadFromHDRFile(std::wstring filename, bool bSRGB = false)=0;
+	virtual bool LoadFromWICFile(std::wstring filename, bool bSRGB = false) = 0;
 
 protected:
 	

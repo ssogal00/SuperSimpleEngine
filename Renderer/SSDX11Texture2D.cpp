@@ -41,7 +41,6 @@ bool SSDX11Texture2D::LoadFromTGAFile(std::wstring filename, bool bsrgb)
 
 	HRESULT result = DirectX::LoadFromTGAFile(filename.c_str(), &metaData, image);
 
-
 	if (result != S_OK)
 	{
 		return false;
@@ -67,6 +66,31 @@ bool SSDX11Texture2D::LoadFromDDSFile(std::wstring filename, bool bsrgb)
 
 	return LoadInternal(metaData, image, bsrgb);
 }
+
+
+bool SSDX11Texture2D::LoadFromWICFile(std::wstring filename, bool bsrgb)
+{
+	
+	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	DirectX::TexMetadata metaData;
+	DirectX::ScratchImage image;
+	HRESULT result = DirectX::LoadFromWICFile(filename.c_str(), DirectX::WIC_FLAGS::WIC_FLAGS_NONE, &metaData, image);
+	if (result != S_OK)
+	{
+		return false;
+	}
+	check(metaData.dimension == DirectX::TEX_DIMENSION_TEXTURE2D);
+	
+	CoUninitialize();
+
+	return LoadInternal(metaData, image, bsrgb);
+}
+
 
 
 bool SSDX11Texture2D::LoadInternal(const DirectX::TexMetadata& metaData, const DirectX::ScratchImage& image, bool bsrgb)
@@ -174,6 +198,7 @@ std::shared_ptr<SSDX11Texture2D> SSDX11Texture2D::CreateFromHDRFile(std::wstring
 	}
 	else
 	{
+		check(false);
 		return nullptr;
 	}
 }
@@ -193,4 +218,25 @@ std::shared_ptr<SSDX11Texture2D> SSDX11Texture2D::CreateFromTGAFile(std::string 
 	wfilename.assign(filename.begin(), filename.end());
 
 	return SSDX11Texture2D::CreateFromTGAFile(wfilename, bsrgb);
+}
+
+std::shared_ptr<SSDX11Texture2D> SSDX11Texture2D::CreateFromWICFile(std::string filename, bool bsrgb)
+{
+	std::wstring wfilename;
+	wfilename.assign(filename.begin(), filename.end());
+
+	return SSDX11Texture2D::CreateFromWICFile(wfilename, bsrgb);
+}
+
+std::shared_ptr<SSDX11Texture2D> SSDX11Texture2D::CreateFromWICFile(std::wstring filename, bool bsrgb)
+{
+	std::shared_ptr<SSDX11Texture2D> texture = std::make_shared<SSDX11Texture2D>();
+	if (texture->LoadFromWICFile(filename, bsrgb))
+	{
+		return texture;
+	}
+	else
+	{
+		return nullptr;
+	}
 }

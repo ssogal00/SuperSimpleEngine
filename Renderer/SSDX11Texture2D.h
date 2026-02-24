@@ -27,9 +27,13 @@ public:
 	static std::shared_ptr<SSDX11Texture2D> CreateFromTGAFile( std::wstring filename, bool bSRGB = false);
 	static std::shared_ptr<SSDX11Texture2D> CreateFromTGAFile( std::string filename, bool bSRGB = false);
 
+	static std::shared_ptr<SSDX11Texture2D> CreateFromWICFile(std::wstring filename, bool bSRGB = false);
+	static std::shared_ptr<SSDX11Texture2D> CreateFromWICFile(std::string filename, bool bSRGB = false);
+
 	virtual bool LoadFromDDSFile( std::wstring filename, bool bSRGB = false) override;
 	virtual bool LoadFromTGAFile( std::wstring filename, bool bSRGB = false) override;
 	virtual bool LoadFromHDRFile( std::wstring filename, bool bSRGB = false) override;
+	virtual bool LoadFromWICFile(std::wstring filename, bool bSRGB = false) override;
 
 	DXGI_FORMAT GetTextureFormat() const { return mTextureFormat; }
 

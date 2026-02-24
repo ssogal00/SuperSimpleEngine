@@ -57,6 +57,17 @@ std::shared_ptr<class SSDX11Texture2D> SSTextureManager::LoadTexture2D(ID3D11Dev
 
 			return texture;
 		}
+		else if (path.find(".png") != std::string::npos || path.find(".jpg") != std::string::npos || path.find(".jpeg") != std::string::npos)
+		{
+			texture = SSDX11Texture2D::CreateFromWICFile(path, bSRGB);
+			if (texture == nullptr)
+			{
+				check(false);
+				return nullptr;
+			}
+			m2DTextureMap[path] = texture;
+			return texture;
+		}
 	}
 
 	return nullptr;
