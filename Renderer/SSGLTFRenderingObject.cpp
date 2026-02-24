@@ -26,11 +26,11 @@ SSGLTFRenderingObject::SSGLTFRenderingObject(SSObjectBase* InGameObject)
 	GLTF::SSGLTF_V2& GLTFDataRef = mGLTFMeshObject->mGLTFData;
 
 	mPositionBuffer = new SSDX11StructuredBuffer(GLTFDataRef.MergedPositions.data(), 
-		sizeof(XMFLOAT3), GLTFDataRef.MergedPositions.size());
+		sizeof(XMFLOAT3), static_cast<unsigned int>( GLTFDataRef.MergedPositions.size()));
 
-	mNormalBuffer		= new SSDX11StructuredBuffer(GLTFDataRef.MergedNormals.data(), sizeof(XMFLOAT3), GLTFDataRef.MergedNormals.size());
-	mTangentBuffer		= new SSDX11StructuredBuffer(GLTFDataRef.MergedTangents.data(), sizeof(XMFLOAT4), GLTFDataRef.MergedTangents.size());
-	mTexcoordBuffer		= new SSDX11StructuredBuffer(GLTFDataRef.MergedTexcoords.data(), sizeof(XMFLOAT2), GLTFDataRef.MergedTexcoords.size());
+	mNormalBuffer		= new SSDX11StructuredBuffer(GLTFDataRef.MergedNormals.data(), sizeof(XMFLOAT3), static_cast<unsigned int>(GLTFDataRef.MergedNormals.size()));
+	mTangentBuffer		= new SSDX11StructuredBuffer(GLTFDataRef.MergedTangents.data(), sizeof(XMFLOAT4), static_cast<unsigned int>(GLTFDataRef.MergedTangents.size()));
+	mTexcoordBuffer		= new SSDX11StructuredBuffer(GLTFDataRef.MergedTexcoords.data(), sizeof(XMFLOAT2), static_cast<unsigned int>(GLTFDataRef.MergedTexcoords.size()));
 
 	mIndexBuffer = GetDX11Device()->CreateIndexBuffer(GLTFDataRef.MergedIndices);
 
@@ -127,12 +127,13 @@ void SSGLTFRenderingObject::CreateRenderCmdList()
 		}
 	}
 	// @ set pixel shader texture
-	for (auto& [name, texture] : mMaterialProxy->GetPSTextureMap())
+	/*for (auto& [name, texture] : mMaterialProxy->GetPSTextureMap())
 	{
 		const int SlotIndex = ps->GetTextureSlotIndex(name);
 		shared_ptr<SSDX11Texture2D> resource = SSTextureManager::Get().LoadTexture2D(GetDX11Device()->GetDeviceContext(), texture);
 		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), resource.get(), SlotIndex));
 	}	
+	*/
 
 	RenderCmdList.push_back(new SSSetPrimivitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
@@ -148,8 +149,29 @@ void SSGLTFRenderingObject::CreateRenderCmdList()
 	for (size_t i = 0; i< GLTFDataRef.IndexCountList.size(); ++i)
 	{  
 		unsigned int IndexCount = GLTFDataRef.IndexCountList[i];
-		unsigned int PositionCount = GLTFDataRef.PositionCountList[i];		
+		unsigned int PositionCount = GLTFDataRef.PositionCountList[i];
+
+		std::string MeshName = GLTFDataRef.Meshes[i].Name;
+
+		unsigned int MaterialIndex = GLTFDataRef.MeshNameToMaterialIndex[MeshName];
+		GLTF::Material MeshMaterial = GLTFDataRef.MaterialIndexToMaterial[MaterialIndex];
+
+		std::shared_ptr<class SSDX11Texture2D> BaseTex = mTextureMap[MeshMaterial.ThisMaterialPBRMetallicRoughness.BaseColorTex.Index];
+		std::shared_ptr<class SSDX11Texture2D> NormalTex = mTextureMap[MeshMaterial.ThisMaterialPBRMetallicRoughness.NormalTex.Index];
+		std::shared_ptr<class SSDX11Texture2D> RoghnessTex = mTextureMap[MeshMaterial.ThisMaterialPBRMetallicRoughness.MetallicRoughnessTex.Index];
 		
+		
+		const int DiffuseSlotIndex = ps->GetTextureSlotIndex("DiffuseTex");
+		const int RoughnessSlotIndex = ps->GetTextureSlotIndex("RoughnessTex");
+		const int MetalicSlotIndex = ps->GetTextureSlotIndex("MetalicTex");
+		const int NormalSlotIndex = ps->GetTextureSlotIndex("NormalTex");
+		check(DiffuseSlotIndex != -1);
+
+		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), BaseTex.get(), DiffuseSlotIndex));
+		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), RoghnessTex.get(), RoughnessSlotIndex));
+		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), NormalTex.get(), NormalSlotIndex));
+		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), RoghnessTex.get(), MetalicSlotIndex));
+
 		RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer, IndexCount, StartIndexLocation, 0));		
 		
 		StartIndexLocation += IndexCount;

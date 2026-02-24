@@ -216,7 +216,6 @@ namespace GLTF {
         std::vector<Accessor> Accessors;
         std::vector<BufferView> BufferViews;
 		std::vector<Buffer> Buffers;
-		std::vector<Mesh> Meshes;
 
 		std::map<std::string, GLTFVertexData> MeshVertexDataMap;
 
@@ -227,6 +226,8 @@ namespace GLTF {
 		std::vector<XMFLOAT4> MergedTangents;
 		std::vector<XMFLOAT2> MergedTexcoords;
 		std::vector<uint16_t> MergedIndices;
+        std::vector<Mesh> Meshes;
+
 
 		std::map<std::string, unsigned int> MeshNameToIndexCount;
 		std::map<std::string, unsigned int> MeshNameToPositionCount;
@@ -235,6 +236,7 @@ namespace GLTF {
 
         std::vector<unsigned int> IndexCountList;
 		std::vector<unsigned int> PositionCountList;
+
 
         std::vector<TextureInfo> Textures;
 
