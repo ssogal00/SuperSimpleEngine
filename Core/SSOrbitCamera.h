@@ -24,6 +24,8 @@ public:
 	void SetDistance(float InDistance);
 	float GetDistance() const { return mDistance; }
 
+	virtual void FocusOnPoint(const DirectX::XMFLOAT3& point) override;
+
 protected:
 	virtual void UpdateViewMatrix() override;
 	virtual void UpdateProjMatrix() override;

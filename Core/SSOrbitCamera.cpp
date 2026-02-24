@@ -70,6 +70,11 @@ void SSOrbitCamera::UpdateRotationMatrix()
 	mRotation = XMMatrixRotationZ(mPitch) * XMMatrixRotationY(mYaw);
 }
 
+void SSOrbitCamera::FocusOnPoint(const XMFLOAT3& point)
+{
+	mLookAtPoint = point;
+}
+
 void SSOrbitCamera::UpdateViewMatrix()
 {
 	XMFLOAT4X4 matrix;

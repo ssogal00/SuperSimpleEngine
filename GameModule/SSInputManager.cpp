@@ -43,6 +43,14 @@ void SSInputManager::OnKeyDown(ULONGLONG key)
 	case VK_RIGHT:
 		SSCameraManager::Get().RotateYaw(0.1f);
 		break;
+	case 0x51:
+		SSCameraManager::Get().RotatePitch(-0.1f);
+		break;
+	case 0x45:
+		SSCameraManager::Get().RotatePitch(+0.1f);
+		break;
+	case VK_TAB:
+		break;
 	}
 }
 

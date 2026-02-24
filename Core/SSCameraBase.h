@@ -32,6 +32,7 @@ public:
 	virtual void MoveBackward(float amount){}
 	virtual void MoveUp(float amount) {}
 	virtual void MoveDown(float amount) {}
+	virtual void FocusOnPoint(const DirectX::XMFLOAT3& point) {}
 
 	void SetFOV(float fov) { mFOV = fov; }
 	float GetFOV() { return mFOV; }
