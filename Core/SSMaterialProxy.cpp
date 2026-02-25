@@ -31,9 +31,17 @@ void SSMaterialProxy::SetVSConstantParam(const std::string& InName, const SSCons
 	VSConstantBufferMap[InName] = InData;
 }
 
-void SSMaterialProxy::SetVSTextureParam(const std::string& InName, const std::string& InTextureName)
+void SSMaterialProxy::SetVSTextureParam(const std::string& InName, const std::string& InTextureName, bool bSRGB)
 {
 	VSTextureMap[InName] = InTextureName;
+	if(bSRGB)
+	{
+		SRGBTextureSet.insert(InTextureName);
+	}
+	else
+	{
+		SRGBTextureSet.erase(InTextureName);
+	}
 }
 
 void SSMaterialProxy::SetPSConstantParam(const std::string& InName, const SSConstantBufferData& InData)
@@ -41,11 +49,32 @@ void SSMaterialProxy::SetPSConstantParam(const std::string& InName, const SSCons
 	PSConstantBufferMap[InName] = InData;
 }
 
-void SSMaterialProxy::SetPSTextureParam(const std::string& InName, const std::string& InTextureName)
+void SSMaterialProxy::SetPSTextureParam(const std::string& InName, const std::string& InTextureName, bool bSRGB)
 {
 	PSTextureMap[InName] = InTextureName;
+	if (bSRGB)
+	{
+		SRGBTextureSet.insert(InTextureName);
+	}
+	else
+	{
+		SRGBTextureSet.erase(InTextureName);
+	}
 }
 
 SSMaterialProxy::~SSMaterialProxy()
 {
+}
+
+
+bool SSMaterialProxy::IsSRGBTexture(const std::string& InName) const
+{
+	if(SRGBTextureSet.count(InName) > 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }

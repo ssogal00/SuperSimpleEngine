@@ -32,10 +32,10 @@ void SSSphere::CreateRenderData()
 	
 	mMaterialProxy->SetPixelShaderName("GBuffer.ps");
 	mMaterialProxy->SetVertexShaderName("GBuffer.vs");
-	mMaterialProxy->SetPSTextureParam("DiffuseTex", "./Resource/Tex/rustediron/rustediron2_basecolor.dds");
-	mMaterialProxy->SetPSTextureParam("NormalTex", "./Resource/Tex/rustediron/rustediron2_normal.dds");
-	mMaterialProxy->SetPSTextureParam("MetalicTex", "./Resource/Tex/rustediron/rustediron2_metallic.dds");
-	mMaterialProxy->SetPSTextureParam("RoughnessTex", "./Resource/Tex/rustediron/rustediron2_roughness.dds");
+	mMaterialProxy->SetPSTextureParam("DiffuseTex", "./Resource/Tex/rustediron/rustediron2_basecolor.dds", true);
+	mMaterialProxy->SetPSTextureParam("NormalTex", "./Resource/Tex/rustediron/rustediron2_normal.dds", false);
+	mMaterialProxy->SetPSTextureParam("MetalicTex", "./Resource/Tex/rustediron/rustediron2_metallic.dds",false);
+	mMaterialProxy->SetPSTextureParam("RoughnessTex", "./Resource/Tex/rustediron/rustediron2_roughness.dds",false);
 		
 	settings.value1 = 1; //metalic
 	settings.value2 = 0; //mask
@@ -90,10 +90,10 @@ void SSPBRSphere::CreateRenderData()
 	mMaterialProxy->SetVertexShaderName("GBuffer.vs");
 	mMaterialProxy->SetPixelShaderName("GBuffer.ps");   
 
-	mMaterialProxy->SetPSTextureParam("DiffuseTex", mDiffuseTexName);
-	mMaterialProxy->SetPSTextureParam("NormalTex", mNormalTexName);
-	mMaterialProxy->SetPSTextureParam("MetalicTex", mMetalTexName);
-	mMaterialProxy->SetPSTextureParam("RoughnessTex", mRoughTexName);
+	mMaterialProxy->SetPSTextureParam("DiffuseTex", mDiffuseTexName,true);
+	mMaterialProxy->SetPSTextureParam("NormalTex", mNormalTexName,false);
+	mMaterialProxy->SetPSTextureParam("MetalicTex", mMetalTexName,false);
+	mMaterialProxy->SetPSTextureParam("RoughnessTex", mRoughTexName,false);
 }
 
 
@@ -119,10 +119,10 @@ void SSInstancedSphere::CreateRenderData()
 	settings.value5 = 1; // diffuse
 	SSConstantBufferData Data{ settings };
 
-	mMaterialProxy->SetPSTextureParam("DiffuseTex", "./Resource/Tex/rustediron/rustediron2_basecolor.dds");
-	mMaterialProxy->SetPSTextureParam("NormalTex", "./Resource/Tex/rustediron/rustediron2_normal.dds");
-	mMaterialProxy->SetPSTextureParam("MetalicTex", "./Resource/Tex/rustediron/rustediron2_metallic.dds");
-	mMaterialProxy->SetPSTextureParam("RoughnessTex", "./Resource/Tex/rustediron/rustediron2_roughness.dds");
+	mMaterialProxy->SetPSTextureParam("DiffuseTex", "./Resource/Tex/rustediron/rustediron2_basecolor.dds",true);
+	mMaterialProxy->SetPSTextureParam("NormalTex", "./Resource/Tex/rustediron/rustediron2_normal.dds",false);
+	mMaterialProxy->SetPSTextureParam("MetalicTex", "./Resource/Tex/rustediron/rustediron2_metallic.dds",false);
+	mMaterialProxy->SetPSTextureParam("RoughnessTex", "./Resource/Tex/rustediron/rustediron2_roughness.dds",false);
 
 	mMaterialProxy->SetPSConstantParam("TextureExist", Data);
 }

@@ -24,5 +24,5 @@ void SSSkybox::CreateRenderData()
 {
 	mMaterialProxy->SetPixelShaderName("CubemapShader.ps");
 	mMaterialProxy->SetVertexShaderName("CubemapShader.vs");
-	mMaterialProxy->SetPSTextureParam("gCubeMap", "./Prebaked/EnvCubemap.dds");
+	mMaterialProxy->SetPSTextureParam("gCubeMap", "./Prebaked/EnvCubemap.dds",false);
 }

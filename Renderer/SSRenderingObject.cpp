@@ -116,7 +116,9 @@ void SSRenderingObject::CreateRenderCmdList()
 	for (auto& [name, texture] : mMaterialProxy->GetPSTextureMap())
 	{
 		const int SlotIndex = ps->GetTextureSlotIndex(name);
-		shared_ptr<SSDX11Texture2D> resource = SSTextureManager::Get().LoadTexture2D(GetDX11Device()->GetDeviceContext(), texture);
+		check(SlotIndex != -1);
+		bool bSRGB = mMaterialProxy->IsSRGBTexture(texture);	
+		shared_ptr<SSDX11Texture2D> resource = SSTextureManager::Get().LoadTexture2D(GetDX11Device()->GetDeviceContext(), texture, bSRGB);
 		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), resource.get(), SlotIndex));
 	}
 
@@ -124,7 +126,9 @@ void SSRenderingObject::CreateRenderCmdList()
 	for (auto& [name, texture] : mMaterialProxy->GetVSTextureMap())
 	{
 		const int SlotIndex = vs->GetTextureSlotIndex(name);
-		shared_ptr<SSDX11Texture2D> resource = SSTextureManager::Get().LoadTexture2D(GetDX11Device()->GetDeviceContext(), texture);
+		check(SlotIndex != -1);
+		bool bSRGB = mMaterialProxy->IsSRGBTexture(texture);
+		shared_ptr<SSDX11Texture2D> resource = SSTextureManager::Get().LoadTexture2D(GetDX11Device()->GetDeviceContext(), texture, bSRGB);
 		RenderCmdList.push_back(new SSRenderCmdSetVSTexture(vs.get(), resource.get(), SlotIndex));
 	}
 	

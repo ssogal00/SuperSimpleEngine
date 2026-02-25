@@ -2,6 +2,7 @@
 
 #include "SSConstantBufferData.h"
 #include <memory>
+#include <set>
 
 class CORE_API SSMaterialProxy : public std::enable_shared_from_this<SSMaterialProxy>
 {
@@ -18,8 +19,8 @@ public:
 	void SetPSConstantParam(const std::string& InName, const SSConstantBufferData& InData);
 	const SSConstantBufferData* GetPSConstantParam(const std::string& InName) const;
 
-	void SetVSTextureParam(const std::string& InName, const std::string& InTextureName);
-	void SetPSTextureParam(const std::string& InName, const std::string& InTextureName);
+	void SetVSTextureParam(const std::string& InName, const std::string& InTextureName, bool bSRGB);
+	void SetPSTextureParam(const std::string& InName, const std::string& InTextureName, bool bSRGB) ;
 
 	void SetVertexShaderName(const std::string& InVSName) { VertexShaderName = InVSName; }
 	void SetPixelShaderName(const std::string& InPSName) { PixelShaderName = InPSName; }
@@ -36,6 +37,8 @@ public:
 	const std::map<std::string, std::string>& GetVSTextureMap() const { return VSTextureMap; }
 	const std::map<std::string, std::string>& GetPSTextureMap() const { return PSTextureMap; }
 
+	bool IsSRGBTexture(const std::string& InName) const;
+
 private:
 	std::string VertexShaderName;
 	std::string PixelShaderName;
@@ -48,6 +51,8 @@ private:
 
 	std::map<std::string, std::string> VSTextureMap;
 	std::map<std::string, std::string> PSTextureMap;
+
+	std::set<std::string> SRGBTextureSet;
 
 };
 

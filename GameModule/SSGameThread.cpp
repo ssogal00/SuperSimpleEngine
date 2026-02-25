@@ -35,10 +35,10 @@ void SSGameThread::Start(DWORD gameThreadId)
 	//mCurrentGameScene = new SSCubeScene();
 	// mCurrentGameScene->InitializeScene();
 
-	//mCurrentGameScene = new SSInstancingTestScene();
-	//mCurrentGameScene->InitializeScene();
-	mCurrentGameScene = new SSGLTFTestScene();
+	mCurrentGameScene = new SSInstancingTestScene();
 	mCurrentGameScene->InitializeScene();
+	//mCurrentGameScene = new SSGLTFTestScene();
+	//mCurrentGameScene->InitializeScene();
 }
 
 void SSGameThread::Tick()

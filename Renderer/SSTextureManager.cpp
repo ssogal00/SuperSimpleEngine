@@ -69,6 +69,6 @@ std::shared_ptr<class SSDX11Texture2D> SSTextureManager::LoadTexture2D(ID3D11Dev
 			return texture;
 		}
 	}
-
+	check(false);
 	return nullptr;
 }

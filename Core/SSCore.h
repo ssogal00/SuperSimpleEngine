@@ -37,7 +37,7 @@
 
 void CORE_API PrintError(const char* loc, const char* msg);
 
-#define check(expression) if(!(expression)) { PrintError(AT, STRINGFY(expression));}
+#define check(expression) if(!(expression)) { PrintError(AT, STRINGFY(expression)); DebugBreak();}
 
 #define checkMsg(expression,msg) if(!(expression)) { PrintError(AT, STRINGFY(msg));}
 

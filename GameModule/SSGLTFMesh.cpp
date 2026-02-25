@@ -13,10 +13,6 @@ SSGLTFMeshObject::SSGLTFMeshObject(std::string InGLTFFilePath)
 
 	 mMaterialProxy->SetPixelShaderName("GBuffer.ps");
 	 mMaterialProxy->SetVertexShaderName("DeferredInstancedManualFetch.vs");
-	 mMaterialProxy->SetPSTextureParam("DiffuseTex", "./Resource/Tex/rustediron/rustediron2_basecolor.dds");
-	 mMaterialProxy->SetPSTextureParam("NormalTex", "./Resource/Tex/rustediron/rustediron2_normal.dds");
-	 mMaterialProxy->SetPSTextureParam("MetalicTex", "./Resource/Tex/rustediron/rustediron2_metallic.dds");
-	 mMaterialProxy->SetPSTextureParam("RoughnessTex", "./Resource/Tex/rustediron/rustediron2_roughness.dds");
 	 
 	 SSAlignedCBuffer<int, int, int, int, int> settings;
 
@@ -97,10 +93,10 @@ SSGLTFTestObject::SSGLTFTestObject()
 
 	mMaterialProxy->SetPixelShaderName("GBuffer.ps");
 	mMaterialProxy->SetVertexShaderName("DeferredInstancedManualFetch.vs");
-	mMaterialProxy->SetPSTextureParam("DiffuseTex", "./Resource/Tex/rustediron/rustediron2_basecolor.dds");
-	mMaterialProxy->SetPSTextureParam("NormalTex", "./Resource/Tex/rustediron/rustediron2_normal.dds");
-	mMaterialProxy->SetPSTextureParam("MetalicTex", "./Resource/Tex/rustediron/rustediron2_metallic.dds");
-	mMaterialProxy->SetPSTextureParam("RoughnessTex", "./Resource/Tex/rustediron/rustediron2_roughness.dds");
+	mMaterialProxy->SetPSTextureParam("DiffuseTex", "./Resource/Tex/rustediron/rustediron2_basecolor.dds", true);
+	mMaterialProxy->SetPSTextureParam("NormalTex", "./Resource/Tex/rustediron/rustediron2_normal.dds",false);
+	mMaterialProxy->SetPSTextureParam("MetalicTex", "./Resource/Tex/rustediron/rustediron2_metallic.dds",false);
+	mMaterialProxy->SetPSTextureParam("RoughnessTex", "./Resource/Tex/rustediron/rustediron2_roughness.dds",false);
 
 	SSAlignedCBuffer<int, int, int, int, int> settings;
 
