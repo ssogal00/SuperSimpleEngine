@@ -577,6 +577,7 @@ void SSDX11Renderer::CreateEnvCubemap()
 	auto proj = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.0f), 1.0f, 0.1f, 10.0f);
 
 	mHDREnvmap = SSDX11Texture2D::CreateFromHDRFile("./Resource/Tex/HDR/Circus_Backstage_3k.hdr");
+	//mHDREnvmap = SSDX11Texture2D::CreateFromHDRFile("./Resource/Tex/HDR/GCanyon_C_YumaPoint_3k.hdr");
 	{
         SSDrawCommand equirectToCubeDrawCmd{ mEquirectToCubemapVertexShader, mEquirectToCubemapPixelShader, mRenderTargetCube };
 
