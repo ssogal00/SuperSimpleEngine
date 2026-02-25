@@ -126,14 +126,6 @@ void SSGLTFRenderingObject::CreateRenderCmdList()
 			RenderCmdList.push_back(new SSRenderCmdSetPSConstantBuffer(ps.get(), ConstantBuffer, SlotIndex));
 		}
 	}
-	// @ set pixel shader texture
-	/*for (auto& [name, texture] : mMaterialProxy->GetPSTextureMap())
-	{
-		const int SlotIndex = ps->GetTextureSlotIndex(name);
-		shared_ptr<SSDX11Texture2D> resource = SSTextureManager::Get().LoadTexture2D(GetDX11Device()->GetDeviceContext(), texture);
-		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), resource.get(), SlotIndex));
-	}	
-	*/
 
 	RenderCmdList.push_back(new SSSetPrimivitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
@@ -157,7 +149,7 @@ void SSGLTFRenderingObject::CreateRenderCmdList()
 		GLTF::Material MeshMaterial = GLTFDataRef.MaterialIndexToMaterial[MaterialIndex];
 
 		std::shared_ptr<class SSDX11Texture2D> BaseTex = mTextureMap[MeshMaterial.ThisMaterialPBRMetallicRoughness.BaseColorTex.Index];
-		std::shared_ptr<class SSDX11Texture2D> NormalTex = mTextureMap[MeshMaterial.ThisMaterialPBRMetallicRoughness.NormalTex.Index];
+		std::shared_ptr<class SSDX11Texture2D> NormalTex = mTextureMap[MeshMaterial.NormalTex.Index];
 		std::shared_ptr<class SSDX11Texture2D> RoghnessTex = mTextureMap[MeshMaterial.ThisMaterialPBRMetallicRoughness.MetallicRoughnessTex.Index];
 		
 		
@@ -167,11 +159,11 @@ void SSGLTFRenderingObject::CreateRenderCmdList()
 		const int NormalSlotIndex = ps->GetTextureSlotIndex("NormalTex");
 		check(DiffuseSlotIndex != -1);
 
-		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), BaseTex.get(), DiffuseSlotIndex));
+		//RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), BaseTex.get(), DiffuseSlotIndex));
 		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), RoghnessTex.get(), RoughnessSlotIndex));
 		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), NormalTex.get(), NormalSlotIndex));
-		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), RoghnessTex.get(), MetalicSlotIndex));
-
+		//RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), RoghnessTex.get(), MetalicSlotIndex));
+		
 		RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer, IndexCount, StartIndexLocation, 0));		
 		
 		StartIndexLocation += IndexCount;
