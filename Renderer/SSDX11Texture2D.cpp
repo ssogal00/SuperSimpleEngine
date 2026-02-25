@@ -64,6 +64,8 @@ bool SSDX11Texture2D::LoadFromDDSFile(std::wstring filename, bool bsrgb)
 
 	check(metaData.dimension == DirectX::TEX_DIMENSION_TEXTURE2D);
 
+	DebugResourcePath = filename;
+
 	return LoadInternal(metaData, image, bsrgb);
 }
 
