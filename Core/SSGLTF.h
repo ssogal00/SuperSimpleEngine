@@ -153,8 +153,8 @@ namespace GLTF {
 
         MetallicRoughnessTexture MetallicRoughnessTex;
 		BaseColorTexture BaseColorTex;
-		NormalTexture NormalTex;
-		EmissiveTexture EmissiveTex;
+		
+		// EmissiveTexture EmissiveTex;
     };
 
     class CORE_API Material
@@ -163,6 +163,7 @@ namespace GLTF {
 		bool DoubleSided;
         std::string Name;
 		PBRMetallicRoughness ThisMaterialPBRMetallicRoughness;
+        NormalTexture NormalTex;
     };
 
     class CORE_API Mesh

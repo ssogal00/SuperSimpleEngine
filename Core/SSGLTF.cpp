@@ -258,6 +258,11 @@ namespace GLTF {
 			
 			Material MaterialObject{};
 
+			if(JsonObject.at_key("normalTexture").error() == simdjson::error_code::SUCCESS)
+			{
+				MaterialObject.NormalTex.Index = static_cast<int>(JsonObject["normalTexture"]["index"].get_int64().take_value());
+			}
+
 			auto PbrObject = JsonObject["pbrMetallicRoughness"].get_object();
 			PBRMetallicRoughness PbrMetallicRoughnessObject{};
 			if (PbrObject.at_key("baseColorTexture").error() == simdjson::error_code::SUCCESS)
