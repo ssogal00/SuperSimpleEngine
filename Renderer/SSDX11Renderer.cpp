@@ -347,7 +347,8 @@ void SSDX11Renderer::DrawCubeScene()
 	
 	SSDrawCommand blitDrawCmd{ mScreenBlitVertexShader, mScreenBlitPixelShader, mScreenBlit };
 	
-	if (true)
+
+	if (bGbufferDump)
 	{
 		blitDrawCmd.SetPSTexture("sampleTexture", mGBufferDumpProcess->GetOutput(0));
 	}

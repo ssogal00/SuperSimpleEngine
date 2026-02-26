@@ -33,6 +33,7 @@ public:
 	ID3D11DeviceContext* GetImmediateDeviceContext();
 	IDXGISwapChain* GetSwapChain();
 
+	void SetGBufferDump(bool bDump) { bGbufferDump = bDump; }
 	void ToggleGBufferDumpMode() { bGbufferDump = !bGbufferDump; }
 
 protected:

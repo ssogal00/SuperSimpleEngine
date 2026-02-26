@@ -9,6 +9,7 @@
 #include "SSGameWindow.h"
 #include "SSRenderingThread.h"
 #include "SSCameraManager.h"
+#include "SSGameDebugManager.h"
 
 bool SSDX11Engine::bInitialized = false;
 
@@ -124,6 +125,9 @@ void SSDX11Engine::Run()
 
 		// tick
 		mGameThread->Tick();
+
+		bool bGBufferDumpMode = SSGameDebugManager::Get().IsGBufferDumpMode();
+		mRenderer->SetGBufferDump(bGBufferDumpMode);
 		
 		// this is awkward...
 		SSRenderingObjectManager::Get().SetPendingObjects(SSGameObjectManager::Get().GetGameObjectMap());

@@ -2,7 +2,7 @@
 
 #include "SSInputManager.h"
 #include "SSCameraManager.h"
-
+#include "SSGameDebugManager.h"
 
 
 SSInputManager& SSInputManager::Get()
@@ -32,7 +32,11 @@ void SSInputManager::OnKeyDown(ULONGLONG key)
 	switch (key)
 	{
 	case VK_SPACE:
-		
+		{
+			SSGameDebugManager::Get().IsGBufferDumpMode() ?
+				SSGameDebugManager::Get().SetGBufferDumpMode(false) :
+				SSGameDebugManager::Get().SetGBufferDumpMode(true);
+		}
 		break;
 	case VK_UP:	
 		SSCameraManager::Get().MoveFoward(2.f);
