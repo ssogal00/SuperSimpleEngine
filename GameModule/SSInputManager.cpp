@@ -31,6 +31,9 @@ void SSInputManager::OnKeyDown(ULONGLONG key)
 {
 	switch (key)
 	{
+	case VK_SPACE:
+		
+		break;
 	case VK_UP:	
 		SSCameraManager::Get().MoveFoward(2.f);
 		break;

@@ -328,6 +328,8 @@ void SSDX11Renderer::DrawCubeScene()
 		v->Draw(mDX11Device->GetDeviceContext());
 	}	
 
+	mGBufferDumpProcess->Draw(mDX11Device, mGBuffer->GetPositionOutput(), mGBuffer->GetColorOutput(), mGBuffer->GetNormalOutput());
+
 	mDeferredLightPostProcess->Draw(
 		mDX11Device,
 		mGBuffer->GetPositionOutput(),
@@ -345,7 +347,7 @@ void SSDX11Renderer::DrawCubeScene()
 	
 	SSDrawCommand blitDrawCmd{ mScreenBlitVertexShader, mScreenBlitPixelShader, mScreenBlit };
 	
-	if (false)
+	if (true)
 	{
 		blitDrawCmd.SetPSTexture("sampleTexture", mGBufferDumpProcess->GetOutput(0));
 	}
