@@ -114,7 +114,10 @@ float4 PSMain(PixelInputType pin): SV_TARGET
     float metallic  = saturate(NormalTex.Sample(DefaultTexSampler,TexCoord).a);
     float roughness = saturate(DiffuseTex.Sample(DefaultTexSampler, TexCoord).a);
     float3 N = normalize(Normal.xyz);
-    float3 V = normalize(Position);
+    // this is very important
+    // previous errorneous code: I used the world space position as the view direction, which is wrong, it should be the vector from the surface point to the camera position.
+    // float3 V = normalize(Position);
+    float3 V = normalize(-Position);
     float3 R = reflect(V, N); 	
 	
     float3 F0 = float3(0.04, 0.04, 0.04); 

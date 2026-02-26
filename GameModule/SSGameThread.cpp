@@ -33,13 +33,13 @@ void SSGameThread::Start(DWORD gameThreadId)
 	mGameThreadDoneEventHandle = CreateEvent(nullptr, false, false, "GameThreadEventHandle");
 
 	//mCurrentGameScene = new SSCubeScene();
-	// mCurrentGameScene->InitializeScene();
-
-	mCurrentGameScene = new SSInstancingTestScene();
-	mCurrentGameScene->InitializeScene();
-	
-	//mCurrentGameScene = new SSGLTFTestScene();
 	//mCurrentGameScene->InitializeScene();
+
+	//mCurrentGameScene = new SSInstancingTestScene();
+	//mCurrentGameScene->InitializeScene();
+	
+	mCurrentGameScene = new SSGLTFTestScene();
+	mCurrentGameScene->InitializeScene();
 }
 
 void SSGameThread::Tick()

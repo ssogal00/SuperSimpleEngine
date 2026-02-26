@@ -27,7 +27,7 @@ SSCameraManager* SSCameraManager::mInstance = nullptr;
 
 SSCameraManager::SSCameraManager()
 {
-    // mCurrentCamera = new SSFreeCamera();
+    //mCurrentCamera = new SSFreeCamera();
 	mCurrentCamera = new SSOrbitCamera();
 }
 
