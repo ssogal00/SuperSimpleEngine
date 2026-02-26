@@ -26,7 +26,7 @@ namespace GLTF {
 		}
 	}
 
-	std::vector<XMFLOAT3> SSGLTF_V2::ParseVector3s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength)
+	std::vector<XMFLOAT3> SSGLTF_V2::ParseVector3s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength, bool bNormalize)
 	{
 		std::vector<XMFLOAT3> Result;
 
@@ -49,7 +49,18 @@ namespace GLTF {
 			float X = *reinterpret_cast<const float*>(DataPtr + i * 12 + 0);
 			float Y = *reinterpret_cast<const float*>(DataPtr + i * 12 + 4);
 			float Z = *reinterpret_cast<const float*>(DataPtr + i * 12 + 8);
-			Result[i] = XMFLOAT3(X, Y, Z);
+			if (bNormalize)
+			{
+				XMVECTOR Vec = XMVectorSet(X, Y, Z, 0.0f);
+				Vec = XMVector3Normalize(Vec);
+				Result[i] = XMFLOAT3(Vec.m128_f32[0], Vec.m128_f32[1], Vec.m128_f32[2]);
+			}
+			else
+			{
+				Result[i] = XMFLOAT3(X, Y, Z);
+			}
+			
+			
 		}
 		
 		return Result;
@@ -399,11 +410,11 @@ namespace GLTF {
 					NormalBuffer.Uri;
 					std::string UriPath = BasePath + "/" + NormalBuffer.Uri;
 
-					int64_t NormalByteOffset = NormalAccessor.ByteOffset;
+					int64_t NormalByteOffset = NormalBufferView.ByteOffset + NormalAccessor.ByteOffset;
 					int64_t ByteLength = NormalBufferView.ByteStride * NormalAccessor.Count;
-
+					
 					Result.MeshVertexDataMap[MeshKey].Normals = ParseVector3s(UriPath, NormalByteOffset, NormalAccessor.Count, ByteLength);
-
+					
 					Result.MergedNormals.insert(Result.MergedNormals.end(),
 						Result.MeshVertexDataMap[MeshKey].Normals.begin(),
 						Result.MeshVertexDataMap[MeshKey].Normals.end());

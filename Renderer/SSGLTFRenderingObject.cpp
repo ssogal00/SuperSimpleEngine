@@ -159,10 +159,10 @@ void SSGLTFRenderingObject::CreateRenderCmdList()
 		const int NormalSlotIndex = ps->GetTextureSlotIndex("NormalTex");
 		check(DiffuseSlotIndex != -1);
 
-		//RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), BaseTex.get(), DiffuseSlotIndex));
+		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), BaseTex.get(), DiffuseSlotIndex));
 		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), RoghnessTex.get(), RoughnessSlotIndex));
 		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), NormalTex.get(), NormalSlotIndex));
-		//RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), RoghnessTex.get(), MetalicSlotIndex));
+		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), RoghnessTex.get(), MetalicSlotIndex));
 		
 		RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer, IndexCount, StartIndexLocation, 0));		
 		
