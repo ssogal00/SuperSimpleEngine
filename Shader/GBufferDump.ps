@@ -1,10 +1,5 @@
-
-
-Texture2D PositionTex;
 Texture2D DiffuseTex;
 Texture2D NormalTex;
-
-
 
 struct PixelInputType
 {
@@ -12,46 +7,47 @@ struct PixelInputType
     float2 texcoord : TEXCOORD0;
 };
 
-cbuffer Dump
-{
-    int PositionDump;
-    int NormalDump;
-    int MetalicDump;
-    int DiffuseDump;
-    int RoughnessDump;    
-};
-
 SamplerState DefaultTexSampler : register(s0);
 
 float4 PSMain(PixelInputType pin) : SV_TARGET
 {
-    float4 FragColor = float4(0,0,0,1);
+    // 1. UV 리매핑: 화면을 2x2로 분할하기 위해 UV에 2를 곱하고 소수점(frac)만 가져옵니다.
+    // 이렇게 하면 각 사분면의 UV가 다시 0.0 ~ 1.0 범위로 반복됩니다.
+    float2 sampleUV = frac(pin.texcoord * 2.0);
     
-    if(PositionDump) 
-    {   
-        FragColor = PositionTex.Sample(DefaultTexSampler, pin.texcoord);
-        FragColor.z = -FragColor.z;
-    }
-    else if(NormalDump)
-    {        
-        FragColor.xyz = NormalTex.Sample(DefaultTexSampler, pin.texcoord).xyz;
-        FragColor.z = -FragColor.z;
-    }
-    else if(DiffuseDump)
+    float4 FragColor = float4(0.0, 0.0, 0.0, 1.0);
+
+    // 2. 현재 픽셀이 어느 사분면에 속하는지 판별
+    bool isRight = pin.texcoord.x >= 0.5;
+    bool isBottom = pin.texcoord.y >= 0.5;
+
+    // 3. 시계방향 순서대로 텍스처 샘플링 (좌상단 -> 우상단 -> 우하단 -> 좌하단)
+    if (!isBottom) 
     {
-        FragColor = DiffuseTex.Sample(DefaultTexSampler, pin.texcoord);        
+        if (!isRight) 
+        {
+            // [Top-Left] Diffuse
+            FragColor = DiffuseTex.Sample(DefaultTexSampler, sampleUV);
+        }
+        else 
+        {
+            // [Top-Right] Normal
+            FragColor.xyz = NormalTex.Sample(DefaultTexSampler, sampleUV).xyz;
+            FragColor.z = -FragColor.z; // 기존에 작성하신 z축 반전 로직 유지
+        }
     }
-    else if(MetalicDump)
+    else 
     {
-        FragColor = NormalTex.Sample(DefaultTexSampler, pin.texcoord).aaaa;       
-    }
-    else if(RoughnessDump)
-    {
-   		FragColor = DiffuseTex.Sample(DefaultTexSampler, pin.texcoord).aaaa;       
-    }    
-    else
-    {
-        FragColor = NormalTex.Sample(DefaultTexSampler, pin.texcoord).aaaa;
+        if (isRight) 
+        {
+            // [Bottom-Right] Roughness (DiffuseTex의 Alpha 채널)
+            FragColor = DiffuseTex.Sample(DefaultTexSampler, sampleUV).aaaa;
+        }
+        else 
+        {
+            // [Bottom-Left] Metallic (NormalTex의 Alpha 채널)
+            FragColor = NormalTex.Sample(DefaultTexSampler, sampleUV).aaaa;
+        }
     }
 
     return FragColor;
