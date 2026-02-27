@@ -1,6 +1,6 @@
 # SuperSimpleEngine
 
-![alt tag](https://github.com/ssogal00/SuperSimpleEngine/blob/RenderingRefactoring/ScreenShot/PBR1.jpg)
+![alt tag](https://github.com/ssogal00/SuperSimpleEngine/blob/RenderingRefactoring/ScreenShot/PRB1.jpg)
 ![alt tag](https://github.com/ssogal00/SuperSimpleEngine/blob/RenderingRefactoring/ScreenShot/PBR2.jpg)
 
 
