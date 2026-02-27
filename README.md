@@ -1,6 +1,7 @@
 # SuperSimpleEngine
 
-![alt tag](https://github.com/ssogal00/SuperSimpleEngine/blob/RenderingRefactoring/ScreenShot/screenshot.png)
+![alt tag](https://github.com/ssogal00/SuperSimpleEngine/blob/RenderingRefactoring/ScreenShot/PBR1.jpg)
+![alt tag](https://github.com/ssogal00/SuperSimpleEngine/blob/RenderingRefactoring/ScreenShot/PBR2.jpg)
 
 
 **SuperSimpleEngine**은 성능과 유연성을 동시에 확보하기 위해 설계된 DirectX 11 기반의 3D 게임 엔진입니다. 데이터 중심 설계(Data-Driven)와 멀티쓰레드 아키텍처를 통해 현대적인 렌더링 파이프라인의 기초를 학습하고 구현하는 것을 목표로 합니다.
