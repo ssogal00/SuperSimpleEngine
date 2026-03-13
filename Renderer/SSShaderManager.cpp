@@ -173,3 +173,9 @@ std::shared_ptr<SSDX11PixelShader> SSShaderManager::GetPixelShader(std::string n
 	check(mPixelShaderMap.count(name) > 0);
 	return mPixelShaderMap[name];
 }
+
+std::shared_ptr<SSDX11ComputeShader> SSShaderManager::GetComputeShader(std::string name)
+{
+	check(mComputeShaderMap.count(name) > 0);
+	return mComputeShaderMap[name];
+}

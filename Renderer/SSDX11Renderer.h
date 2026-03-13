@@ -129,6 +129,7 @@ private:
 	std::shared_ptr<class SSObjMesh> mObjMeshSphere;
 
 	std::shared_ptr<class SSDX11PostProcess> mFXAAPostProcess;
+	std::shared_ptr<class SSGaussianBlurPostProcess> mGaussianBlurPostProcess;
 	std::shared_ptr<class SSGBufferDumpPostProcess> mGBufferDumpProcess;
 	std::shared_ptr<class SSDX11PostProcess> mDeferredLightPostProcess;
 

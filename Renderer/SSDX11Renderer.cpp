@@ -16,6 +16,7 @@
 #include "SSFileHelper.h"
 #include "SSShaderManager.h"
 #include "SSFXAAPostProcess.h"
+#include "SSGaussianBlurPostProcess.h"
 #include "SSGBufferDumpPostProcess.h"
 #include "SSLightPostProcess.h"
 #include "SSRenderingObjectManager.h"
@@ -88,6 +89,7 @@ void SSDX11Renderer::Initialize(HWND windowHandle)
 	m2DLUTRenderTarget = std::make_shared<class SSDX11RenderTarget>(512, 512, 1, false);
 
 	mFXAAPostProcess = std::make_shared<SSFXAAPostProcess>(mWindowWidth, mWindowHeight);
+	mGaussianBlurPostProcess = std::make_shared<SSGaussianBlurPostProcess>(mWindowWidth, mWindowHeight);
 	mGBufferDumpProcess = std::make_shared<SSGBufferDumpPostProcess>(512, 512);
 	mDeferredLightPostProcess = std::make_shared<SSLightPostProcess>(mWindowWidth, mWindowHeight);
 
@@ -340,6 +342,9 @@ void SSDX11Renderer::DrawCubeScene()
 		mEnvCubemapPrefilter.get());
 
 	mFXAAPostProcess->Draw(mDX11Device, mDeferredLightPostProcess->GetOutput(0));
+
+	//mFXAAPostProcess->Draw(mDX11Device, mGaussianBlurPostProcess->GetOutput());
+	//mFXAAPostProcess->Draw(mDX11Device, mGaussianBlurPostProcess->GetOutput());
 	
 	float ClearColor[4]{1,0,0,1};
 	mDX11Device->ClearDefaultRenderTargetView(ClearColor);
@@ -411,6 +416,7 @@ void SSDX11Renderer::Resize(int newWidth,int newHeight)
 	mDX11Device->ResizeRenderTarget(newWidth, newHeight);
 	mGBuffer->Resize(newWidth, newHeight);
 	mFXAAPostProcess->OnResize(newWidth, newHeight);
+	mGaussianBlurPostProcess->OnResize(newWidth, newHeight);
 	mGBufferDumpProcess->OnResize(newWidth, newHeight);
 	mDeferredLightPostProcess->OnResize(newWidth, newHeight);
 }
