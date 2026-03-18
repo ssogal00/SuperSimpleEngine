@@ -9,7 +9,7 @@ using Microsoft::WRL::ComPtr;
 // Used as intermediate / output buffers for compute shader post-processes.
 // Created with D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
 // it does NOT have an RTV and cannot be bound as a render target.
-class SSComputeRWTexture2D : public SSDX11Texture2D
+class SSComputeRWTexture2D
 {
 public:
     SSComputeRWTexture2D(UINT width, UINT height, DXGI_FORMAT format);
@@ -17,12 +17,17 @@ public:
 
     void Resize(UINT width, UINT height);
 
-    ID3D11UnorderedAccessView*        GetUnorderedAccessView()    { return mUAV.Get(); }
-    ID3D11UnorderedAccessView* const* GetUnorderedAccessViewRef() { return mUAV.GetAddressOf(); }
+    ID3D11UnorderedAccessView*  GetUnorderedAccessView() { return mUAV; }
+    ID3D11ShaderResourceView*   GetShaderResourceView() { return mSRV; }
+
 
 private:
     void Create(UINT width, UINT height);
 
     DXGI_FORMAT                         mFormat;
-    ComPtr<ID3D11UnorderedAccessView>   mUAV;
+    ID3D11UnorderedAccessView*          mUAV = nullptr;
+    ID3D11ShaderResourceView*           mSRV = nullptr;
+    ID3D11Texture2D* mTexturePtr = nullptr;
+    DXGI_FORMAT mTextureFormat = DXGI_FORMAT_R16G16B16A16_FLOAT;
+
 };

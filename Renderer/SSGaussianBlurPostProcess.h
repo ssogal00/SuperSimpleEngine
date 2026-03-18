@@ -8,8 +8,8 @@ class SSDX11Texture2D;
 class SSDX11ComputeShader;
 
 // Separable Gaussian blur implemented with two compute shader passes:
-//   Pass 1 (GaussianBlurH.cs): horizontal blur  â†’ mHorizontalBuffer
-//   Pass 2 (GaussianBlurV.cs): vertical   blur  â†’ mVerticalBuffer
+//   Pass 1 (GaussianBlurH.cs): horizontal blur  ¡æ mHorizontalBuffer
+//   Pass 2 (GaussianBlurV.cs): vertical   blur  ¡æ mVerticalBuffer
 //
 // Usage:
 //   mGaussianBlur->Draw(device, inputTexture);
@@ -26,7 +26,7 @@ public:
     void Draw(SSDX11Device* device, SSDX11Texture2D* input0);
 
     // Returns the fully blurred result (SRV ready for the next pass / FXAA etc.)
-    SSDX11Texture2D* GetOutput() { return mVerticalBuffer.get(); }
+    // SSDX11Texture2D* GetOutput() { return mVerticalBuffer.get(); }
 
     void OnResize(UINT width, UINT height);
 
@@ -52,7 +52,7 @@ private:
     std::shared_ptr<SSDX11ComputeShader> mBlurHCS;
     std::shared_ptr<SSDX11ComputeShader> mBlurVCS;
 
-    // Simple constant buffer (b0) â€” layout must match CBBlurParams in both .cs files
+    // Simple constant buffer (b0) ? layout must match CBBlurParams in both .cs files
     struct BlurParams
     {
         int   width;
