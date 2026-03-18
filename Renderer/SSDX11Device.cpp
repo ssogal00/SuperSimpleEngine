@@ -563,6 +563,10 @@ ID3D11Buffer* SSDX11Device::GetBoundConstantBufferVS(UINT slot)
 {
 	ID3D11Buffer* ConstantBuffer = nullptr;
 	mDeviceContext->VSGetConstantBuffers(slot, 1, &ConstantBuffer);
+	if (ConstantBuffer)
+	{
+		ConstantBuffer->Release();
+	}
 	return ConstantBuffer;
 }
 
@@ -570,6 +574,10 @@ ID3D11Buffer* SSDX11Device::GetBoundConstantBufferPS(UINT slot)
 {
 	ID3D11Buffer* ConstantBuffer = nullptr;
 	mDeviceContext->PSGetConstantBuffers(slot, 1, &ConstantBuffer);
+	if (ConstantBuffer)
+	{
+		ConstantBuffer->Release();
+	}
 	return ConstantBuffer;
 }
 

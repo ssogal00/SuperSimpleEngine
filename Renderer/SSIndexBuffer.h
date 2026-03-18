@@ -6,7 +6,6 @@
 class SSIndexBuffer : public SSBufferBase
 {
 public:
-	virtual void SetIndexBufferData(const std::vector<UINT> indexData, D3D_PRIMITIVE_TOPOLOGY ePrimitiveType = D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST) = 0;
 	D3D_PRIMITIVE_TOPOLOGY GetPrimitiveType() const { return mPrimitiveType; }
 	UINT GetIndexCount() { return mIndexCount; }
 protected:
