@@ -672,6 +672,6 @@ void RHISetPixelShader(RHIPixelShader* pixelShader)
 {
 	void* Dummy = nullptr;
 	//GetDX11Device()->GetDeviceContext()->PSSetShader((ID3D11PixelShader*)pixelShader, nullptr, 0);
-	GetDX11Device()->GetDeviceContext()->PSSetShader(Dummy, nullptr, 0);
+	//GetDX11Device()->GetDeviceContext()->PSSetShader(Dummy, nullptr, 0);
 }
 

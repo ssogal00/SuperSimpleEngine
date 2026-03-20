@@ -6,6 +6,7 @@
 // trigger compile
 SSDX11ConstantBuffer::SSDX11ConstantBuffer(ID3D11Buffer* InBuffer, UINT InSlotIndex, UINT InSize, std::string InName)
 {
+	check(InBuffer != nullptr);
     mpBuffer = InBuffer;
     mBufferSlotIndex = InSlotIndex;
     mBufferSize = InSize;
@@ -27,28 +28,7 @@ SSDX11ConstantBuffer::SSDX11ConstantBuffer(ID3D11ShaderReflectionConstantBuffer*
 	mBufferSize = BufferDesc.Size;
     mBufferName = BufferDesc.Name;
     
-    // 
-    for(unsigned int i = 0; i < BufferDesc.Variables; ++i)
-    {
-        ID3D11ShaderReflectionVariable* variableReflection = constantBuffer->GetVariableByIndex(i);
-        D3D11_SHADER_VARIABLE_DESC variableDesc;
-        variableReflection->GetDesc(&variableDesc);
-        
-        ID3D11ShaderReflectionType* variableType = variableReflection->GetType();
-        D3D11_SHADER_TYPE_DESC typeDesc;
-        variableType->GetDesc(&typeDesc);
-
-        VariableInConstantBufferInfo info 
-        {
-            static_cast<USHORT>(variableDesc.StartOffset),
-            static_cast<USHORT>(variableDesc.Size),
-            static_cast<BYTE>(i),
-            variableDesc.Name
-        };
-
-        mVariableInfoArray.push_back(info);
-    }
-
+   
     // alloc
     mBufferData = new BYTE[mBufferSize] {0};
 
@@ -74,6 +54,8 @@ SSDX11ConstantBuffer::~SSDX11ConstantBuffer()
         delete [] mBufferData;
         mBufferData = nullptr;
     }
+
+
 }
 
 void SSDX11ConstantBuffer::SetBufferData(const SSConstantBufferData& data)
@@ -115,9 +97,6 @@ void SSDX11ConstantBuffer::SetBufferData(void* InDataPtr, unsigned int InDataLen
 void SSDX11ConstantBuffer::SubmitDataToDevice(ID3D11DeviceContext* deviceContext)
 { 	
 	check(deviceContext);    
-
-	//check(mBufferDescription.CPUAccessFlags & D3D11_CPU_ACCESS_WRITE);  
-	//check(mBufferDescription.Usage == D3D11_USAGE_DYNAMIC);
 
     D3D11_MAPPED_SUBRESOURCE mappedResource;
 	HR(deviceContext->Map(mpBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));

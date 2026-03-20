@@ -9,7 +9,6 @@ class SSDX11IndexBuffer : public SSIndexBuffer
 public:
 
 	SSDX11IndexBuffer(ID3D11Buffer* ptrBuffer, unsigned int nIndexCount);
-    //SSDX11IndexBuffer(){}
 
 	virtual ~SSDX11IndexBuffer();
 	virtual void* GetBufferPointer() override;

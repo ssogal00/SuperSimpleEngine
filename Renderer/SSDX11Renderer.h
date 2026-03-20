@@ -152,4 +152,7 @@ inline SSDX11Device* GetDX11Device() { return SSDX11Renderer::Get().GetDX11Devic
 
 void RHISetPixelShader(class RHIPixelShader* ps);
 void RHISetVertexShader(class RHIVertexShader* vs);
+void RHISetConstantBufferVS(UINT slotIndex, class RHIConstantBuffer* cb);
+void RHICreateVertexShader();
+
 //void RHISetVertexShader(void* vs);

@@ -37,12 +37,7 @@ public:
     virtual void SubmitDataToDevice(ID3D11DeviceContext* deviceContext) override;
 protected:
     BYTE* mBufferData = nullptr;
-
-    std::vector<VariableInConstantBufferInfo> mVariableInfoArray;    
-
 	friend class SSDrawCommand;
-	friend class SSMaterial;
-
-    
+	friend class SSMaterial;    
 };
 
