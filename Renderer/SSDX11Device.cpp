@@ -276,6 +276,127 @@ void SSDX11Device::SetDefaultRenderTargetAsCurrent()
 	mDeviceContext->RSSetViewports(1, &mScreenViewport);
 }
 
+bool SSDX11Device::IsBoundPixelShaderEqual(ID3D11PixelShader* InPS)
+{
+	if (mDeviceStateCache.mPixelShader == InPS)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool SSDX11Device::UpdateBoundPixelShaderIfDifferent(ID3D11PixelShader* InPS)
+{
+	if (mDeviceStateCache.mPixelShader != InPS)
+	{
+		mDeviceContext->PSSetShader(InPS, nullptr, 0);
+		mDeviceStateCache.mPixelShader = InPS;
+		return true;
+	}
+	return false;
+}
+
+bool SSDX11Device::UpdateBoundVertexShaderIfDifferent(ID3D11VertexShader* InVS)
+{
+	if (mDeviceStateCache.mVertexShader != InVS)
+	{
+		mDeviceContext->VSSetShader(InVS, nullptr, 0);
+		mDeviceStateCache.mVertexShader = InVS;
+		return true;
+	}
+	return false;
+}
+
+bool SSDX11Device::UpdateBoundComputeShaderIfDifferent(ID3D11ComputeShader* InCS)
+{
+	if (mDeviceStateCache.mComputeShader != InCS)
+	{
+		mDeviceContext->CSSetShader(InCS, nullptr, 0);
+		mDeviceStateCache.mComputeShader = InCS;
+		return true;
+	}
+	return false;
+}
+
+bool SSDX11Device::SetPSBoundConstantBufferIfDifferent(UINT InSlotIndex, ID3D11Buffer* InBuffer)
+{
+	// not exist
+	if (mDeviceStateCache.mBoundPSConstantBuffers.find(InSlotIndex) == mDeviceStateCache.mBoundPSConstantBuffers.end())
+	{
+		mDeviceContext->PSSetConstantBuffers(InSlotIndex, 1, &InBuffer);
+		mDeviceStateCache.mBoundPSConstantBuffers[InSlotIndex] = InBuffer;
+		return true;
+	}
+	// exist but different
+	if (mDeviceStateCache.mBoundPSConstantBuffers[InSlotIndex] != InBuffer)
+	{
+		mDeviceContext->PSSetConstantBuffers(InSlotIndex, 1, &InBuffer);
+		mDeviceStateCache.mBoundPSConstantBuffers[InSlotIndex] = InBuffer;
+		return true;
+	}
+	return false;
+}
+
+bool SSDX11Device::SetVSBoundConstantBufferIfDifferent(UINT InSlotIndex, ID3D11Buffer* InBuffer)
+{
+	// not exist
+	if(mDeviceStateCache.mBoundVSConstantBuffers.find(InSlotIndex) == mDeviceStateCache.mBoundVSConstantBuffers.end())
+	{
+		mDeviceContext->VSSetConstantBuffers(InSlotIndex, 1, &InBuffer);
+		mDeviceStateCache.mBoundVSConstantBuffers[InSlotIndex] = InBuffer;
+		return true;
+	}
+
+	// exist but different
+	if (mDeviceStateCache.mBoundVSConstantBuffers[InSlotIndex] != InBuffer)
+	{
+		mDeviceContext->VSSetConstantBuffers(InSlotIndex, 1, &InBuffer);
+		mDeviceStateCache.mBoundVSConstantBuffers[InSlotIndex] = InBuffer;
+		return true;
+	}
+
+	return false;
+}
+
+bool SSDX11Device::SetPSBoundTextureIfDifferent(UINT InSlotIndex, ID3D11ShaderResourceView* InTextureView)
+{
+	if(mDeviceStateCache.mBoundPSTextures.find(InSlotIndex) == mDeviceStateCache.mBoundPSTextures.end())
+	{
+		mDeviceContext->PSSetShaderResources(InSlotIndex, 1, &InTextureView);
+		mDeviceStateCache.mBoundPSTextures[InSlotIndex] = InTextureView;
+		return true;
+	}
+
+	if(mDeviceStateCache.mBoundPSTextures[InSlotIndex] != InTextureView)
+	{
+		mDeviceContext->PSSetShaderResources(InSlotIndex, 1, &InTextureView);
+		mDeviceStateCache.mBoundPSTextures[InSlotIndex] = InTextureView;
+		return true;
+	}
+
+	return false;
+}
+
+bool SSDX11Device::SetVSBoundTextureIfDifferent(UINT InSlotIndex, ID3D11ShaderResourceView* InTextureView)
+{
+	if(mDeviceStateCache.mBoundVSTextures.find(InSlotIndex) == mDeviceStateCache.mBoundVSTextures.end())
+	{
+		mDeviceContext->VSSetShaderResources(InSlotIndex, 1, &InTextureView);
+		mDeviceStateCache.mBoundVSTextures[InSlotIndex] = InTextureView;
+		return true;
+	}
+
+	if(mDeviceStateCache.mBoundVSTextures[InSlotIndex] != InTextureView)
+	{
+		mDeviceContext->VSSetShaderResources(InSlotIndex, 1, &InTextureView);
+		mDeviceStateCache.mBoundVSTextures[InSlotIndex] = InTextureView;
+		return true;
+	}
+
+	return false;
+}
+
 void SSDX11Device::Present()
 {
 	HRESULT presentResult = mSwapChain->Present(0, 0);
@@ -627,25 +748,4 @@ void SSDX11Device::PrintCompileError(ID3DBlob* errorMessage)
 	OutputDebugStringA("============= Shader Compile Error =============\n");
 
 	delete[] compileErrBuffer;
-}
-
-bool SSDX11DeviceStateCache::UpdatePSIfDifferent(ID3D11PixelShader* ps)
-{
-	if (mPixelShader != ps)
-	{
-		mPixelShader = ps;
-		return true;
-	}
-
-	return false;
-}
-
-bool SSDX11DeviceStateCache::UpdateVSIfDifferent(ID3D11VertexShader* vs)
-{
-	if (mVertexShader != vs)
-	{
-		mVertexShader = vs;
-		return true;
-	}
-	return false;
 }

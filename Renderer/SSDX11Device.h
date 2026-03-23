@@ -23,16 +23,10 @@ public:
 	ID3D11VertexShader*		mVertexShader = nullptr;
 	ID3D11PixelShader*		mPixelShader = nullptr;
 	ID3D11ComputeShader*	mComputeShader = nullptr;
+	ID3D11GeometryShader*	mGeometryShader = nullptr;
 	ID3D11Buffer*			mVertexBuffer = nullptr;
 	ID3D11Buffer*			mIndexBuffer = nullptr;
-
 	ID3D11InputLayout*		mInputLayout = nullptr;
-
-	UINT mVertexShaderConstantBufferCount = 0;
-	UINT mPixelShaderConstantBufferCount = 0;	
-
-	ID3D11Buffer** mVSConstantBufferList = nullptr;
-	ID3D11Buffer** mPSConstantBufferList = nullptr;
 
 	UINT mVSTextureCount = 0;
 	UINT mPSTextureCount = 0;
@@ -40,9 +34,15 @@ public:
 	ID3D11ShaderResourceView** mPSTextureView = nullptr;
 	ID3D11ShaderResourceView** mVSTextureView = nullptr;
 
-public:
-	bool UpdatePSIfDifferent(ID3D11PixelShader* ps);
-	bool UpdateVSIfDifferent(ID3D11VertexShader* ps);
+	// slot -> buffer map
+	std::map<UINT, ID3D11Buffer*> mBoundVSConstantBuffers;
+	std::map<UINT, ID3D11Buffer*> mBoundPSConstantBuffers;
+
+	// slot -> texture map
+	std::map<UINT, ID3D11ShaderResourceView*> mBoundVSTextures;
+	std::map<UINT, ID3D11ShaderResourceView*> mBoundPSTextures;
+
+	
 };
 
 class SSDX11Device 
@@ -89,6 +89,18 @@ public:
 
 	virtual void										Present();
 	void												ResizeRenderTarget(int inWidth, int inHeight);
+
+
+	bool IsBoundPixelShaderEqual(ID3D11PixelShader* InPS);
+
+	bool UpdateBoundPixelShaderIfDifferent(ID3D11PixelShader* InPS);
+	bool UpdateBoundVertexShaderIfDifferent(ID3D11VertexShader* InVS);
+	bool UpdateBoundComputeShaderIfDifferent(ID3D11ComputeShader* InCS);
+
+	bool SetVSBoundConstantBufferIfDifferent(UINT InSlotIndex, ID3D11Buffer* InBuffer);
+	bool SetPSBoundConstantBufferIfDifferent(UINT InSlotIndex, ID3D11Buffer* InBuffer);
+	bool SetVSBoundTextureIfDifferent(UINT InSlotIndex, ID3D11ShaderResourceView* InTextureView);
+	bool SetPSBoundTextureIfDifferent(UINT InSlotIndex, ID3D11ShaderResourceView* InTextureView);
 
 protected:
 	bool						CreateSwapChain(HWND windowHandle);
