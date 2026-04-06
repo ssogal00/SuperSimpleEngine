@@ -5,6 +5,7 @@
 #include "Windows.h"
 #include "SSTimer.h"
 #include "SSRenderingObjectManager.h"
+#include "SSTextureStreamingManager.h"
 
 SSRenderingThread::SSRenderingThread(SSRenderer* pRenderer)
 {
@@ -76,6 +77,7 @@ DWORD SSRenderingThread::Run()
 
 		if (mRenderer)
 		{
+			SSTextureStreamingManager::Get().Tick(renderingThreadTimer.GetDeltaTime());
 			SSRenderingObjectManager::Get().Tick(renderingThreadTimer.GetDeltaTime());
 			// sync gamethread object <-> rendering thread object
 			mRenderer->UpdateRenderingObjects();

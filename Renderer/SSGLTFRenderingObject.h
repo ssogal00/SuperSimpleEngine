@@ -5,6 +5,7 @@
 #include "SSRenderingObject.h"
 
 class SSDX11StructuredBuffer;
+class SSDX11StreamingTexture2D;
 
 class SSGLTFRenderingObject : public SSRenderingObject
 {
@@ -24,4 +25,5 @@ private:
 	SSDX11StructuredBuffer* mTexcoordBuffer = nullptr;
 
 	std::map<unsigned int, std::shared_ptr<class SSDX11Texture2D>> mTextureMap;
+	std::map<unsigned int, std::shared_ptr<SSDX11StreamingTexture2D>> mStreamingTextureMap;
 };

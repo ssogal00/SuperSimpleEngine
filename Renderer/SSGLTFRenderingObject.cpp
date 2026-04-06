@@ -7,8 +7,11 @@
 #include "SSShaderManager.h"
 #include "SSFreqUsedNames.h"
 #include "SSTextureManager.h"
+#include "SSTextureStreamingManager.h"
+#include "SSDX11StreamingTexture2D.h"
 #include "SSRenderCommand.h"
 #include "SSShader.h"
+#include "FreqUsedConstantBufferTypes.h"
 #include <filesystem>
 
 SSGLTFRenderingObject::SSGLTFRenderingObject(SSObjectBase* InGameObject)
@@ -34,13 +37,24 @@ SSGLTFRenderingObject::SSGLTFRenderingObject(SSObjectBase* InGameObject)
 
 	mIndexBuffer = GetDX11Device()->CreateIndexBuffer(GLTFDataRef.MergedIndices);
 
-	// load all textures 
+	// load all textures via streaming
 	for (auto i = 0; i < GLTFDataRef.Textures.size(); ++i)
 	{
 		GLTF::TextureInfo& TextureInfo = GLTFDataRef.Textures[i];
 		std::string TexturePath = BasePath + "/" + TextureInfo.Name;
-		std::shared_ptr< SSDX11Texture2D> MatTexture = SSTextureManager::Get().LoadTexture2D(GetDX11Device()->GetDeviceContext(), TexturePath);
-		mTextureMap[i] = MatTexture;
+
+		auto streamingTex = SSTextureManager::Get().LoadStreamingTexture2D(TexturePath);
+		if (streamingTex)
+		{
+			mStreamingTextureMap[static_cast<unsigned int>(i)] = streamingTex;
+			mTextureMap[static_cast<unsigned int>(i)] = streamingTex; // polymorphic: SSDX11StreamingTexture2D is-a SSDX11Texture2D
+		}
+		else
+		{
+			// Fallback to synchronous loading for non-DDS
+			std::shared_ptr<SSDX11Texture2D> MatTexture = SSTextureManager::Get().LoadTexture2D(GetDX11Device()->GetDeviceContext(), TexturePath);
+			mTextureMap[static_cast<unsigned int>(i)] = MatTexture;
+		}
 	}
 
 	CreateRenderCmdList();

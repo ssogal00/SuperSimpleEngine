@@ -34,7 +34,7 @@ struct PixelOutputType
 cbuffer MetalicRoughness
 {
     float Metalic = 0.9;
-    float Roughness = 0.9; 
+    float Roughness = 0.9;
 };
 
 cbuffer CBDiffuseColor
@@ -42,20 +42,43 @@ cbuffer CBDiffuseColor
     float3 DiffuseOverride;
 };
 
+cbuffer TextureStreamingInfo : register(b5)
+{
+    float4 DiffuseStreamInfo;
+    float4 NormalStreamInfo;
+    float4 RoughnessStreamInfo;
+    float4 MetalicStreamInfo;
+};
+
+float4 SampleStreaming(Texture2D tex, SamplerState samp, float2 uv, float4 streamInfo)
+{
+    // Sample at mip 0 outside of dynamic branch to ensure valid gradients
+    float4 result = tex.SampleLevel(samp, uv, 0);
+
+    if (streamInfo.x > 0.0)
+    {
+        float4 coarse = tex.SampleLevel(samp, uv, streamInfo.x);
+        float4 finer = tex.SampleLevel(samp, uv, max(streamInfo.y, 0.0));
+        result = lerp(coarse, finer, streamInfo.z);
+    }
+
+    return result;
+}
+
 
 PixelOutputType PSMain(PixelInputType pin)
 {   
     PixelOutputType output = (PixelOutputType)0;; 
 
 #ifdef DIFFUSETEX_EXIST
-    output.DiffuseColor = DiffuseTex.Sample(DefaultTexSampler, pin.InTexCoord);            
+    output.DiffuseColor = SampleStreaming(DiffuseTex, DefaultTexSampler, pin.InTexCoord, DiffuseStreamInfo);
 #else
     output.DiffuseColor = float4(DiffuseOverride,0); 
 #endif
 
 #ifdef ROUGHNESSTEX_EXIST
     {
-        output.DiffuseColor.a = OcclusionRoughnessMetalicTex.Sample(DefaultTexSampler, pin.InTexCoord).y;
+        output.DiffuseColor.a = SampleStreaming(OcclusionRoughnessMetalicTex, DefaultTexSampler, pin.InTexCoord, RoughnessStreamInfo).y;
     }
 #else
     {
@@ -78,9 +101,9 @@ PixelOutputType PSMain(PixelInputType pin)
 
 #ifdef NORMALTEX_EXIST
     {
-        float3 NormalMapNormal = normalize( 2.0f * (NormalTex.Sample(DefaultTexSampler, pin.InTexCoord ).xyz ) - float3(1.0f,1.0f,1.0f) );        
+        float3 NormalMapNormal = normalize( 2.0f * (SampleStreaming(NormalTex, DefaultTexSampler, pin.InTexCoord, NormalStreamInfo).xyz ) - float3(1.0f,1.0f,1.0f) );
 	    float3 BumpNormal = normalize(mul(NormalMapNormal.xyz , TangentToModelViewSpaceMatrix));
-	
+
         output.NormalColor.xyz = BumpNormal;
     }
 #else
@@ -91,7 +114,7 @@ PixelOutputType PSMain(PixelInputType pin)
 
 #ifdef METALICTEX_EXIST
     {
-        output.NormalColor.a = OcclusionRoughnessMetalicTex.Sample(DefaultTexSampler, pin.InTexCoord).z;        
+        output.NormalColor.a = SampleStreaming(OcclusionRoughnessMetalicTex, DefaultTexSampler, pin.InTexCoord, MetalicStreamInfo).z;
     }
 #else
     {

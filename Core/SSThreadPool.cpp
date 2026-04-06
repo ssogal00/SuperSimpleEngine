@@ -9,23 +9,26 @@ DWORD ThreadPoolWorkerThreadProc(LPVOID lpParam)
 	while (!threadPool->mShutdown)
 	{
 		std::function<void()> job;
+		bool hasJob = false;
+
 		EnterCriticalSection(&threadPool->mJobQueueCriticalSection);
 
 		while (!threadPool->mShutdown && threadPool->mJobQueue.empty())
 		{
 			SleepConditionVariableCS(&threadPool->mJobQueueConditionVariable, &threadPool->mJobQueueCriticalSection, INFINITE);
 		}
-		
-		if (!threadPool->mShutdown)
+
+		if (!threadPool->mShutdown && !threadPool->mJobQueue.empty())
 		{
-			job = threadPool->mJobQueue.front();
+			job = std::move(threadPool->mJobQueue.front());
+			threadPool->mJobQueue.pop();
+			hasJob = true;
 		}
 
 		LeaveCriticalSection(&threadPool->mJobQueueCriticalSection);
 
-		if (!threadPool->mShutdown)
-		{			
-			threadPool->mJobQueue.pop();
+		if (hasJob)
+		{
 			job();
 		}
 	}

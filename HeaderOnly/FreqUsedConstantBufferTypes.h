@@ -75,3 +75,11 @@ struct alignas(16) SSAlignedCBuffer<T1>
 	 T4 value4;
 	 T5 value5;
  };
+
+ struct alignas(16) TextureStreamingInfoCB
+ {
+     XMFLOAT4 DiffuseStreamInfo;
+     XMFLOAT4 NormalStreamInfo;
+     XMFLOAT4 RoughnessStreamInfo;
+     XMFLOAT4 MetalicStreamInfo;
+ };

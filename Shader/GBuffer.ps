@@ -35,20 +35,47 @@ cbuffer TextureExist
     int MaskMapExist;
     int NormalMapExist;
     int RoughnessExist;
-    int DiffuseMapExist;    
+    int DiffuseMapExist;
 };
 
 
 cbuffer MetalicRoughness
 {
     float Metalic = 0.9;
-    float Roughness = 0.9; 
+    float Roughness = 0.9;
 };
 
 cbuffer CBDiffuseColor
 {
     float3 DiffuseOverride;
 };
+
+cbuffer TextureStreamingInfo : register(b5)
+{
+    // x = current loaded coarsest mip index
+    // y = target finer mip index
+    // z = blend factor (0.0 ~ 1.0)
+    // w = unused
+    float4 DiffuseStreamInfo;
+    float4 NormalStreamInfo;
+    float4 RoughnessStreamInfo;
+    float4 MetalicStreamInfo;
+};
+
+float4 SampleStreaming(Texture2D tex, SamplerState samp, float2 uv, float4 streamInfo)
+{
+    // Sample at mip 0 outside of dynamic branch to ensure valid gradients
+    float4 result = tex.SampleLevel(samp, uv, 0);
+
+    if (streamInfo.x > 0.0)
+    {
+        float4 coarse = tex.SampleLevel(samp, uv, streamInfo.x);
+        float4 finer = tex.SampleLevel(samp, uv, max(streamInfo.y, 0.0));
+        result = lerp(coarse, finer, streamInfo.z);
+    }
+
+    return result;
+}
 
 
 PixelOutputType PSMain(PixelInputType pin)
@@ -60,7 +87,7 @@ PixelOutputType PSMain(PixelInputType pin)
     	float4 MaskValue= MaskTex.Sample(DefaultTexSampler, pin.InTexCoord);
     	if(MaskValue.x > 0)
     	{
-    		output.DiffuseColor = DiffuseTex.Sample(DefaultTexSampler, pin.InTexCoord);
+    		output.DiffuseColor = SampleStreaming(DiffuseTex, DefaultTexSampler, pin.InTexCoord, DiffuseStreamInfo);
     	}
     	else
     	{
@@ -71,17 +98,17 @@ PixelOutputType PSMain(PixelInputType pin)
     {
         if(DiffuseMapExist)
     	{
-           output.DiffuseColor = DiffuseTex.Sample(DefaultTexSampler, pin.InTexCoord);            
+           output.DiffuseColor = SampleStreaming(DiffuseTex, DefaultTexSampler, pin.InTexCoord, DiffuseStreamInfo);
         }
         else
         {
-            output.DiffuseColor = float4(DiffuseOverride,0);           
+            output.DiffuseColor = float4(DiffuseOverride,0);
         }
     }
 
     if(RoughnessExist)
     {
-        output.DiffuseColor.a = RoughnessTex.Sample(DefaultTexSampler, pin.InTexCoord).x;
+        output.DiffuseColor.a = SampleStreaming(RoughnessTex, DefaultTexSampler, pin.InTexCoord, RoughnessStreamInfo).x;
     }
     else
     {
@@ -103,9 +130,9 @@ PixelOutputType PSMain(PixelInputType pin)
 
     if(NormalMapExist)
     {
-        float3 NormalMapNormal = normalize( 2.0f * (NormalTex.Sample(DefaultTexSampler, pin.InTexCoord ).xyz ) - float3(1.0f,1.0f,1.0f) );        
+        float3 NormalMapNormal = normalize( 2.0f * (SampleStreaming(NormalTex, DefaultTexSampler, pin.InTexCoord, NormalStreamInfo).xyz ) - float3(1.0f,1.0f,1.0f) );
 	    float3 BumpNormal = normalize(mul(NormalMapNormal.xyz , TangentToModelViewSpaceMatrix));
-	
+
         output.NormalColor.xyz = BumpNormal;
     }
     else    
@@ -115,7 +142,7 @@ PixelOutputType PSMain(PixelInputType pin)
 
     if(MetalicExist)
     {
-        output.NormalColor.a = MetalicTex.Sample(DefaultTexSampler, pin.InTexCoord).x;        
+        output.NormalColor.a = SampleStreaming(MetalicTex, DefaultTexSampler, pin.InTexCoord, MetalicStreamInfo).x;
     }
     else
     {
