@@ -185,6 +185,7 @@ namespace GLTF {
 			Result.Meshes.push_back(MeshObject);
 		}
 
+		std::vector<Accessor> Accessors;
 		for (auto Element : GLTFJson["accessors"].get_array())
 		{
 			auto JsonObject = Element.get_object();
@@ -202,14 +203,15 @@ namespace GLTF {
 			{
 				AccessorObject.ByteOffset = 0;
 			}
-			
+
 			if (JsonObject["name"].get_string().error() == simdjson::error_code::SUCCESS)
 			{
 				AccessorObject.Name = JsonObject["name"].get_string().value();
 			}
-			Result.Accessors.push_back(AccessorObject);
+			Accessors.push_back(AccessorObject);
 		}
 
+		std::vector<BufferView> BufferViews;
 		for (auto Element : GLTFJson["bufferViews"].get_array())
 		{
 			auto JsonObject = Element.get_object();
@@ -225,7 +227,7 @@ namespace GLTF {
 			{
 				View.ByteOffset = 0;
 			}
-			
+
 			if(JsonObject.at_key("byteStride").error() == simdjson::error_code::SUCCESS)
 			{
 				View.ByteStride = JsonObject["byteStride"].get_int64().take_value();
@@ -247,9 +249,10 @@ namespace GLTF {
 				View.Name = JsonObject["name"].get_string().take_value();
 			}
 
-			Result.BufferViews.push_back(View);
+			BufferViews.push_back(View);
 		}
 
+		std::vector<Buffer> Buffers;
 		for (auto Element : GLTFJson["buffers"].get_array())
 		{
 			auto JsonObject = Element.get_object();
@@ -259,7 +262,7 @@ namespace GLTF {
 			Buffer BufferObject{};
 			BufferObject.ByteLength = static_cast<int>(ByteLength.get_int64().take_value());
 			BufferObject.Uri = Uri.get_string().take_value();
-			Result.Buffers.push_back(BufferObject);
+			Buffers.push_back(BufferObject);
 		}
 
 		unsigned int MaterialIndex = 0;
@@ -325,15 +328,8 @@ namespace GLTF {
 #pragma endregion
 
 
-		unsigned int CurrentPositionOffset = 0;
-		unsigned int CurrentNormalOffset = 0;
-		unsigned int CurrentTangentOffset = 0;
-		unsigned int CurrentTexcoordOffset = 0;
-		unsigned int CurrentIndexOffset = 0;
-		unsigned int CurrentIndexCount = 0;
-
 		for (auto& Mesh : Result.Meshes)
-		{	
+		{
 			for (auto& Primitive : Mesh.Primitives)
 			{
 				std::string BasePath = std::filesystem::path(InPath).parent_path().string();
@@ -343,10 +339,9 @@ namespace GLTF {
 				if(Primitive.Indices != -1)
 				{
 					int AccessorIndex = Primitive.Indices;
-					Accessor& IndexAccessor = Result.Accessors[AccessorIndex];
-					BufferView& IndexBufferView = Result.BufferViews[IndexAccessor.BufferView];
-					Buffer& IndexBuffer = Result.Buffers[IndexBufferView.Buffer];
-					IndexBuffer.Uri;
+					Accessor& IndexAccessor = Accessors[AccessorIndex];
+					BufferView& IndexBufferView = BufferViews[IndexAccessor.BufferView];
+					Buffer& IndexBuffer = Buffers[IndexBufferView.Buffer];
 					std::string UriPath = BasePath + "/" + IndexBuffer.Uri;
 					std::vector<uint16_t> Indices;
 
@@ -357,15 +352,11 @@ namespace GLTF {
 
 					Indices = ParseUInt16s(UriPath, IndexByteOffset, IndexAccessor.Count, Length, IndexOffset);
 
-					Result.MeshVertexDataMap[MeshKey].Indices = Indices;
-
 					Result.MergedIndices.insert(Result.MergedIndices.end(),
 						Indices.begin(),
 						Indices.end());
 
 					Result.IndexCountList.push_back(Indices.size());
-
-					Result.MeshNameToIndexCount[MeshKey] = static_cast<unsigned int>(Indices.size());
 				}
 
 				if(Primitive.Material != -1)
@@ -377,10 +368,9 @@ namespace GLTF {
 				if (Primitive.Attributes.find("POSITION") != Primitive.Attributes.end())
 				{
 					int AccessorIndex = Primitive.Attributes["POSITION"];
-					Accessor& PositionAccessor = Result.Accessors[AccessorIndex];
-					BufferView& PositionBufferView = Result.BufferViews[PositionAccessor.BufferView];
-					Buffer& PositionBuffer = Result.Buffers[PositionBufferView.Buffer];
-					PositionBuffer.Uri;
+					Accessor& PositionAccessor = Accessors[AccessorIndex];
+					BufferView& PositionBufferView = BufferViews[PositionAccessor.BufferView];
+					Buffer& PositionBuffer = Buffers[PositionBufferView.Buffer];
 					std::string UriPath = BasePath + "/" + PositionBuffer.Uri;
 
 					int64_t PositionByteOffset = PositionAccessor.ByteOffset + PositionBufferView.ByteOffset;
@@ -390,75 +380,68 @@ namespace GLTF {
 					int64_t ByteLength = PositionAccessor.Count * PositionBufferView.ByteStride;
 					PositionList = ParseVector3s(UriPath, PositionByteOffset, PositionAccessor.Count, ByteLength);
 
-					Result.MeshVertexDataMap[MeshKey].Positions = PositionList;
-
 					Result.PositionCountList.push_back(static_cast<unsigned int>(PositionList.size()));
 
 					Result.MergedPositions.insert(Result.MergedPositions.end(),
 						PositionList.begin(),
 						PositionList.end());
-
-					Result.MeshNameToPositionCount[MeshKey] = static_cast<unsigned int>(PositionList.size());
 				}
 				// Parse Normals
 				if (Primitive.Attributes.find("NORMAL") != Primitive.Attributes.end())
 				{
 					int AccessorIndex = Primitive.Attributes["NORMAL"];
-					Accessor& NormalAccessor = Result.Accessors[AccessorIndex];
-					BufferView& NormalBufferView = Result.BufferViews[NormalAccessor.BufferView];
-					Buffer& NormalBuffer = Result.Buffers[NormalBufferView.Buffer];
-					NormalBuffer.Uri;
+					Accessor& NormalAccessor = Accessors[AccessorIndex];
+					BufferView& NormalBufferView = BufferViews[NormalAccessor.BufferView];
+					Buffer& NormalBuffer = Buffers[NormalBufferView.Buffer];
 					std::string UriPath = BasePath + "/" + NormalBuffer.Uri;
 
 					int64_t NormalByteOffset = NormalBufferView.ByteOffset + NormalAccessor.ByteOffset;
 					int64_t ByteLength = NormalBufferView.ByteStride * NormalAccessor.Count;
-					
-					Result.MeshVertexDataMap[MeshKey].Normals = ParseVector3s(UriPath, NormalByteOffset, NormalAccessor.Count, ByteLength);
-					
+
+					auto Normals = ParseVector3s(UriPath, NormalByteOffset, NormalAccessor.Count, ByteLength);
+
 					Result.MergedNormals.insert(Result.MergedNormals.end(),
-						Result.MeshVertexDataMap[MeshKey].Normals.begin(),
-						Result.MeshVertexDataMap[MeshKey].Normals.end());
+						Normals.begin(),
+						Normals.end());
 				}
 				// Parse Tangents
 				if (Primitive.Attributes.find("TANGENT") != Primitive.Attributes.end())
 				{
 					int AccessorIndex = Primitive.Attributes["TANGENT"];
-					Accessor& TangentAccessor = Result.Accessors[AccessorIndex];
-					BufferView& TangentBufferView = Result.BufferViews[TangentAccessor.BufferView];
-					Buffer& TangentBuffer = Result.Buffers[TangentBufferView.Buffer];
-					TangentBuffer.Uri;
+					Accessor& TangentAccessor = Accessors[AccessorIndex];
+					BufferView& TangentBufferView = BufferViews[TangentAccessor.BufferView];
+					Buffer& TangentBuffer = Buffers[TangentBufferView.Buffer];
 					std::string UriPath = BasePath + "/" + TangentBuffer.Uri;
 
 					int64_t TangentByteOffset = TangentBufferView.ByteOffset + TangentAccessor.ByteOffset;
 					int64_t ByteLength = TangentAccessor.Count * TangentBufferView.ByteStride;
 
-					Result.MeshVertexDataMap[MeshKey].Tangents = ParseVector4s(UriPath, TangentByteOffset, TangentAccessor.Count, ByteLength);
+					auto Tangents = ParseVector4s(UriPath, TangentByteOffset, TangentAccessor.Count, ByteLength);
 
 					Result.MergedTangents.insert(Result.MergedTangents.end(),
-						Result.MeshVertexDataMap[MeshKey].Tangents.begin(),
-						Result.MeshVertexDataMap[MeshKey].Tangents.end());
+						Tangents.begin(),
+						Tangents.end());
 				}
 
 				if (Primitive.Attributes.find("TEXCOORD_0") != Primitive.Attributes.end())
 				{
 					int AccessorIndex = Primitive.Attributes["TEXCOORD_0"];
-					Accessor& TexcoordAccessor = Result.Accessors[AccessorIndex];
-					BufferView& TexcoordBufferView = Result.BufferViews[TexcoordAccessor.BufferView];
-					Buffer& TexcoordBuffer = Result.Buffers[TexcoordBufferView.Buffer];
-					TexcoordBuffer.Uri;
+					Accessor& TexcoordAccessor = Accessors[AccessorIndex];
+					BufferView& TexcoordBufferView = BufferViews[TexcoordAccessor.BufferView];
+					Buffer& TexcoordBuffer = Buffers[TexcoordBufferView.Buffer];
 					std::string UriPath = BasePath + "/" + TexcoordBuffer.Uri;
 
 					int64_t TexcoordByteOffset = TexcoordBufferView.ByteOffset + TexcoordAccessor.ByteOffset;
 
-					Result.MeshVertexDataMap[MeshKey].Texcoords = ParseVector2s(UriPath, TexcoordByteOffset, TexcoordAccessor.Count, TexcoordBufferView.ByteLength);
+					auto Texcoords = ParseVector2s(UriPath, TexcoordByteOffset, TexcoordAccessor.Count, TexcoordBufferView.ByteLength);
 
 					Result.MergedTexcoords.insert(Result.MergedTexcoords.end(),
-						Result.MeshVertexDataMap[MeshKey].Texcoords.begin(),
-						Result.MeshVertexDataMap[MeshKey].Texcoords.end());
+						Texcoords.begin(),
+						Texcoords.end());
 				}
-					
+
 			}
-			
+
 		}
 
 		return Result;
