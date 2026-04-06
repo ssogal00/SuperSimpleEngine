@@ -36,16 +36,17 @@ include_directories("GameModule")
 include_directories("Core")
 
 
-# # 1. ���̴� ���ϵ��� ��� ã�Ƽ� ������ �����մϴ�.
-file(GLOB_RECURSE SHADER_FILES 
-    "${CMAKE_CURRENT_SOURCE_DIR}/Shaders/*.vs"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Shaders/*.ps"
-	"${CMAKE_CURRENT_SOURCE_DIR}/Shaders/*.cs"
+# Collect all shader files under the Shader folder
+file(GLOB_RECURSE SHADER_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/Shader/*.vs"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Shader/*.ps"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Shader/*.cs"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Shader/*.hlsl"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Shader/*.json"
 )
 
-# 2. �ַ�� Ž���⿡�� ���� ����(Filter) �̸��� �����մϴ�.
-# "Resources/Shaders" ó�� ��� �������� ���� ���� ������ ����ϴ�.
-source_group("Shaders" FILES ${SHADER_FILES})
+# Add shader files as a filter group visible in Visual Studio Solution Explorer
+source_group("Shader" FILES ${SHADER_FILES})
 
 
 add_executable(SuperSimpleEngine resource.h targetver.h SSAppWindow.h SSAppWindow.cpp SSApplication.cpp DXWindow.rc "Console/main.cpp" ${SHADER_FILES})
