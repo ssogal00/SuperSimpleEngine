@@ -186,22 +186,6 @@ namespace GLTF {
         HANDLE FileHandle = INVALID_HANDLE_VALUE;
     };
 
-    class CORE_API GLTFVertexData
-    {
-    public:
-        std::vector<XMFLOAT3> Positions;
-        std::vector<XMFLOAT3> Normals;
-        std::vector<XMFLOAT4> Tangents;
-        std::vector<XMFLOAT2> Texcoords;
-		std::vector<uint16_t> Indices;
-
-        unsigned int PostionOffsetInBytes = 0;
-        unsigned int NormalOffsetInBytes = 0;
-        unsigned int TangentsOffsetInBytes = 0;
-        unsigned int TexcoordsOffsetInBytes = 0;
-        unsigned int IndexOffsetInBytes = 0;
-    };
-
     class CORE_API SSGLTF_V2
     {
     public:
@@ -212,14 +196,6 @@ namespace GLTF {
 		static std::vector<XMFLOAT4> ParseVector4s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength);
 		static std::vector<uint16_t> ParseUInt16s(std::string InPath, int64_t InOffset, int64_t InCount, int64_t InByteLength, uint16_t IndexOffset = 0);
         
-    protected:
-        std::vector<std::string> Images;
-        std::vector<Accessor> Accessors;
-        std::vector<BufferView> BufferViews;
-		std::vector<Buffer> Buffers;
-
-		std::map<std::string, GLTFVertexData> MeshVertexDataMap;
-
     public:
 		// we only need these merged data for creating single big buffers
         std::vector<XMFLOAT3> MergedPositions;
@@ -230,8 +206,6 @@ namespace GLTF {
         std::vector<Mesh> Meshes;
 
 
-		std::map<std::string, unsigned int> MeshNameToIndexCount;
-		std::map<std::string, unsigned int> MeshNameToPositionCount;
         std::map<std::string, unsigned int> MeshNameToMaterialIndex;
         std::map<unsigned int, Material> MaterialIndexToMaterial;
 
