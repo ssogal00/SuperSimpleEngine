@@ -16,7 +16,6 @@
 #include "SSAppWindow.h"
 #include "SSEngineBase.h"
 
-
 #define MAX_LOADSTRING 100
 
 // Global Variables:

@@ -45,6 +45,9 @@ file(GLOB_RECURSE SHADER_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/Shader/*.json"
 )
 
+# Exclude shader files from build (display only in Solution Explorer)
+set_source_files_properties(${SHADER_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
+
 # Add shader files as a filter group visible in Visual Studio Solution Explorer
 source_group("Shader" FILES ${SHADER_FILES})
 
@@ -67,17 +70,16 @@ target_compile_options(SuperSimpleEngine PRIVATE /GR-)
 target_compile_options(SuperSimpleEngine PRIVATE /EHs-c-)
 
 
-# Copy Shader folder to build output directory on every build
-add_custom_command(TARGET SuperSimpleEngine POST_BUILD
+# Copy Shader folder to build output directories on every build (even when up-to-date)
+add_custom_target(CopyShaders ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_SOURCE_DIR}/Shader"
         "${CMAKE_CURRENT_BINARY_DIR}/Shader"
-    # Copy to MyBuild directory if it exists
     COMMAND cmd /c "if exist \"${CMAKE_CURRENT_SOURCE_DIR}/MyBuild\" (\"${CMAKE_COMMAND}\" -E copy_directory \"${CMAKE_CURRENT_SOURCE_DIR}/Shader\" \"${CMAKE_CURRENT_SOURCE_DIR}/MyBuild/Shader\")"
-    # Copy to build directory if it exists
     COMMAND cmd /c "if exist \"${CMAKE_CURRENT_SOURCE_DIR}/build\" (\"${CMAKE_COMMAND}\" -E copy_directory \"${CMAKE_CURRENT_SOURCE_DIR}/Shader\" \"${CMAKE_CURRENT_SOURCE_DIR}/build/Shader\")"
     COMMENT "Copying Shader folder to build output directories"
 )
+add_dependencies(SuperSimpleEngine CopyShaders)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Resource DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/lib/bin DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

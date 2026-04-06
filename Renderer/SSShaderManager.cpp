@@ -69,6 +69,7 @@ void SSShaderManager::Initialize()
             std::wstring wfilepath;
             wfilepath.assign(cstrfilepath.begin(), cstrfilepath.end());
 
+
             if (ps->CompileFromFile(wfilepath, context) == true)
             {
                 mPixelShaderMap[shaderName.data()] = ps;

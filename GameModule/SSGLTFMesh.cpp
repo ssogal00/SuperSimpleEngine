@@ -11,19 +11,8 @@ SSGLTFMeshObject::SSGLTFMeshObject(std::string InGLTFFilePath)
 {
 	 mGLTFData = GLTF::SSGLTF_V2::LoadGLTFFile(InGLTFFilePath);
 
-	 mMaterialProxy->SetPixelShaderName("GBuffer.ps");
+	 mMaterialProxy->SetPixelShaderName("GBufferGLTF.ps.default");
 	 mMaterialProxy->SetVertexShaderName("DeferredInstancedManualFetch.vs");
-	 
-	 SSAlignedCBuffer<int, int, int, int, int> settings;
-
-	 settings.value1 = 1; //metalic
-	 settings.value2 = 0; //mask
-	 settings.value3 = 1; //normal
-	 settings.value4 = 1; // roghness
-	 settings.value5 = 1; // diffuse
-
-	 SSConstantBufferData Data{ settings };
-	 mMaterialProxy->SetPSConstantParam("TextureExist", Data);
 }
 
 SSGLTFMeshObject::~SSGLTFMeshObject()
@@ -52,7 +41,7 @@ SSGLTFTestObject::SSGLTFTestObject()
 
 	
 
-	mGLTFData.PositionCountList.push_back(CubeDataList.size());
+	mGLTFData.PositionCountList.push_back(static_cast<unsigned int>(CubeDataList.size()));
 
 	std::vector<VT_PositionNormalTexcoordTangent> SphereDataList = SSSharedRenderData::Get().GetRawCubeVertexData();
 
@@ -69,7 +58,7 @@ SSGLTFTestObject::SSGLTFTestObject()
 		mGLTFData.MergedTangents.push_back(vertex.VertexAttribute4);
 	}
 
-	mGLTFData.PositionCountList.push_back(SphereDataList.size());
+	mGLTFData.PositionCountList.push_back(static_cast<unsigned int>(SphereDataList.size()));
 
 	auto CubeIndexData = SSSharedRenderData::Get().GetCubeIndexData();
 
@@ -79,7 +68,7 @@ SSGLTFTestObject::SSGLTFTestObject()
 	{
 		mGLTFData.MergedIndices.push_back(static_cast<uint16_t>(index));
 	}
-	mGLTFData.IndexCountList.push_back(CubeIndexData.size());
+	mGLTFData.IndexCountList.push_back(static_cast<unsigned int>(CubeIndexData.size()));
 
 	auto SphereIndexData = SSSharedRenderData::Get().GetCubeIndexData();
 
@@ -89,9 +78,9 @@ SSGLTFTestObject::SSGLTFTestObject()
 		//mGLTFData.MergedIndices.push_back(static_cast<uint16_t>(index));
 	}
 	
-	mGLTFData.IndexCountList.push_back(SphereIndexData.size());
+	mGLTFData.IndexCountList.push_back(static_cast<unsigned int>(SphereIndexData.size()));
 
-	mMaterialProxy->SetPixelShaderName("GBuffer.ps");
+	mMaterialProxy->SetPixelShaderName("GBufferGLTF.ps.default");
 	mMaterialProxy->SetVertexShaderName("DeferredInstancedManualFetch.vs");
 	mMaterialProxy->SetPSTextureParam("DiffuseTex", "./Resource/Tex/rustediron/rustediron2_basecolor.dds", true);
 	mMaterialProxy->SetPSTextureParam("NormalTex", "./Resource/Tex/rustediron/rustediron2_normal.dds",false);

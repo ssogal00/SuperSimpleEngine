@@ -20,15 +20,24 @@
 			 ]
 		},
 		{
-			"name" : "GBufferNoMask.ps",
-			"filepath" : "./Shader/GBufferMacro.ps",
-			"defines" :
-			[
-				{"MASK_EXIST" : "0"},
-				{"DIFFUSE_EXIST" : "1"},
-				{"ROUGH_EXIST" : "1"},
-				{"NORMAL_EXIST" : "1"},
-				{"METALLIC_EXIST" : "1"}
+			"name": "GBufferNoMask.ps",
+			"filepath": "./Shader/GBufferMacro.ps",
+			"defines": [
+				{ "MASK_EXIST": "0" },
+				{ "DIFFUSE_EXIST": "1" },
+				{ "ROUGH_EXIST": "1" },
+				{ "NORMAL_EXIST": "1" },
+				{ "METALLIC_EXIST": "1" }
+			]
+		},
+		{
+			"name": "GBufferGLTF.ps.default",
+			"filepath": "./Shader/GLTFGBuffer.ps",
+			"defines": [
+				{ "DIFFUSETEX_EXIST": "1" },
+				{ "ROUGHNESSTEX_EXIST": "1" },
+				{ "NORMALTEX_EXIST": "1" },
+				{ "METALICTEX_EXIST": "1" }
 			]
 		}
 	]	

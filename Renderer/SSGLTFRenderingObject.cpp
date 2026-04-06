@@ -150,19 +150,20 @@ void SSGLTFRenderingObject::CreateRenderCmdList()
 
 		std::shared_ptr<class SSDX11Texture2D> BaseTex = mTextureMap[MeshMaterial.ThisMaterialPBRMetallicRoughness.BaseColorTex.Index];
 		std::shared_ptr<class SSDX11Texture2D> NormalTex = mTextureMap[MeshMaterial.NormalTex.Index];
-		std::shared_ptr<class SSDX11Texture2D> RoghnessTex = mTextureMap[MeshMaterial.ThisMaterialPBRMetallicRoughness.MetallicRoughnessTex.Index];
+		std::shared_ptr<class SSDX11Texture2D> ORMTex = mTextureMap[MeshMaterial.ThisMaterialPBRMetallicRoughness.MetallicRoughnessTex.Index];
 		
 		
 		const int DiffuseSlotIndex = ps->GetTextureSlotIndex("DiffuseTex");
-		const int RoughnessSlotIndex = ps->GetTextureSlotIndex("RoughnessTex");
-		const int MetalicSlotIndex = ps->GetTextureSlotIndex("MetalicTex");
+		const int ORMSlotIndex = ps->GetTextureSlotIndex("OcclusionRoughnessMetalicTex");
 		const int NormalSlotIndex = ps->GetTextureSlotIndex("NormalTex");
+		
 		check(DiffuseSlotIndex != -1);
+		check(NormalSlotIndex != -1);
+		check(ORMSlotIndex != -1);
 
 		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), BaseTex.get(), DiffuseSlotIndex));
-		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), RoghnessTex.get(), RoughnessSlotIndex));
+		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), ORMTex.get(), ORMSlotIndex));
 		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), NormalTex.get(), NormalSlotIndex));
-		RenderCmdList.push_back(new SSRenderCmdSetPSTexture(ps.get(), RoghnessTex.get(), MetalicSlotIndex));
 		
 		RenderCmdList.push_back(new SSRenderCmdDrawIndexed(mIndexBuffer, IndexCount, StartIndexLocation, 0));		
 		
