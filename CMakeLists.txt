@@ -36,15 +36,15 @@ include_directories("GameModule")
 include_directories("Core")
 
 
-# # 1. ¼ÎÀÌ´õ ÆÄÀÏµéÀ» ¸ðµÎ Ã£¾Æ¼­ º¯¼ö¿¡ ÀúÀåÇÕ´Ï´Ù.
+# # 1. ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ Ã£ï¿½Æ¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 file(GLOB_RECURSE SHADER_FILES 
     "${CMAKE_CURRENT_SOURCE_DIR}/Shaders/*.vs"
     "${CMAKE_CURRENT_SOURCE_DIR}/Shaders/*.ps"
 	"${CMAKE_CURRENT_SOURCE_DIR}/Shaders/*.cs"
 )
 
-# 2. ¼Ö·ç¼Ç Å½»ö±â¿¡¼­ º¸ÀÏ Æú´õ(Filter) ÀÌ¸§À» ÁöÁ¤ÇÕ´Ï´Ù.
-# "Resources/Shaders" Ã³·³ °æ·Î Çü½ÄÀ¸·Î ¾²¸é °èÃþ ±¸Á¶°¡ »ý±é´Ï´Ù.
+# 2. ï¿½Ö·ï¿½ï¿½ Å½ï¿½ï¿½ï¿½â¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(Filter) ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+# "Resources/Shaders" Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
 source_group("Shaders" FILES ${SHADER_FILES})
 
 
@@ -66,7 +66,18 @@ target_compile_options(SuperSimpleEngine PRIVATE /GR-)
 target_compile_options(SuperSimpleEngine PRIVATE /EHs-c-)
 
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Shader DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+# Copy Shader folder to build output directory on every build
+add_custom_command(TARGET SuperSimpleEngine POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/Shader"
+        "${CMAKE_CURRENT_BINARY_DIR}/Shader"
+    # Copy to MyBuild directory if it exists
+    COMMAND cmd /c "if exist \"${CMAKE_CURRENT_SOURCE_DIR}/MyBuild\" (\"${CMAKE_COMMAND}\" -E copy_directory \"${CMAKE_CURRENT_SOURCE_DIR}/Shader\" \"${CMAKE_CURRENT_SOURCE_DIR}/MyBuild/Shader\")"
+    # Copy to build directory if it exists
+    COMMAND cmd /c "if exist \"${CMAKE_CURRENT_SOURCE_DIR}/build\" (\"${CMAKE_COMMAND}\" -E copy_directory \"${CMAKE_CURRENT_SOURCE_DIR}/Shader\" \"${CMAKE_CURRENT_SOURCE_DIR}/build/Shader\")"
+    COMMENT "Copying Shader folder to build output directories"
+)
+
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Resource DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/lib/bin DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
