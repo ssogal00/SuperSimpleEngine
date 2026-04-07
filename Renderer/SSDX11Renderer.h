@@ -149,6 +149,7 @@ private:
 };
 
 inline SSDX11Device* GetDX11Device() { return SSDX11Renderer::Get().GetDX11Device(); }
+inline ID3D11Device* GetDX11DevicePtr() { return SSDX11Renderer::Get().GetDevice(); }
 
 void RHISetPixelShader(class RHIPixelShader* ps);
 void RHISetVertexShader(class RHIVertexShader* vs);

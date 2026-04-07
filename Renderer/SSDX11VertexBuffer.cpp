@@ -5,7 +5,6 @@
 SSDX11VertexBuffer::SSDX11VertexBuffer(ID3D11Buffer* ptrBuffer, unsigned int stride, unsigned int count)
 	:	mpBuffer(ptrBuffer),
 		mStride(stride),
-		mTotalSize(stride* count),
 		mVertexCount(count)
 {	
 }

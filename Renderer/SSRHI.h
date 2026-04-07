@@ -1,20 +1,17 @@
 #pragma once
 
+#include <vector>
+#include <memory>
+#include "d3d11.h"
 
-class SSRHIPixelShader
-{
-public:
-	SSRHIPixelShader();
+#include "wrl/client.h"
+using Microsoft::WRL::ComPtr;
 
-private:
-	ID3D11Shader* mpPixelShader = nullptr;
-};
+class SSDX11IndexBuffer;
+class SSDX11VertexBuffer;
+class SSDX11ConstantBuffer;
 
-class SSRHIVertexShader
-{
-public:
-	SSRHIVertexShader();
-
-private:
-	ID3D11Shader* mpVertexShader = nullptr;
-};
+std::shared_ptr<SSDX11IndexBuffer> RHICreateIndexBuffer(std::vector<unsigned short>& InData);
+std::shared_ptr<SSDX11IndexBuffer> RHICreateIndexBuffer(std::vector<unsigned int>& InData);
+std::shared_ptr<SSDX11VertexBuffer> RHICreateVertexBuffer(unsigned int InStride, unsigned int InCount, void* InPtrData, bool bIsImmutable);
+std::shared_ptr<SSDX11ConstantBuffer> RHICreateConstantBuffer(const UINT InBufferSize, const UINT InSlotIndex, std::string InName);

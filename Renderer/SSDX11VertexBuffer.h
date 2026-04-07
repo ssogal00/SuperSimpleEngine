@@ -11,6 +11,7 @@ class SSDX11VertexBuffer : public SSBufferBase
 public:
     SSDX11VertexBuffer(ID3D11Buffer* ptrBuffer, unsigned int stride, unsigned int count);    
     ~SSDX11VertexBuffer();
+    
     template<class T>
     void SetVertexBufferData(const std::vector<T>& vertexData);
 
@@ -19,7 +20,6 @@ public:
 
     virtual unsigned int GetStride() const { return mStride; }
     virtual unsigned int GetVertexCount() const { return mVertexCount; }
-    virtual unsigned int GetTotalSize() const { return mTotalSize; }
 
     virtual BYTE* GetBufferDataPtr() override { return nullptr; }
 
@@ -33,7 +33,6 @@ protected:
 protected:
     unsigned int mStride = 0;
     unsigned int mVertexCount = 0;
-    unsigned int mTotalSize = 0;
 };
 
 template<class T>
