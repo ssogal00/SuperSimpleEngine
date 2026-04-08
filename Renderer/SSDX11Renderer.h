@@ -150,10 +150,5 @@ private:
 
 inline SSDX11Device* GetDX11Device() { return SSDX11Renderer::Get().GetDX11Device(); }
 inline ID3D11Device* GetDX11DevicePtr() { return SSDX11Renderer::Get().GetDevice(); }
-
-void RHISetPixelShader(class RHIPixelShader* ps);
-void RHISetVertexShader(class RHIVertexShader* vs);
-void RHISetConstantBufferVS(UINT slotIndex, class RHIConstantBuffer* cb);
-void RHICreateVertexShader();
-
+inline ID3D11DeviceContext* GetDX11DeviceContextPtr() { return SSDX11Renderer::Get().GetImmediateDeviceContext(); }
 //void RHISetVertexShader(void* vs);

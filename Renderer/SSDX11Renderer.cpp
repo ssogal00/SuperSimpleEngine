@@ -667,11 +667,3 @@ void SSDX11Renderer::CreateSkyBoxDrawCommands()
 
 }
 
-
-void RHISetPixelShader(RHIPixelShader* pixelShader)
-{
-	GetDX11Device()->GetDeviceContext()->PSSetShader((ID3D11PixelShader*)pixelShader, nullptr, 0);
-	//GetDX11Device()->GetDeviceContext()->PSSetShader((ID3D11PixelShader*)pixelShader, nullptr, 0);
-	//GetDX11Device()->GetDeviceContext()->PSSetShader(Dummy, nullptr, 0);
-}
-
