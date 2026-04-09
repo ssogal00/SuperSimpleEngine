@@ -5,6 +5,7 @@
 #include "SSDX11ConstantBuffer.h"
 #include "SSShader.h"
 #include "SSDX11Texture2D.h"
+#include "SSDX11VertexBuffer.h"
 
 std::shared_ptr<SSDX11IndexBuffer> RHICreateIndexBuffer(std::vector<unsigned short>& InData)
 {

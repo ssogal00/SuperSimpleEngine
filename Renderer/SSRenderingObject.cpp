@@ -156,7 +156,7 @@ void SSRenderingObject::CreateRenderCmdList()
 	}
 }
 
-void SSRenderingObject::Draw(ID3D11DeviceContext* deviceContext)
+void SSRenderingObject::Render(ID3D11DeviceContext* deviceContext)
 {
 	for (auto* Cmd : RenderCmdList)
 	{

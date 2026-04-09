@@ -236,7 +236,7 @@ void SSDX11Renderer::DrawObject()
 	auto& objects = SSRenderingObjectManager::Get().GetRenderingObjectMap();
 	for (auto [k, v] : objects)
 	{
-		v->Draw(mDX11Device->GetDeviceContext());
+		v->Render(mDX11Device->GetDeviceContext());
 	}
 	
 	float ClearColor[4]{ 1,0,0,1 };
@@ -327,7 +327,7 @@ void SSDX11Renderer::DrawCubeScene()
 	auto& objects = SSRenderingObjectManager::Get().GetRenderingObjectMap();
 	for (auto [k, v] : objects)
 	{
-		v->Draw(mDX11Device->GetDeviceContext());
+		v->Render(mDX11Device->GetDeviceContext());
 	}	
 
 	mGBufferDumpProcess->Draw(mDX11Device, mGBuffer->GetPositionOutput(), mGBuffer->GetColorOutput(), mGBuffer->GetNormalOutput());

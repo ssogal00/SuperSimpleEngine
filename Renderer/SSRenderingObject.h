@@ -10,7 +10,7 @@ public:
 	SSRenderingObject(){}
 	
 	virtual ~SSRenderingObject();
-	virtual void Draw(ID3D11DeviceContext* deviceContext);
+	virtual void Render(ID3D11DeviceContext* deviceContext);
 
 	bool IsTranslucent() const { return bIsTranslucent; }
 
