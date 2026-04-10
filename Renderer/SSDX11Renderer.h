@@ -41,6 +41,7 @@ protected:
 	void DrawObject();
 	void DrawSkybox();
 	void DrawDummyScene();	
+	void DrawInfiniteGrid();
 
 	void CreateSkyBoxDrawCommands();
 	
@@ -132,6 +133,11 @@ private:
 	std::shared_ptr<class SSGaussianBlurPostProcess> mGaussianBlurPostProcess;
 	std::shared_ptr<class SSGBufferDumpPostProcess> mGBufferDumpProcess;
 	std::shared_ptr<class SSDX11PostProcess> mDeferredLightPostProcess;
+
+	// Infinite Grid
+	std::shared_ptr<class SSDX11VertexShader> mInfiniteGridVertexShader;
+	std::shared_ptr<class SSDX11PixelShader> mInfiniteGridPixelShader;
+	ID3D11BlendState* mAlphaBlendState = nullptr;
 
 	
 

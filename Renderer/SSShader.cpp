@@ -160,8 +160,8 @@ SSDX11VertexShader::~SSDX11VertexShader()
 void SSDX11VertexShader::CreateInputLayout(ID3D11ShaderReflection* shaderReflection, const SSCompileContext& context)
 {
     auto* dxDevice = SSDX11Renderer::Get().GetDevice();
-    
-    check(dxDevice != nullptr);    
+
+    check(dxDevice != nullptr);
 	check(shaderReflection != nullptr);
 
 	D3D11_SHADER_DESC shaderDescription;
@@ -169,8 +169,33 @@ void SSDX11VertexShader::CreateInputLayout(ID3D11ShaderReflection* shaderReflect
 
 	// @input layout creation
 	UINT inputParamCount = shaderDescription.InputParameters;
-	D3D11_INPUT_ELEMENT_DESC* inputDescriptions = new D3D11_INPUT_ELEMENT_DESC[inputParamCount];
+
+	// First pass: count non-system-value parameters.
+	// System-value semantics (SV_VertexID, SV_InstanceID, etc.) must not be
+	// included in the input layout -- they are provided by the IA stage automatically.
+	UINT layoutElementCount = 0;
+	for (UINT i = 0; i < inputParamCount; ++i)
+	{
+		D3D11_SIGNATURE_PARAMETER_DESC inputDesc;
+		shaderReflection->GetInputParameterDesc(i, &inputDesc);
+
+		if (inputDesc.SystemValueType == D3D_NAME_UNDEFINED)
+		{
+			layoutElementCount++;
+		}
+	}
+
+	// If there are no user-defined vertex inputs (e.g., SV_VertexID only),
+	// skip input layout creation -- the shader doesn't need one.
+	if (layoutElementCount == 0)
+	{
+		mInputLayout = nullptr;
+		return;
+	}
+
+	D3D11_INPUT_ELEMENT_DESC* inputDescriptions = new D3D11_INPUT_ELEMENT_DESC[layoutElementCount];
 	UINT byteOffset = 0;
+	UINT layoutIndex = 0;
 
 	map<std::string, int> semanticIndexMap;
 
@@ -183,9 +208,15 @@ void SSDX11VertexShader::CreateInputLayout(ID3D11ShaderReflection* shaderReflect
 		D3D11_SIGNATURE_PARAMETER_DESC inputDesc;
 		shaderReflection->GetInputParameterDesc(i, &inputDesc);
 
+		// Skip system-value semantics (SV_VertexID, SV_InstanceID, etc.)
+		if (inputDesc.SystemValueType != D3D_NAME_UNDEFINED)
+		{
+			continue;
+		}
+
 		auto format = SSDXTranslator::GetVertexShaderInputType(inputDesc);
-		inputDescriptions[i].SemanticName = inputDesc.SemanticName;
-		inputDescriptions[i].Format = format;
+		inputDescriptions[layoutIndex].SemanticName = inputDesc.SemanticName;
+		inputDescriptions[layoutIndex].Format = format;
 
 		if(semanticIndexMap.count(inputDesc.SemanticName) > 0)
         {
@@ -203,25 +234,26 @@ void SSDX11VertexShader::CreateInputLayout(ID3D11ShaderReflection* shaderReflect
 
 		if(bInstanced)
         {
-		    inputDescriptions[i].InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA;
-		    inputDescriptions[i].InstanceDataStepRate = 1;
-			inputDescriptions[i].InputSlot = 1;
-            inputDescriptions[i].AlignedByteOffset = 0;
+		    inputDescriptions[layoutIndex].InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA;
+		    inputDescriptions[layoutIndex].InstanceDataStepRate = 1;
+			inputDescriptions[layoutIndex].InputSlot = 1;
+            inputDescriptions[layoutIndex].AlignedByteOffset = 0;
         }
 		else
         {
-            inputDescriptions[i].InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
-            inputDescriptions[i].InstanceDataStepRate = 0;
-            inputDescriptions[i].AlignedByteOffset = i == 0 ? 0 : D3D11_APPEND_ALIGNED_ELEMENT;
-			inputDescriptions[i].InputSlot = 0;
+            inputDescriptions[layoutIndex].InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
+            inputDescriptions[layoutIndex].InstanceDataStepRate = 0;
+            inputDescriptions[layoutIndex].AlignedByteOffset = layoutIndex == 0 ? 0 : D3D11_APPEND_ALIGNED_ELEMENT;
+			inputDescriptions[layoutIndex].InputSlot = 0;
         }
 
-		inputDescriptions[i].SemanticIndex = semanticIndexMap[inputDesc.SemanticName];
+		inputDescriptions[layoutIndex].SemanticIndex = semanticIndexMap[inputDesc.SemanticName];
 
 		byteOffset += SSDXTranslator::GetDXGIFormatByteSize(format);
+		layoutIndex++;
 	}
 
-	HR(dxDevice->CreateInputLayout(inputDescriptions, inputParamCount, mShaderBuffer->GetBufferPointer(), mShaderBuffer->GetBufferSize(), &mInputLayout));
+	HR(dxDevice->CreateInputLayout(inputDescriptions, layoutElementCount, mShaderBuffer->GetBufferPointer(), mShaderBuffer->GetBufferSize(), &mInputLayout));
 
 	delete [] inputDescriptions;
 }

@@ -123,6 +123,12 @@ void SSDX11Renderer::Shutdown()
 	SSRenderingObjectManager::Get().Shutdown();
 	SSSharedBufferCache::Get().Shutdown();
 
+	if (mAlphaBlendState)
+	{
+		mAlphaBlendState->Release();
+		mAlphaBlendState = nullptr;
+	}
+
 	mGBuffer.reset();
 	mEquirectToCubemapRenderTarget.reset();
 }
@@ -330,6 +336,7 @@ void SSDX11Renderer::DrawCubeScene()
 		v->Render(mDX11Device->GetDeviceContext());
 	}	
 
+
 	mGBufferDumpProcess->Draw(mDX11Device, mGBuffer->GetPositionOutput(), mGBuffer->GetColorOutput(), mGBuffer->GetNormalOutput());
 
 	mDeferredLightPostProcess->Draw(
@@ -345,11 +352,11 @@ void SSDX11Renderer::DrawCubeScene()
 
 	//mFXAAPostProcess->Draw(mDX11Device, mGaussianBlurPostProcess->GetOutput());
 	//mFXAAPostProcess->Draw(mDX11Device, mGaussianBlurPostProcess->GetOutput());
-	
+
 	float ClearColor[4]{1,0,0,1};
 	mDX11Device->ClearDefaultRenderTargetView(ClearColor);
-	mDX11Device->SetDefaultRenderTargetAsCurrent();	
-	
+	mDX11Device->SetDefaultRenderTargetAsCurrent();
+
 	SSDrawCommand blitDrawCmd{ mScreenBlitVertexShader, mScreenBlitPixelShader, mScreenBlit };
 	
 
@@ -364,11 +371,14 @@ void SSDX11Renderer::DrawCubeScene()
 
 	blitDrawCmd.Do(mDX11Device);
 
+	// Draw infinite grid as a forward overlay on the default render target.
+	// The grid uses alpha blending and SV_Depth for correct depth output.
+	// Note: scene objects won't occlude the grid because the default RT depth
+	// is cleared. For proper occlusion, copy GBuffer depth before this call.
+	DrawInfiniteGrid();
+
 	mDX11Device->Present();
 }
-
-
-
 
 void SSDX11Renderer::TestCompileShader()
 {
@@ -398,6 +408,26 @@ void SSDX11Renderer::TestCompileShader()
 
 	mTBNDebugVertexShader = SSShaderManager::Get().GetVertexShader("TBNDebug.vs");
 	mTBNDebugPixelShader = SSShaderManager::Get().GetPixelShader("TBNDebug.ps");
+
+	mInfiniteGridVertexShader = SSShaderManager::Get().GetVertexShader("InfiniteGrid.vs");
+	mInfiniteGridPixelShader = SSShaderManager::Get().GetPixelShader("InfiniteGrid.ps");
+
+	// Create alpha blend state for infinite grid
+	{
+		D3D11_BLEND_DESC blendDesc;
+		ZeroMemory(&blendDesc, sizeof(blendDesc));
+		blendDesc.AlphaToCoverageEnable = FALSE;
+		blendDesc.IndependentBlendEnable = FALSE;
+		blendDesc.RenderTarget[0].BlendEnable = TRUE;
+		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		HR(SSDX11Renderer::Get().GetDevice()->CreateBlendState(&blendDesc, &mAlphaBlendState));
+	}
 }
 
 
@@ -586,7 +616,7 @@ void SSDX11Renderer::CreateEnvCubemap()
 	auto proj = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.0f), 1.0f, 0.1f, 10.0f);
 
 	mHDREnvmap = SSDX11Texture2D::CreateFromHDRFile("./Resource/Tex/HDR/Circus_Backstage_3k.hdr");
-	//mHDREnvmap = SSDX11Texture2D::CreateFromHDRFile("./Resource/Tex/HDR/GCanyon_C_YumaPoint_3k.hdr");
+	//mHDREnvmap = SSDX11Texture2D::CreateFromHDRFile("./Resource/Tex/HDR/white_furnace.hdr");
 	{
         SSDrawCommand equirectToCubeDrawCmd{ mEquirectToCubemapVertexShader, mEquirectToCubemapPixelShader, mRenderTargetCube };
 
@@ -638,6 +668,161 @@ void SSDX11Renderer::DrawScene()
 {	
 	DrawCubeScene();
 	//DrawObject();
+}
+
+void SSDX11Renderer::DrawInfiniteGrid()
+{
+	std::cout << "[DEBUG] DrawInfiniteGrid called" << std::endl;
+
+	auto* deviceContext = GetImmediateDeviceContext();
+	if (deviceContext == nullptr)
+	{
+		std::cout << "ERROR: deviceContext is NULL" << std::endl;
+		return;
+	}
+
+	// Debug: Check if shaders are loaded
+	if (!mInfiniteGridVertexShader || !mInfiniteGridPixelShader)
+	{
+		std::cout << "ERROR: InfiniteGrid shaders not loaded! VS: " << (mInfiniteGridVertexShader ? "OK" : "NULL")
+		          << ", PS: " << (mInfiniteGridPixelShader ? "OK" : "NULL") << std::endl;
+		return;
+	}
+	std::cout << "[DEBUG] Shaders loaded OK" << std::endl;
+
+	// -----------------------------------------------------------------------
+	// 1. Compute camera matrices and their inverses
+	// -----------------------------------------------------------------------
+	XMMATRIX view = SSCameraManager::Get().GetGameThreadCameraView();
+	XMMATRIX proj = SSCameraManager::Get().GetGameThreadCameraProj();
+
+	XMMATRIX invView = XMMatrixInverse(nullptr, view);
+	XMMATRIX invProj = XMMatrixInverse(nullptr, proj);
+
+	// Transpose for row-major HLSL consumption (engine convention)
+	XMMATRIX invViewT = XMMatrixTranspose(invView);
+	XMMATRIX invProjT = XMMatrixTranspose(invProj);
+	XMMATRIX viewT = XMMatrixTranspose(view);
+	XMMATRIX projT = XMMatrixTranspose(proj);
+
+	// -----------------------------------------------------------------------
+	// 2. Update VS constant buffers: InvView (b0), InvProj (b1)
+	// -----------------------------------------------------------------------
+	auto* vsInvViewCB = mInfiniteGridVertexShader->GetConstantBuffer("InvView");
+	auto* vsInvProjCB = mInfiniteGridVertexShader->GetConstantBuffer("InvProj");
+
+	if (!vsInvViewCB || !vsInvProjCB)
+	{
+		std::cout << "ERROR: VS cbuffers not found! InvView: " << (vsInvViewCB ? "OK" : "NULL")
+		          << ", InvProj: " << (vsInvProjCB ? "OK" : "NULL") << std::endl;
+		return;
+	}
+
+	if (vsInvViewCB)
+	{
+		vsInvViewCB->SetBufferData((void*)&invViewT, sizeof(XMMATRIX));
+		vsInvViewCB->SubmitDataToDevice(deviceContext);
+		deviceContext->VSSetConstantBuffers(vsInvViewCB->GetBufferIndex(), 1,
+			(ID3D11Buffer* const*)vsInvViewCB->GetBufferPointerRef());
+	}
+
+	if (vsInvProjCB)
+	{
+		vsInvProjCB->SetBufferData((void*)&invProjT, sizeof(XMMATRIX));
+		vsInvProjCB->SubmitDataToDevice(deviceContext);
+		deviceContext->VSSetConstantBuffers(vsInvProjCB->GetBufferIndex(), 1,
+			(ID3D11Buffer* const*)vsInvProjCB->GetBufferPointerRef());
+	}
+
+	// -----------------------------------------------------------------------
+	// 3. Update PS constant buffers: View (b0), Proj (b1), GridParams (b2)
+	// -----------------------------------------------------------------------
+	auto* psViewCB = mInfiniteGridPixelShader->GetConstantBuffer("View");
+	auto* psProjCB = mInfiniteGridPixelShader->GetConstantBuffer("Proj");
+	auto* psGridParamsCB = mInfiniteGridPixelShader->GetConstantBuffer("GridParams");
+
+	if (!psViewCB || !psProjCB || !psGridParamsCB)
+	{
+		std::cout << "ERROR: PS cbuffers not found! View: " << (psViewCB ? "OK" : "NULL")
+		          << ", Proj: " << (psProjCB ? "OK" : "NULL")
+		          << ", GridParams: " << (psGridParamsCB ? "OK" : "NULL") << std::endl;
+		return;
+	}
+
+	if (psViewCB)
+	{
+		psViewCB->SetBufferData((void*)&viewT, sizeof(XMMATRIX));
+		psViewCB->SubmitDataToDevice(deviceContext);
+		deviceContext->PSSetConstantBuffers(psViewCB->GetBufferIndex(), 1,
+			(ID3D11Buffer* const*)psViewCB->GetBufferPointerRef());
+	}
+
+	if (psProjCB)
+	{
+		psProjCB->SetBufferData((void*)&projT, sizeof(XMMATRIX));
+		psProjCB->SubmitDataToDevice(deviceContext);
+		deviceContext->PSSetConstantBuffers(psProjCB->GetBufferIndex(), 1,
+			(ID3D11Buffer* const*)psProjCB->GetBufferPointerRef());
+	}
+
+	if (psGridParamsCB)
+	{
+		struct GridParams
+		{
+			float Near;
+			float Far;
+			float GridScale;
+			float Padding;
+		};
+
+		// TODO: expose near/far getters from SSCameraBase instead of hardcoding
+		// Current camera defaults: mNear=0.1f, mFar=2500.0f (see SSCameraBase.h)
+		GridParams params;
+		params.Near = 0.1f;
+		params.Far = 2500.0f;
+		params.GridScale = 1.0f;
+		params.Padding = 0.0f;
+
+		psGridParamsCB->SetBufferData((void*)&params, sizeof(GridParams));
+		psGridParamsCB->SubmitDataToDevice(deviceContext);
+		deviceContext->PSSetConstantBuffers(psGridParamsCB->GetBufferIndex(), 1,
+			(ID3D11Buffer* const*)psGridParamsCB->GetBufferPointerRef());
+	}
+
+	// -----------------------------------------------------------------------
+	// 4. Set shaders (no input layout needed -- SV_VertexID only)
+	// -----------------------------------------------------------------------
+	deviceContext->VSSetShader(mInfiniteGridVertexShader->GetShader(), nullptr, 0);
+	deviceContext->PSSetShader(mInfiniteGridPixelShader->GetShader(), nullptr, 0);
+	deviceContext->IASetInputLayout(nullptr);
+
+	// -----------------------------------------------------------------------
+	// 5. Set render states
+	// -----------------------------------------------------------------------
+	// Alpha blending
+	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	deviceContext->OMSetBlendState(mAlphaBlendState, blendFactor, 0xFFFFFFFF);
+
+	// Depth test enabled with LessEqual, depth write enabled
+	SSDepthStencilStateManager::Get().SetDepthCompLessEqual(deviceContext);
+
+	// No backface culling (the grid is a single plane)
+	SSRasterizeStateManager::Get().SetCullModeNone(deviceContext);
+
+	// -----------------------------------------------------------------------
+	// 6. Draw (4 vertices, triangle strip, no vertex buffer)
+	// -----------------------------------------------------------------------
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	deviceContext->Draw(4, 0);
+	std::cout << "[DEBUG] Draw call completed" << std::endl;
+
+	// -----------------------------------------------------------------------
+	// 7. Restore default states
+	// -----------------------------------------------------------------------
+	deviceContext->OMSetBlendState(nullptr, blendFactor, 0xFFFFFFFF);
+	SSDepthStencilStateManager::Get().SetToDefault(deviceContext);
+	SSRasterizeStateManager::Get().SetToDefault(deviceContext);
+	std::cout << "[DEBUG] DrawInfiniteGrid completed successfully" << std::endl;
 }
 
 void SSDX11Renderer::DrawSkybox()
