@@ -1,0 +1,178 @@
+// =============================================================================
+// InfiniteGrid Pixel Shader
+// =============================================================================
+// Computes the ray-plane intersection with Y=0, draws anti-aliased grid lines,
+// highlights the X (red) and Z (blue) world axes, and fades the grid out
+// as it approaches the far plane.
+//
+// SV_Depth is written so the grid correctly participates in the depth buffer
+// even though there is no actual geometry.
+// =============================================================================
+
+// ---------------------------------------------------------------------------
+// Constant Buffers
+// ---------------------------------------------------------------------------
+
+cbuffer View : register(b0)
+{
+    float4x4 g_View;
+};
+
+cbuffer Proj : register(b1)
+{
+    float4x4 g_Proj;
+};
+
+cbuffer GridParams : register(b2)
+{
+    float g_Near;       // camera near plane distance
+    float g_Far;        // camera far plane distance
+    float g_GridScale;  // base grid cell size (1.0 = 1 unit cells)
+    float g_Padding;    // unused, 16-byte alignment
+};
+
+// ---------------------------------------------------------------------------
+// Structures
+// ---------------------------------------------------------------------------
+
+struct PS_INPUT
+{
+    float4 Pos       : SV_POSITION;
+    float3 NearPoint : TEXCOORD0;
+    float3 FarPoint  : TEXCOORD1;
+};
+
+struct PS_OUTPUT
+{
+    float4 Color : SV_Target;
+    float  Depth : SV_Depth;
+};
+
+// ---------------------------------------------------------------------------
+// Grid pattern generator
+// ---------------------------------------------------------------------------
+// Uses fwidth() for screen-space anti-aliasing so the line thickness remains
+// constant regardless of distance.
+// ---------------------------------------------------------------------------
+
+float4 Grid(float3 fragPos3D, float scale, float2 derivative)
+{
+    float2 coord = fragPos3D.xz * scale;
+    float2 grid  = abs(frac(coord - 0.5) - 0.5) / derivative;
+    float  gridLine  = min(grid.x, grid.y);
+
+    float minimumz = min(derivative.y, 1.0);
+    float minimumx = min(derivative.x, 1.0);
+
+    float4 color = float4(0.2, 0.2, 0.2, 1.0 - min(gridLine, 1.0));
+
+    // Highlight the Z axis in red (X ~ 0)
+    float axisLineWidth = 0.1;
+    if (fragPos3D.x > -axisLineWidth * minimumx && fragPos3D.x < axisLineWidth * minimumx)
+    {
+        color = float4(1.0, 0.3, 0.3, color.a);
+    }
+
+    // Highlight the X axis in blue (Z ~ 0)
+    if (fragPos3D.z > -axisLineWidth * minimumz && fragPos3D.z < axisLineWidth * minimumz)
+    {
+        color = float4(0.3, 0.3, 1.0, color.a);
+    }
+
+    return color;
+}
+
+// ---------------------------------------------------------------------------
+// Depth computation
+// ---------------------------------------------------------------------------
+// Transforms the world-space intersection point back into clip space and
+// extracts the hardware depth value.
+// ---------------------------------------------------------------------------
+
+float ComputeDepth(float3 worldPos, float4x4 viewMat, float4x4 projMat)
+{
+    float4 clipPos = mul(mul(float4(worldPos, 1.0), viewMat), projMat);
+    return clipPos.z / clipPos.w;
+}
+
+// ---------------------------------------------------------------------------
+// Linear depth for fade computation
+// ---------------------------------------------------------------------------
+
+float ComputeLinearDepth(float depth, float near, float far)
+{
+    // Convert from [0..1] non-linear depth to a linear [0..1] range.
+    float clipDepth = depth * 2.0 - 1.0; // back to NDC [-1..1] (OpenGL convention)
+    // For DX where depth is already [0..1], use a simpler form:
+    float linearDepth = (2.0 * near * far) / (far + near - depth * (far - near));
+    return linearDepth / far; // normalise to [0..1]
+}
+
+// ---------------------------------------------------------------------------
+// PS Entry Point
+// ---------------------------------------------------------------------------
+
+PS_OUTPUT PSMain(PS_INPUT input)
+{
+    PS_OUTPUT output;
+
+    // -----------------------------------------------------------------------
+    // 1. Ray-plane intersection: find t where the ray hits Y = 0
+    // -----------------------------------------------------------------------
+    float dirY = input.FarPoint.y - input.NearPoint.y;
+
+    // t parameter for the ray-plane intersection
+    float t = -input.NearPoint.y / dirY;
+
+    // Discard pixels where the ray never hits the ground plane
+    // (t <= 0 means the plane is behind the camera)
+    clip(t);
+
+    // World-space intersection point
+    float3 fragPos3D = input.NearPoint + t * (input.FarPoint - input.NearPoint);
+
+    // -----------------------------------------------------------------------
+    // 2. Depth
+    // -----------------------------------------------------------------------
+    float depth = ComputeDepth(fragPos3D, g_View, g_Proj);
+
+    // Clamp depth to valid range. Fragments beyond far plane should be discarded.
+    clip(1.0 - depth);
+
+    output.Depth = depth;
+
+    // -----------------------------------------------------------------------
+    // 3. Grid pattern with anti-aliasing
+    // -----------------------------------------------------------------------
+    float scale = g_GridScale;
+    float2 coord = fragPos3D.xz * scale;
+    float2 derivative = fwidth(coord);
+
+    // Primary grid (1-unit cells)
+    float4 gridColor = Grid(fragPos3D, scale, derivative);
+
+    // Secondary grid (10x larger cells) for a visual hierarchy
+    float2 coord10 = fragPos3D.xz * scale * 0.1;
+    float2 derivative10 = fwidth(coord10);
+    float2 grid10 = abs(frac(coord10 - 0.5) - 0.5) / derivative10;
+    float gridLine10 = min(grid10.x, grid10.y);
+    float largeGridAlpha = 1.0 - min(gridLine10, 1.0);
+
+    // Blend the large grid on top to make every 10th line bolder
+    gridColor.a = max(gridColor.a, largeGridAlpha * 0.6);
+
+    // -----------------------------------------------------------------------
+    // 4. Distance-based fade
+    // -----------------------------------------------------------------------
+    float linearDepth = ComputeLinearDepth(depth, g_Near, g_Far);
+    float fading = max(0.0, 0.5 - linearDepth);
+
+    gridColor.a *= fading;
+
+    // Discard fully transparent fragments early
+    clip(gridColor.a - 0.001);
+
+    output.Color = gridColor;
+
+    return output;
+}
