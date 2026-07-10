@@ -19,12 +19,6 @@
 ### 3. Physically Based Rendering 
 * 물리기반렌더링 구현 
 
-## 🛠 Technical Highlights
-
-엔진의 완성도를 높이기 위해 다음과 같은 기술적 요소들이 포함되어 있습니다.
-
-* **Render Data Synchronization**: 게임 쓰레드에서 생성된 데이터를 렌더 쓰레드로 안전하게 전달하기 위한 **Producer-Consumer 패턴** 기반의 큐잉 시스템 혹은 데이터 스냅샷 메커니즘을 적용했습니다.
-
 ## 💻 Tech Stack
 
 * **Language**: C++
